@@ -1,3 +1,13 @@
 <Solution>
-  <Folder Name="/Src/" />
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/Src/">
+    <Project Path="src/Application_layer/Application_layer.csproj" Id="1414f247-b779-4cbd-8edb-651b500f3b8c" />
+    <Project Path="Src/Data_layer/Data_layer.csproj" Id="c4508334-65d6-4a86-a02a-99ec3490f58c" />
+    <Project Path="Src/UMS.api/UMS.api.csproj" Id="493a0fb9-03eb-4828-a221-4e57bfb8d2b4" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/UMS.tests/UMS.tests.csproj" Id="8e0eb97a-7bb2-4890-ab98-4a70b16eef37" />
+  </Folder>
 </Solution>
