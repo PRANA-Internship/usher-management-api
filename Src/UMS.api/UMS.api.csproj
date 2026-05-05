@@ -10,4 +10,8 @@
     <PackageReference Include="NSwag.AspNetCore" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Application_layer\Application_layer.csproj" />
+  </ItemGroup>
+
 </Project>

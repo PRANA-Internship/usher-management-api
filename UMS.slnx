@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
+    <File Path="Directory.Packages.props" />
   </Folder>
   <Folder Name="/Src/">
     <Project Path="src/Application_layer/Application_layer.csproj" Id="1414f247-b779-4cbd-8edb-651b500f3b8c" />
