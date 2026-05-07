@@ -1,4 +1,4 @@
-﻿namespace Data_layer
+﻿namespace UMS.Infrastructure
 {
     public class Class1
     {
