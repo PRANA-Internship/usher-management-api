@@ -3,12 +3,12 @@
     <File Path=".gitignore" />
     <File Path="Directory.Packages.props" />
   </Folder>
-  <Folder Name="/Src/">
+  <Folder Name="/src/">
     <Project Path="src/UMS.Application/UMS.Application.csproj" Id="1414f247-b779-4cbd-8edb-651b500f3b8c" />
-    <Project Path="Src/UMS.api/UMS.api.csproj" Id="493a0fb9-03eb-4828-a221-4e57bfb8d2b4" />
-    <Project Path="Src/UMS.Contracts/UMS.Contracts.csproj" Id="ced4d277-ac2d-4a4d-9b61-60ffabfed214" />
-    <Project Path="Src/UMS.Domain/UMS.Domain.csproj" Id="842b9730-6362-4066-8c21-958ee90fe79b" />
-    <Project Path="Src/UMS.Infrastructure/UMS.Infrastructure.csproj" Id="da9159ed-945e-419d-87e9-2327fb838a01" />
+    <Project Path="src/UMS.api/UMS.api.csproj" Id="493a0fb9-03eb-4828-a221-4e57bfb8d2b4" />
+    <Project Path="src/UMS.Contracts/UMS.Contracts.csproj" Id="ced4d277-ac2d-4a4d-9b61-60ffabfed214" />
+    <Project Path="src/UMS.Domain/UMS.Domain.csproj" Id="842b9730-6362-4066-8c21-958ee90fe79b" />
+    <Project Path="src/UMS.Infrastructure/UMS.Infrastructure.csproj" Id="da9159ed-945e-419d-87e9-2327fb838a01" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/UMS.tests/UMS.tests.csproj" Id="8e0eb97a-7bb2-4890-ab98-4a70b16eef37" />
