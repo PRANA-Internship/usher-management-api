@@ -24,4 +24,10 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\UMS.Domain\UMS.Domain.csproj" />
+    <ProjectReference Include="..\..\src\UMS.Application\UMS.Application.csproj" />
+    <ProjectReference Include="..\..\src\UMS.Contracts\UMS.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>
