@@ -1,0 +1,65 @@
+name: Sync PRs with Main
+
+on:
+  push:
+    branches:
+      - main  # Trigger when main is updated
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get open PRs targeting main
+        id: prs
+        run: |
+          prs=$(gh pr list --base main --state open --json number,headRefName)
+          echo "prs=$prs" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Sync PR branches
+        run: |
+          echo '${{ steps.prs.outputs.prs }}' | jq -c '.[]' | while read pr; do
+            number=$(echo "$pr" | jq -r '.number')
+            branch=$(echo "$pr" | jq -r '.headRefName')
+
+            echo "🔄 Processing PR #$number ($branch)..."
+
+            # Fetch latest refs
+            git fetch origin $branch main
+
+            # Check if branch already contains main
+            base=$(git merge-base origin/main origin/$branch)
+            if [ "$base" = "$(git rev-parse origin/main)" ]; then
+              echo "✅ $branch is already up-to-date with main"
+              continue
+            fi
+
+            # Try merging main into branch
+            git checkout $branch
+            if git merge --no-ff origin/main -m "Sync main into $branch"; then
+              echo "✅ Merge clean, pushing to $branch"
+              git push origin $branch
+            else
+              echo "❌ Conflict detected in $branch"
+              gh pr comment $number --body "⚠️ Conflict detected while syncing \`main\` into this branch. Please resolve manually."
+              git merge --abort || true
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
