@@ -8,6 +8,8 @@ using UMS.Domain.Common;
 using static UMS.Domain.Common.Error;
 namespace UMS.Application.Features.Auth.Commands.Login
 {
+
+    public sealed record LoginCommand(string Email, string Password) : IRequest<Result<AuthResponse>>;
     public sealed class LoginCommandHandler(
     IUserRepository userRepository,
     IPasswordHasher passwordHasher,
