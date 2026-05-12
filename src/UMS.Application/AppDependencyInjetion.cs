@@ -13,7 +13,7 @@ namespace UMS.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddMediatR(cfg => 
+            services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
                 cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
@@ -21,7 +21,7 @@ namespace UMS.Application
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-          return services;
+            return services;
         }
     }
 }
