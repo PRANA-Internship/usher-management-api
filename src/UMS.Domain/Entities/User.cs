@@ -25,6 +25,31 @@ namespace UMS.Domain.Entities
         public ICollection<EmailVerificationToken> VerificationTokens { get; private set; } = null!;
         private User() { }
 
+        
+
+        public static User CreateUser(string fullName, string email, string phone, string passwordHash)
+        {
+            //this is for devlopment purpose only to create users and change their role
+            fullName = fullName.Trim();
+            email = email.Trim().ToLowerInvariant();
+            phone = phone.Trim();
+            ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(email);
+            ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
+            return new User
+            {
+                FullName = fullName,
+                Email = email,
+                Phone = phone,
+                PasswordHash = passwordHash,
+                Role = UserRole.GUEST,
+                EmailVerified = true,
+                EmailVerifiedAt = DateTimeOffset.UtcNow
+            };
+        }
+
+
+
 
         // user who submit usher application is guest untill approved
         //doesnt require password to submit application
