@@ -13,15 +13,15 @@ namespace UMS.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            services.AddMediatR(cfg => 
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
+            });
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            // MediatR pipeline: validation before every handler
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-
-            return services;
+          return services;
         }
     }
 }
