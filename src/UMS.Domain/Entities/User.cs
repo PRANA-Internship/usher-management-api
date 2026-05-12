@@ -25,7 +25,7 @@ namespace UMS.Domain.Entities
         public ICollection<EmailVerificationToken> VerificationTokens { get; private set; } = null!;
         private User() { }
 
-        
+
 
         public static User CreateUser(string fullName, string email, string phone, string passwordHash)
         {

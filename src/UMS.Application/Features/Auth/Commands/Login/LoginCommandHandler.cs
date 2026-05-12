@@ -15,11 +15,11 @@ namespace UMS.Application.Features.Auth.Commands.Login
     IPasswordHasher passwordHasher,
     ITokenService tokenService
 
-        ): IRequestHandler<LoginCommand, Result<AuthResponse>>
+        ) : IRequestHandler<LoginCommand, Result<AuthResponse>>
     {
-     public async Task<Result<AuthResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AuthResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-          var email = request.Email.Trim().ToLowerInvariant();
+            var email = request.Email.Trim().ToLowerInvariant();
 
             var user = await userRepository.GetByEmailAsync(email, cancellationToken);
             var hash = user?.PasswordHash ?? "$2a$12$invalidhashpaddingtomakeconstanttime";
@@ -35,7 +35,7 @@ namespace UMS.Application.Features.Auth.Commands.Login
             var refreshExpiry = tokenService.GetRefreshTokenExpiry();
             var accessExpiry = tokenService.GetAccessTokenExpiry();
 
-        //    user.SetRefreshToken(refreshToken, refreshExpiry);
+            //    user.SetRefreshToken(refreshToken, refreshExpiry);
             await userRepository.UpdateAsync(user, cancellationToken);
 
             return Result<AuthResponse>.Success(new AuthResponse(
@@ -46,9 +46,9 @@ namespace UMS.Application.Features.Auth.Commands.Login
                 FullName: user.FullName,
                 Role: user.Role.ToString()
             ));
-        
 
-    }
+
+        }
 
     }
 }

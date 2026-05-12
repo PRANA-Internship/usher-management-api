@@ -29,7 +29,7 @@ namespace UMS.Domain.Common
 
 
     //this work for method that return data
-    public class Result<T>:Result
+    public class Result<T> : Result
     {
         public T? Value { get; }
         private Result(T value) : base(Error.None)
