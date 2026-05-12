@@ -8,9 +8,9 @@ using System.Text;
 namespace UMS.Infrastructure.Persistance.Context
 {
 
-    
-        public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
-        {
+
+    public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    {
         public AppDbContext CreateDbContext(string[] args)
         {
             var configuration = new ConfigurationBuilder()
@@ -32,6 +32,6 @@ namespace UMS.Infrastructure.Persistance.Context
             return new AppDbContext(options);
         }
     }
-    
+
 
 }
