@@ -61,7 +61,9 @@ namespace UMS.Domain.Entities
                 EducationLevel = data.EducationLevel,
                 ExperienceSummary = data.ExperienceSummary,
                 Languages = data.Languages,
-                Sector = data.Sector
+                Sector = data.Sector,
+                ProfilePhotoUrl = data.ProfilePhotoUrl,
+                IdDocumentUrl = data.IdDocumentUrl,
             };
         }
 
@@ -110,6 +112,9 @@ namespace UMS.Domain.Entities
 
     }
 }
+
+// this recored updated because the Architecture changed
+// files and photos must be uploaded first thats why
 public record CreateUsherData(
       Gender Gender,
       DateOnly DateOfBirth,
@@ -120,5 +125,7 @@ public record CreateUsherData(
       string EducationLevel,
       string ExperienceSummary,
       string Languages,
-      string Sector
+      string Sector,
+    string ProfilePhotoUrl,
+    string IdDocumentUrl
   );

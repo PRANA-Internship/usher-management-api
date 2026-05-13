@@ -23,7 +23,7 @@ namespace UMS.tests.Entities
         public Usher Build() => Usher.CreateApplication(_userId, new CreateUsherData(
             _gender, _dob, _address, _city,
             "Emergency Person", "0612345678",
-            "Bachelor", "3 years events", "Dutch, English", "Events"
+            "Bachelor", "3 years events", "Dutch, English", "Events", "profile-photos/6d698e58-313a-4858-ab13-6a0771a25f86.jpg", "id-documents/5179e42a-60ea-471c-84ba-03db8d185a19.pdf"
         ));
 
         public static Usher Default() => new UsherBuilder().Build();
@@ -213,7 +213,7 @@ namespace UMS.tests.Entities
             new DateOnly(1995, 6, 15),
             "123 Main St", "noah",
             "Emergency Person", "0945675878",
-            "Bachelor", "3 years events", "Dutch, English", "Events"
+            "Bachelor", "3 years events", "Dutch, English", "Events", "\"profile-photos/6d698e58-313a-4858-ab13-6a0771a25f86.jpg\"", "id-documents/5179e42a-60ea-471c-84ba-03db8d185a19.pdf"
         );
 
         private static void ApproveUsher(Usher usher, Guid? adminId = null) =>
