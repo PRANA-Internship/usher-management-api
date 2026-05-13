@@ -32,13 +32,15 @@ builder.Services.AddControllers();
 
 
 var app = builder.Build();
-app.UseOpenApi();
-
-app.UseSwaggerUi(options =>
+if (app.Environment.IsDevelopment())
 {
-    options.DocumentPath = "/swagger/v1/swagger.json";
-});
+    app.UseOpenApi();
 
+    app.UseSwaggerUi(options =>
+    {
+        options.DocumentPath = "/swagger/v1/swagger.json";
+    });
+}
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
