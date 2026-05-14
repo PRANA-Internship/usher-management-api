@@ -18,6 +18,12 @@ namespace UMS.Domain.Common
             public static readonly Error EmailAlreadyExists = new("AUTH_006", "An account with this email already exists.");
 
         }
+        public static class UsherErrors
+        {
+            public static readonly Error EmailAlreadyExists = new("USHER_001", "An account with this email already exists.");
+            public static readonly Error FileUploadFailed = new("USHER_002", "File upload failed. Please try again.");
+            public static readonly Error ApplicationSaveFailed = new("USHER_003", "Failed to save application. Please try again.");
+        }
     }
 
 }
