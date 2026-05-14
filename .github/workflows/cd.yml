@@ -15,6 +15,16 @@ concurrency:
 jobs:
   build-push-deploy:
     runs-on: ubuntu-latest
+    # Map secrets once (like Azure Pipelines variables). `secrets` is not available in workflow-level `env`.
+    env:
+      AZURE_ACR_LOGIN_SERVER: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}
+      AZURE_ACR_USERNAME: ${{ secrets.AZURE_ACR_USERNAME }}
+      AZURE_ACR_PASSWORD: ${{ secrets.AZURE_ACR_PASSWORD }}
+      AZURE_ACR_REPOSITORY: ${{ secrets.AZURE_ACR_REPOSITORY }}
+      AZURE_VM_SSH_HOST: ${{ secrets.AZURE_VM_SSH_HOST }}
+      AZURE_VM_SSH_USER: ${{ secrets.AZURE_VM_SSH_USER }}
+      AZURE_VM_SSH_KEY: ${{ secrets.AZURE_VM_SSH_KEY }}
+      AZURE_VM_COMPOSE_DIR: ${{ secrets.AZURE_VM_COMPOSE_DIR }}
 
     steps:
       - name: Checkout
@@ -26,17 +36,15 @@ jobs:
       - name: Log in to Azure Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}
-          username: ${{ secrets.AZURE_ACR_USERNAME }}
-          password: ${{ secrets.AZURE_ACR_PASSWORD }}
+          registry: ${{ env.AZURE_ACR_LOGIN_SERVER }}
+          username: ${{ env.AZURE_ACR_USERNAME }}
+          password: ${{ env.AZURE_ACR_PASSWORD }}
 
       - name: Docker metadata (tags)
         id: meta
         run: |
-          REGISTRY="${{ secrets.AZURE_ACR_LOGIN_SERVER }}"
-          REPO="${{ secrets.AZURE_ACR_REPOSITORY }}"
-          SHA_TAG="${REGISTRY}/${REPO}:${GITHUB_SHA}"
-          LATEST_TAG="${REGISTRY}/${REPO}:latest"
+          SHA_TAG="${AZURE_ACR_LOGIN_SERVER}/${AZURE_ACR_REPOSITORY}:${GITHUB_SHA}"
+          LATEST_TAG="${AZURE_ACR_LOGIN_SERVER}/${AZURE_ACR_REPOSITORY}:latest"
           echo "tags<<EOF" >> "$GITHUB_OUTPUT"
           echo "${SHA_TAG}" >> "$GITHUB_OUTPUT"
           echo "${LATEST_TAG}" >> "$GITHUB_OUTPUT"
@@ -56,21 +64,21 @@ jobs:
       - name: Deploy on VM (Docker Compose)
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.AZURE_VM_SSH_HOST }}
-          username: ${{ secrets.AZURE_VM_SSH_USER }}
-          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          host: ${{ env.AZURE_VM_SSH_HOST }}
+          username: ${{ env.AZURE_VM_SSH_USER }}
+          key: ${{ env.AZURE_VM_SSH_KEY }}
           script_stop: true
           script: |
             set -euo pipefail
-            COMPOSE_DIR="${{ secrets.AZURE_VM_COMPOSE_DIR }}"
+            COMPOSE_DIR="${{ env.AZURE_VM_COMPOSE_DIR }}"
             if [ -z "${COMPOSE_DIR}" ] || [ ! -d "${COMPOSE_DIR}" ]; then
               echo "AZURE_VM_COMPOSE_DIR must be set to an existing directory on the VM (where docker-compose.yml lives)."
               exit 1
             fi
             cd "${COMPOSE_DIR}"
 
-            echo "${{ secrets.AZURE_ACR_PASSWORD }}" | docker login "${{ secrets.AZURE_ACR_LOGIN_SERVER }}" \
-              -u "${{ secrets.AZURE_ACR_USERNAME }}" --password-stdin
+            echo "${{ env.AZURE_ACR_PASSWORD }}" | docker login "${{ env.AZURE_ACR_LOGIN_SERVER }}" \
+              -u "${{ env.AZURE_ACR_USERNAME }}" --password-stdin
 
             # Optional in compose: image: ...:${IMAGE_TAG:-latest}  (CI pushes both :$SHA and :latest)
             export IMAGE_TAG="${{ github.sha }}"
