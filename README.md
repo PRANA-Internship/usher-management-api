@@ -114,11 +114,13 @@ docker run --rm -p 8080:8080 --env-file ./my-ums.env ums-api:local
 
 ### Local stack (`docker-compose.yml`)
 
-PostgreSQL (**with `pgcrypto` and `citext`** via [`docker/postgres-init`](docker/postgres-init)), **MinIO** (S3-compatible storage), and the **API**. API settings load from the repo-root **`.env`** file. **[`.env.example`](.env.example)** is the template (same keys as the committed dev [`.env`](.env)); copy it over your `.env` when you want a clean baseline:
+PostgreSQL (**with `pgcrypto` and `citext`** via [`docker/postgres-init`](docker/postgres-init)), **MinIO** (S3-compatible storage), and the **API**. API settings load from a repo-root **`.env`** file (gitignored). Copy the template once:
 
 ```bash
 cp .env.example .env
 ```
+
+Edit `.env` for your machine; only **[`.env.example`](.env.example)** is tracked in git.
 
 1. Apply migrations once (Postgres must be up, or use the compose file’s published `5432`):
 

@@ -1,6 +1,6 @@
 # Local stack: PostgreSQL, MinIO (object storage), UMS API.
 #
-# Setup: root .env is committed with local dev defaults; see .env.example as the template to reset.
+# Setup: copy `.env.example` to `.env` once (`.env` is gitignored).
 #
 # First run (apply EF migrations from the repo root, with Postgres reachable):
 #   docker compose up -d postgres
