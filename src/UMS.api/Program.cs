@@ -1,7 +1,7 @@
-using UMS.Infrastructure.Persistance;
-using UMS.Application;
-
 using Microsoft.AspNetCore.RateLimiting;
+using System.Text.Json.Serialization;
+using UMS.Application;
+using UMS.Infrastructure.Persistance;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -13,7 +13,12 @@ builder.Services.AddOpenApiDocument(config =>
 
 // Add services to the container.
 builder.Services.AddInfrastructure(builder.Configuration);
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters
+            .Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddRateLimiter(options =>
 {

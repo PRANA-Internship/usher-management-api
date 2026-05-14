@@ -1,16 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Minio;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UMS.Application.Common.Interfaces;
 using UMS.Infrastructure.Auth;
 using UMS.Infrastructure.Persistance.Context;
+using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
 using UMS.Infrastructure.Settings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using UMS.Infrastructure.Storage;
 namespace UMS.Infrastructure.Persistance
 {
     public static class InfraDependencyInjection
@@ -19,6 +23,24 @@ namespace UMS.Infrastructure.Persistance
            this IServiceCollection services,
            IConfiguration configuration)
         {
+            services.Configure<MinioSettings>(configuration.GetSection(MinioSettings.SectionName));
+
+            services.AddSingleton<IMinioClient>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<MinioSettings>>().Value;
+
+                return new MinioClient()
+                    .WithEndpoint(settings.Endpoint)
+                    .WithCredentials(settings.AccessKey, settings.SecretKey)
+                    .WithSSL(settings.UseSSL)
+                    .Build();
+            });
+
+            services.AddScoped<IFileStorageService, MinioFileStorageService>();
+
+            services.AddScoped<IUsherRepository, UsherRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
 
             services.AddScoped<ITokenService, JwtTokenService>();
