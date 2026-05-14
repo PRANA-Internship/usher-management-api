@@ -1,0 +1,95 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}
+          username: ${{ secrets.AZURE_ACR_USERNAME }}
+          password: ${{ secrets.AZURE_ACR_PASSWORD }}
+
+      - name: Docker metadata (tags)
+        id: meta
+        run: |
+          REGISTRY="${{ secrets.AZURE_ACR_LOGIN_SERVER }}"
+          REPO="${{ secrets.AZURE_ACR_REPOSITORY }}"
+          SHA_TAG="${REGISTRY}/${REPO}:${GITHUB_SHA}"
+          LATEST_TAG="${REGISTRY}/${REPO}:latest"
+          echo "tags<<EOF" >> "$GITHUB_OUTPUT"
+          echo "${SHA_TAG}" >> "$GITHUB_OUTPUT"
+          echo "${LATEST_TAG}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "image_ref=${SHA_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to Azure VM (SSH)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.AZURE_VM_SSH_HOST }}
+          username: ${{ secrets.AZURE_VM_SSH_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            echo "${{ secrets.AZURE_ACR_PASSWORD }}" | docker login "${{ secrets.AZURE_ACR_LOGIN_SERVER }}" \
+              -u "${{ secrets.AZURE_ACR_USERNAME }}" --password-stdin
+
+            IMAGE="${{ secrets.AZURE_ACR_LOGIN_SERVER }}/${{ secrets.AZURE_ACR_REPOSITORY }}"
+            TAG="${{ github.sha }}"
+
+            docker pull "${IMAGE}:${TAG}"
+
+            APP_PORT="${{ secrets.AZURE_APP_HOST_PORT }}"
+            APP_PORT="${APP_PORT:-8080}"
+            CONTAINER_NAME="${{ secrets.AZURE_CONTAINER_NAME }}"
+            CONTAINER_NAME="${CONTAINER_NAME:-ums-api}"
+            ENV_FILE_PATH="${{ secrets.AZURE_VM_ENV_FILE_PATH }}"
+            ENV_FILE_PATH="${ENV_FILE_PATH:-$HOME/ums-api.env}"
+
+            docker stop "${CONTAINER_NAME}" 2>/dev/null || true
+            docker rm "${CONTAINER_NAME}" 2>/dev/null || true
+
+            if [ -f "${ENV_FILE_PATH}" ]; then
+              docker run -d \
+                --name "${CONTAINER_NAME}" \
+                --restart unless-stopped \
+                -p "${APP_PORT}:8080" \
+                --env-file "${ENV_FILE_PATH}" \
+                "${IMAGE}:${TAG}"
+            else
+              echo "Env file not found at ${ENV_FILE_PATH}. Set secret AZURE_VM_ENV_FILE_PATH or create the file on the VM."
+              exit 1
+            fi
+
+            docker image prune -f

@@ -1,0 +1,16 @@
+**/.git
+.env
+**/.github
+**/bin
+**/obj
+**/*.user
+**/*.suo
+**/TestResults
+**/Tests
+**/.vs
+**/.idea
+**/*.md
+!README.md
+**/node_modules
+**/.env
+**/.env.*

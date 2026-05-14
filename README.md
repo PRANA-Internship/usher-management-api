@@ -77,6 +77,68 @@ On every **pull request**, GitHub Actions:
 
 Workflow file: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
+## CD — Docker image, ACR, Azure VM ([`cd.yml`](.github/workflows/cd.yml))
+
+Runs on **push to `main`** and **`workflow_dispatch`**: build the [`Dockerfile`](Dockerfile), push to **Azure Container Registry**, then **SSH** into your VM to `docker pull` and `docker run` the new image.
+
+### GitHub Actions secrets
+
+| Secret | Purpose |
+|--------|---------|
+| `AZURE_ACR_LOGIN_SERVER` | Registry hostname, e.g. `myregistry.azurecr.io` |
+| `AZURE_ACR_USERNAME` | ACR login name (registry user or service principal **app ID**) |
+| `AZURE_ACR_PASSWORD` | ACR password or service principal **secret** |
+| `AZURE_ACR_REPOSITORY` | Image repository path **without** registry or tag, e.g. `usher-management-api/ums-api` |
+| `AZURE_VM_SSH_HOST` | VM public DNS or IP |
+| `AZURE_VM_SSH_USER` | SSH user (e.g. `azureuser`) |
+| `AZURE_VM_SSH_KEY` | Private key PEM for that user |
+| `AZURE_VM_ENV_FILE_PATH` | *(Optional)* Path on the VM to `--env-file` (defaults to `$HOME/ums-api.env` if unset) |
+| `AZURE_APP_HOST_PORT` | *(Optional)* Host port mapped to container `8080` (default `8080`) |
+| `AZURE_CONTAINER_NAME` | *(Optional)* Docker container name (default `ums-api`) |
+
+On the VM, create an env file (for example `$HOME/ums-api.env`) using the same keys as [`.env.example`](.env.example): `ConnectionStrings__DefaultConnection`, `Jwt__*`, `Minio__*`, etc. The container listens on **8080** inside the network namespace; the workflow publishes it as `AZURE_APP_HOST_PORT:8080`.
+
+For a non-default SSH port, add a `port:` input to the `appleboy/ssh-action` step in [`cd.yml`](.github/workflows/cd.yml).
+
+## Docker
+
+### API image
+
+Multi-stage build at repo root: **SDK 10** publish, **ASP.NET 10** runtime, non-root user, Kestrel on **8080** (`ASPNETCORE_URLS`).
+
+```bash
+docker build -t ums-api:local .
+# Use a filled env file (see .env.example); docker compose below is easier for first try.
+docker run --rm -p 8080:8080 --env-file ./my-ums.env ums-api:local
+```
+
+### Local stack (`docker-compose.yml`)
+
+PostgreSQL (**with `pgcrypto` and `citext`** via [`docker/postgres-init`](docker/postgres-init)), **MinIO** (S3-compatible storage), and the **API**. API settings load from the repo-root **`.env`** file. **[`.env.example`](.env.example)** is the template (same keys as the committed dev [`.env`](.env)); copy it over your `.env` when you want a clean baseline:
+
+```bash
+cp .env.example .env
+```
+
+1. Apply migrations once (Postgres must be up, or use the compose file’s published `5432`):
+
+   ```bash
+   docker compose up -d postgres
+   dotnet ef database update \
+     --project src/UMS.Infrastructure/UMS.Infrastructure.csproj \
+     --startup-project src/UMS.api/UMS.api.csproj \
+     --connection "Host=localhost;Port=5432;Database=Usher_mgmt;Username=postgres;Password=postgres"
+   ```
+
+2. Start everything:
+
+   ```bash
+   docker compose up --build
+   ```
+
+- API: `http://localhost:8080`  
+- MinIO console: `http://localhost:9001` (default dev credentials in compose — change for anything beyond local testing)
+
 ## Sync PRs with `main` (`synch-prs-main.yml`)
 
 When **`main`** receives a push, a workflow merges the latest `main` into each **open PR** whose base is `main`. If the merge conflicts, it aborts and posts a comment on that PR asking for a manual resolution.
