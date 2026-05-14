@@ -53,7 +53,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Deploy to Azure VM (SSH)
+      - name: Deploy on VM (Docker Compose)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.AZURE_VM_SSH_HOST }}
@@ -62,34 +62,21 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
+            COMPOSE_DIR="${{ secrets.AZURE_VM_COMPOSE_DIR }}"
+            if [ -z "${COMPOSE_DIR}" ] || [ ! -d "${COMPOSE_DIR}" ]; then
+              echo "AZURE_VM_COMPOSE_DIR must be set to an existing directory on the VM (where docker-compose.yml lives)."
+              exit 1
+            fi
+            cd "${COMPOSE_DIR}"
+
             echo "${{ secrets.AZURE_ACR_PASSWORD }}" | docker login "${{ secrets.AZURE_ACR_LOGIN_SERVER }}" \
               -u "${{ secrets.AZURE_ACR_USERNAME }}" --password-stdin
 
-            IMAGE="${{ secrets.AZURE_ACR_LOGIN_SERVER }}/${{ secrets.AZURE_ACR_REPOSITORY }}"
-            TAG="${{ github.sha }}"
+            # Optional in compose: image: ...:${IMAGE_TAG:-latest}  (CI pushes both :$SHA and :latest)
+            export IMAGE_TAG="${{ github.sha }}"
 
-            docker pull "${IMAGE}:${TAG}"
-
-            APP_PORT="${{ secrets.AZURE_APP_HOST_PORT }}"
-            APP_PORT="${APP_PORT:-8080}"
-            CONTAINER_NAME="${{ secrets.AZURE_CONTAINER_NAME }}"
-            CONTAINER_NAME="${CONTAINER_NAME:-ums-api}"
-            ENV_FILE_PATH="${{ secrets.AZURE_VM_ENV_FILE_PATH }}"
-            ENV_FILE_PATH="${ENV_FILE_PATH:-$HOME/ums-api.env}"
-
-            docker stop "${CONTAINER_NAME}" 2>/dev/null || true
-            docker rm "${CONTAINER_NAME}" 2>/dev/null || true
-
-            if [ -f "${ENV_FILE_PATH}" ]; then
-              docker run -d \
-                --name "${CONTAINER_NAME}" \
-                --restart unless-stopped \
-                -p "${APP_PORT}:8080" \
-                --env-file "${ENV_FILE_PATH}" \
-                "${IMAGE}:${TAG}"
-            else
-              echo "Env file not found at ${ENV_FILE_PATH}. Set secret AZURE_VM_ENV_FILE_PATH or create the file on the VM."
-              exit 1
-            fi
+            docker compose down
+            docker compose pull
+            docker compose up -d --remove-orphans
 
             docker image prune -f

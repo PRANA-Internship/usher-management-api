@@ -79,7 +79,9 @@ Workflow file: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## CD — Docker image, ACR, Azure VM ([`cd.yml`](.github/workflows/cd.yml))
 
-Runs on **push to `main`** and **`workflow_dispatch`**: build the [`Dockerfile`](Dockerfile), push to **Azure Container Registry**, then **SSH** into your VM to `docker pull` and `docker run` the new image.
+Runs on **push to `main`** and **`workflow_dispatch`**: build the [`Dockerfile`](Dockerfile), push to **Azure Container Registry**, then **SSH** into your VM, **`cd`** to the compose app directory, and run **`docker compose down` → `pull` → `up -d`** so the stack matches what you keep on the VM (ports, env files, dependencies).
+
+The VM must have **Docker Compose V2** (`docker compose`) and a **`docker-compose.yml`** (plus a local **`.env`** if you use `env_file`) under the directory in `AZURE_VM_COMPOSE_DIR`.
 
 ### GitHub Actions secrets
 
@@ -92,11 +94,19 @@ Runs on **push to `main`** and **`workflow_dispatch`**: build the [`Dockerfile`]
 | `AZURE_VM_SSH_HOST` | VM public DNS or IP |
 | `AZURE_VM_SSH_USER` | SSH user (e.g. `azureuser`) |
 | `AZURE_VM_SSH_KEY` | Private key PEM for that user |
-| `AZURE_VM_ENV_FILE_PATH` | *(Optional)* Path on the VM to `--env-file` (defaults to `$HOME/ums-api.env` if unset) |
-| `AZURE_APP_HOST_PORT` | *(Optional)* Host port mapped to container `8080` (default `8080`) |
-| `AZURE_CONTAINER_NAME` | *(Optional)* Docker container name (default `ums-api`) |
+| `AZURE_VM_COMPOSE_DIR` | Absolute path on the VM where **`docker-compose.yml`** lives (e.g. `/home/azureuser/usher-management-api`) |
 
-On the VM, create an env file (for example `$HOME/ums-api.env`) using the same keys as [`.env.example`](.env.example): `ConnectionStrings__DefaultConnection`, `Jwt__*`, `Minio__*`, etc. The container listens on **8080** inside the network namespace; the workflow publishes it as `AZURE_APP_HOST_PORT:8080`.
+The deploy step logs in to ACR, exports **`IMAGE_TAG=${{ github.sha }}`** for compose interpolation, then runs compose **down → pull → up**. In your VM compose file you can pin the API image with a tag, for example:
+
+```yaml
+services:
+  api:
+    image: myregistry.azurecr.io/my-repo/ums-api:${IMAGE_TAG:-latest}
+```
+
+CI pushes both **`:<commit-sha>`** and **`:latest`**, so **`docker compose pull`** always has something to fetch; using **`${IMAGE_TAG:-latest}`** lets local runs default to `latest` while CD deploys the commit that was just built.
+
+On the VM, keep a **`.env`** next to compose (not committed from this repo) with the same style of keys as [`.env.example`](.env.example): `ConnectionStrings__DefaultConnection`, `Jwt__*`, `Minio__*`, etc.
 
 For a non-default SSH port, add a `port:` input to the `appleboy/ssh-action` step in [`cd.yml`](.github/workflows/cd.yml).
 
