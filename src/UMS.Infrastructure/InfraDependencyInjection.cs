@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using UMS.Application.Common.Interfaces;
 using UMS.Infrastructure.Auth;
+using UMS.Infrastructure.Email;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
@@ -36,6 +37,9 @@ namespace UMS.Infrastructure.Persistance
                     .Build();
             });
 
+            services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+            services.AddScoped<IEmailService, MailKitEmailService>();
+            services.AddScoped<IEmailVerificationTokenRepository, EmailVerificationTokenRepository>();
             services.AddScoped<IFileStorageService, MinioFileStorageService>();
 
             services.AddScoped<IUsherRepository, UsherRepository>();
