@@ -83,7 +83,7 @@ namespace UMS.Domain.Entities
         {
 
             ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
-           
+
 
             if (EmailVerified)
                 return new Error("Email verified.", "email is alredy verified");
