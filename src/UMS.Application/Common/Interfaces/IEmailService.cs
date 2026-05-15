@@ -11,10 +11,5 @@ namespace UMS.Application.Common.Interfaces
         Task SendPasswordSetupAsync(string toEmail, string fullName, string token, CancellationToken ct = default);
     }
 
-    public interface IEmailVerificationTokenRepository
-    {
-        Task AddAsync(EmailVerificationToken token, CancellationToken ct = default);
-        Task<EmailVerificationToken?> GetByTokenAsync(string token, CancellationToken ct = default);
-        Task UpdateAsync(EmailVerificationToken token, CancellationToken ct = default);
-    }
+
 }
