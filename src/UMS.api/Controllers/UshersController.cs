@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
+using UMS.Application.Features.Auth.Commands.SetPassword;
 using UMS.Application.Features.Auth.Commands.SubmitApplication;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
@@ -100,6 +101,26 @@ namespace UMS.api.Controllers
                 {
                     "USHER_004" => NotFound(result.Error),
                     "USHER_005" => Conflict(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
+        [HttpPost("set-password")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SetPassword(
+        [FromBody] SetPasswordRequest request,
+    CancellationToken ct)
+        {
+            var result = await sender.Send(
+                new SetPasswordCommand(request.Token, request.Password, request.ConfirmPassword), ct);
+
+            return result.IsSuccess
+                ? Ok(new { message = "Password set successfully. You can now log in." })
+                : result.Error.Code switch
+                {
+                    "USHER_006" => BadRequest(result.Error),
+                    "USHER_007" => Conflict(result.Error),
                     _ => BadRequest(result.Error)
                 };
         }

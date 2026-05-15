@@ -83,10 +83,7 @@ namespace UMS.Domain.Entities
         {
 
             ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
-            if (Role == UserRole.GUEST)
-            {
-                return new Error("Role Guest or coordinator", "Guest can't create a password and verify email");
-            }
+
 
             if (EmailVerified)
                 return new Error("Email verified.", "email is alredy verified");

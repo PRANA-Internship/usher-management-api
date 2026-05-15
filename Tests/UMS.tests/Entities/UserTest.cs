@@ -61,7 +61,7 @@ namespace UMS.tests.Entities
 
             var result = user.VerifyEmailAndSetPassword("hashed_password");
 
-            Assert.NotEqual(Error.None, result);
+            Assert.Equal(Error.None, result);
         }
 
         [Fact]
