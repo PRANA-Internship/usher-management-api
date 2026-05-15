@@ -60,5 +60,17 @@ namespace UMS.Infrastructure.Storage
                 await minioClient.MakeBucketAsync(makeArgs, ct);
             }
         }
+        public async Task<string> GetPresignedUrlAsync(
+            string objectPath,
+            int expirySeconds = 3600,
+            CancellationToken ct = default)
+        {
+            var args = new PresignedGetObjectArgs()
+                .WithBucket(_settings.BucketName)
+                .WithObject(objectPath)
+                .WithExpiry(expirySeconds);
+
+            return await minioClient.PresignedGetObjectAsync(args);
+        }
     }
 }

@@ -23,7 +23,12 @@ namespace UMS.Domain.Common
             public static readonly Error EmailAlreadyExists = new("USHER_001", "An account with this email already exists.");
             public static readonly Error FileUploadFailed = new("USHER_002", "File upload failed. Please try again.");
             public static readonly Error ApplicationSaveFailed = new("USHER_003", "Failed to save application. Please try again.");
+            public static readonly Error NotFound = new("USHER_004", "Usher application not found.");
+            public static readonly Error AlreadyApproved = new("USHER_005", "Application is already approved.");
+            public static readonly Error InvalidToken = new("USHER_006", "Token is invalid or expired.");
+            public static readonly Error TokenAlreadyUsed = new("USHER_007", "Token has already been used.");
         }
+
     }
 
 }

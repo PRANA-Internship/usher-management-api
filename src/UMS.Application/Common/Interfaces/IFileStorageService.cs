@@ -12,6 +12,7 @@ namespace UMS.Application.Common.Interfaces
        string contentType,
        string folder,
        CancellationToken ct = default);
+        Task<string> GetPresignedUrlAsync(string objectPath, int expirySeconds = 3600, CancellationToken ct = default);
         Task DeleteAsync(string objectPath, CancellationToken ct = default);
     }
 

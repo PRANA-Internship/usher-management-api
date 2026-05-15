@@ -14,7 +14,8 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
     IUserRepository userRepository,
     IUsherRepository usherRepository,
     IFileStorageService fileStorage,
-    IUnitOfWork unitOfWork
+    IUnitOfWork unitOfWork,
+    IEmailService emailService
 ) : IRequestHandler<SubmitUsherApplicationCommand, Result<SubmitUsherApplicationResponse>>
     {
         public async Task<Result<SubmitUsherApplicationResponse>> Handle(
@@ -81,11 +82,18 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
                     var usher = Usher.CreateApplication(user.Id, UsherData);
                     await usherRepository.AddAsync(usher, cancellationToken);
                 }, cancellationToken);
-
+                try
+                {
+                    await emailService.SendApplicationReceivedAsync(email, request.FullName, cancellationToken);
+                }
+                catch (Exception)
+                {
+                }
                 return Result<SubmitUsherApplicationResponse>.Success(new SubmitUsherApplicationResponse(
 
                     FullName: request.FullName
                 ));
+
             }
             catch (Exception)
             {
