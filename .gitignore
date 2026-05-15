@@ -27,7 +27,7 @@ ScaffoldingReadMe.txt
 # NuGet Symbol Packages
 *.snupkg
 
-# dotenv environment variables file
+# Local env — not committed; copy from `.env.example` for Docker Compose
 .env
 
 # Others

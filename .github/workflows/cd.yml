@@ -1,0 +1,90 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+    # Map secrets once (like Azure Pipelines variables). `secrets` is not available in workflow-level `env`.
+    env:
+      AZURE_ACR_LOGIN_SERVER: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}
+      AZURE_ACR_USERNAME: ${{ secrets.AZURE_ACR_USERNAME }}
+      AZURE_ACR_PASSWORD: ${{ secrets.AZURE_ACR_PASSWORD }}
+      AZURE_ACR_REPOSITORY: ${{ secrets.AZURE_ACR_REPOSITORY }}
+      AZURE_VM_SSH_HOST: ${{ secrets.AZURE_VM_SSH_HOST }}
+      AZURE_VM_SSH_USER: ${{ secrets.AZURE_VM_SSH_USER }}
+      AZURE_VM_SSH_KEY: ${{ secrets.AZURE_VM_SSH_KEY }}
+      AZURE_VM_COMPOSE_DIR: ${{ secrets.AZURE_VM_COMPOSE_DIR }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.AZURE_ACR_LOGIN_SERVER }}
+          username: ${{ env.AZURE_ACR_USERNAME }}
+          password: ${{ env.AZURE_ACR_PASSWORD }}
+
+      - name: Docker metadata (tags)
+        id: meta
+        run: |
+          SHA_TAG="${AZURE_ACR_LOGIN_SERVER}/${AZURE_ACR_REPOSITORY}:${GITHUB_SHA}"
+          LATEST_TAG="${AZURE_ACR_LOGIN_SERVER}/${AZURE_ACR_REPOSITORY}:latest"
+          echo "tags<<EOF" >> "$GITHUB_OUTPUT"
+          echo "${SHA_TAG}" >> "$GITHUB_OUTPUT"
+          echo "${LATEST_TAG}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "image_ref=${SHA_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy on VM (Docker Compose)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ env.AZURE_VM_SSH_HOST }}
+          username: ${{ env.AZURE_VM_SSH_USER }}
+          key: ${{ env.AZURE_VM_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            COMPOSE_DIR="${{ env.AZURE_VM_COMPOSE_DIR }}"
+            if [ -z "${COMPOSE_DIR}" ] || [ ! -d "${COMPOSE_DIR}" ]; then
+              echo "AZURE_VM_COMPOSE_DIR must be set to an existing directory on the VM (where docker-compose.yml lives)."
+              exit 1
+            fi
+            cd "${COMPOSE_DIR}"
+
+            echo "${{ env.AZURE_ACR_PASSWORD }}" | docker login "${{ env.AZURE_ACR_LOGIN_SERVER }}" \
+              -u "${{ env.AZURE_ACR_USERNAME }}" --password-stdin
+
+            # Optional in compose: image: ...:${IMAGE_TAG:-latest}  (CI pushes both :$SHA and :latest)
+            export IMAGE_TAG="${{ github.sha }}"
+
+            docker compose down
+            docker compose pull
+            docker compose up -d --remove-orphans
+
+            docker image prune -f

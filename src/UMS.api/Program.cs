@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using UMS.Application;
 using UMS.Infrastructure.Persistance;
+using UMS.Infrastructure.Persistance.Context;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -39,6 +41,10 @@ builder.Services.AddControllers();
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+
     app.UseOpenApi();
 
     app.UseSwaggerUi(options =>
