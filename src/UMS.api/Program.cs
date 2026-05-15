@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 using UMS.Application;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
@@ -18,6 +19,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
+
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.Converters
             .Add(new JsonStringEnumConverter());
     });
