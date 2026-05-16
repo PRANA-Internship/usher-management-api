@@ -34,7 +34,7 @@ namespace UMS.Application.Features.Auth.Commands.CreateUser
             var refreshExpiry = tokenService.GetRefreshTokenExpiry();
             var accessExpiry = tokenService.GetAccessTokenExpiry();
 
-            //    user.SetRefreshToken(refreshToken, refreshExpiry);
+            createUser.SetRefreshToken(refreshToken, refreshExpiry);
             await userRepository.UpdateAsync(createUser, cancellationToken);
             return Result<AuthResponse>.Success(new AuthResponse(
                AccessToken: accessToken,

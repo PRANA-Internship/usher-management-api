@@ -31,5 +31,7 @@ namespace UMS.Infrastructure.Persistence.Repositories
             db.Users.Update(user);
             await db.SaveChangesAsync(ct);
         }
+        public Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken ct = default) =>
+                db.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken, ct);
     }
 }

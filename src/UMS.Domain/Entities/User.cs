@@ -96,6 +96,18 @@ namespace UMS.Domain.Entities
             return Error.None;
 
         }
+        public bool IsRefreshTokenValid(string token) =>
+                  RefreshToken == token &&
+                  RefreshTokenExpiry.HasValue &&
+                  RefreshTokenExpiry.Value > DateTimeOffset.UtcNow;
+
+        public void SetRefreshToken(string token, DateTimeOffset expiry)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(token);
+            RefreshToken = token;
+            RefreshTokenExpiry = expiry;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
 
     }
 }
