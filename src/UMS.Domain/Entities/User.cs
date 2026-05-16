@@ -108,7 +108,11 @@ namespace UMS.Domain.Entities
             RefreshTokenExpiry = expiry;
             UpdatedAt = DateTimeOffset.UtcNow;
         }
-
+        public void SetRole(UserRole role)
+        {
+            Role = role;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
     }
 }
 public record CreateGuest(
