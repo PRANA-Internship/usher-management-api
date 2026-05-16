@@ -60,7 +60,7 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
-       
+
         [HttpPost("set-password")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]

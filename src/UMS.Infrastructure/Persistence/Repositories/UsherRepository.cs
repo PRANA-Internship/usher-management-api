@@ -17,7 +17,7 @@ namespace UMS.Infrastructure.Persistence.Repositories
 
         public Task<Usher?> GetByUserIdAsync(Guid userId, CancellationToken ct = default) =>
                    db.Ushers
-                  .Include(u => u.User) 
+                  .Include(u => u.User)
                   .FirstOrDefaultAsync(u => u.UserId == userId, ct);
         public Task<Usher?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
                 db.Ushers.Include(u => u.User)
