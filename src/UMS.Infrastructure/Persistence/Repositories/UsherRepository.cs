@@ -15,8 +15,10 @@ namespace UMS.Infrastructure.Persistence.Repositories
         public async Task AddAsync(Usher usher, CancellationToken ct = default) =>
             await db.Ushers.AddAsync(usher, ct);
 
-        public async Task<Usher?> GetByUserIdAsync(Guid userId, CancellationToken ct = default) =>
-          await db.Ushers.FirstOrDefaultAsync(u => u.UserId == userId, ct);
+        public Task<Usher?> GetByUserIdAsync(Guid userId, CancellationToken ct = default) =>
+                   db.Ushers
+                  .Include(u => u.User) 
+                  .FirstOrDefaultAsync(u => u.UserId == userId, ct);
         public Task<Usher?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
                 db.Ushers.Include(u => u.User)
          .FirstOrDefaultAsync(u => u.Id == id, ct);
