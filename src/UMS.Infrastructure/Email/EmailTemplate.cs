@@ -52,5 +52,24 @@ namespace UMS.Infrastructure.Email
       <p>Best regards,<br/>UMS Team</p>
     </div>
     """;
+        public static string PasswordReset(string fullName, string resetUrl) => $"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
+      <h2 style="color:#2c3e50">Password Reset Request</h2>
+      <p>Dear <strong>{fullName}</strong>,</p>
+      <p>We received a request to reset your password. Click the button below to proceed:</p>
+      <div style="text-align:center;margin:30px 0">
+        <a href="{resetUrl}"
+           style="background:#2c3e50;color:#fff;padding:14px 28px;
+                  text-decoration:none;border-radius:6px;font-size:16px">
+          Reset Password
+        </a>
+      </div>
+      <p style="color:#888;font-size:13px">
+        This link expires in 1 hour. If you did not request a password reset, ignore this email.
+      </p>
+      <br/>
+      <p>Best regards,<br/>UMS Team</p>
+    </div>
+    """;
     }
 }

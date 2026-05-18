@@ -113,6 +113,20 @@ namespace UMS.Domain.Entities
             Role = role;
             UpdatedAt = DateTimeOffset.UtcNow;
         }
+        public void SetPassword(string passwordHash)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
+            PasswordHash = passwordHash;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void RevokeRefreshToken()
+        {
+            RefreshToken = null;
+            RefreshTokenExpiry = null;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
     }
 }
 public record CreateGuest(
