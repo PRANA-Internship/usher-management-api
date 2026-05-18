@@ -47,6 +47,9 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
             {
                 usher.ApproveUsher(command.AdminId);
                 await usherRepository.UpdateAsync(usher, cancellationToken);
+                user.SetRole(UserRole.USHER);
+                await userRepository.UpdateAsync(user, cancellationToken);
+
                 await tokenRepository.AddAsync(verificationToken, cancellationToken);
             }, cancellationToken);
 
