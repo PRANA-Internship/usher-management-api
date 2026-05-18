@@ -82,7 +82,10 @@ namespace UMS.Infrastructure.Persistance.Configuration
                    .HasForeignKey(t => t.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
 
-
+            builder.HasIndex(u => u.RefreshToken)
+                   .IsUnique()
+                   .HasDatabaseName("IDX_Users_RefreshToken")
+                   .HasFilter("refresh_token IS NOT NULL");
         }
 
     }
