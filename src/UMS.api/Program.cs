@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using UMS.Application;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
+using UMS.Infrastructure.Persistence.Seeder;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -57,6 +58,8 @@ if (app.Environment.IsDevelopment())
 }
 // Configure the HTTP request pipeline.
 
+
+await AdminSeeder.SeedAsync(app.Services);
 app.UseHttpsRedirection();
 
 app.UseRateLimiter();
