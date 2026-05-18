@@ -59,7 +59,8 @@ namespace UMS.api.Controllers
                 request.FullName,
                 request.Email,
                 request.Phone,
-                request.Password);
+                request.Password,
+                request.Role);
 
             var id = await sender.Send(command, ct);
             return CreatedAtAction(nameof(CreateAdmin), new { id }, new { id });

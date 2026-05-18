@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using UMS.Contracts.Auth;
 using UMS.Domain.Common;
+using UMS.Domain.Enums;
 
 namespace UMS.Application.Features.Auth.Commands.CreateUser
 {
@@ -13,7 +14,8 @@ namespace UMS.Application.Features.Auth.Commands.CreateUser
      string FullName,
      string Email,
      string Phone,
-     string Password
+     string Password,
+     UserRole Role
  ) : IRequest<Result<AuthResponse>>;
 
 
@@ -30,6 +32,9 @@ namespace UMS.Application.Features.Auth.Commands.CreateUser
                 .MinimumLength(8)
                 .Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
                 .Matches(@"[0-9]").WithMessage("Password must contain at least one digit.");
+            RuleFor(x => x.Role)
+                .IsInEnum().WithMessage("Invalid role.")
+                .WithMessage("Cannot seed a GUEST user.");
         }
     }
 

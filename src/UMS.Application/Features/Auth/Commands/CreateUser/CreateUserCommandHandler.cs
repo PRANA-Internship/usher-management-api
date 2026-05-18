@@ -26,7 +26,7 @@ namespace UMS.Application.Features.Auth.Commands.CreateUser
 
             var passwordHash = passwordHasher.Hash(request.Password);
             var createUser = User.CreateUser(request.FullName, email, request.Phone, passwordHash);
-
+            createUser.SetRole(request.Role);
             await userRepository.AddAsync(createUser, cancellationToken);
 
             var accessToken = tokenService.GenerateAccessToken(createUser);
