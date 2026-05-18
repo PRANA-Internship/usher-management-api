@@ -16,6 +16,9 @@ namespace UMS.Domain.Common
             public static readonly Error InvalidRefreshToken = new("AUTH_004", "Refresh token is invalid.");
             public static readonly Error RefreshTokenExpired = new("AUTH_005", "Refresh token has expired.");
             public static readonly Error EmailAlreadyExists = new("AUTH_006", "An account with this email already exists.");
+            public static readonly Error UserNotFound = new("AUTH_007", "No account found with this email.");
+            public static readonly Error InvalidResetToken = new("AUTH_008", "Password reset token is invalid or expired.");
+            public static readonly Error TokenAlreadyUsed = new("AUTH_009", "Password reset token has already been used.");
 
         }
         public static class UsherErrors

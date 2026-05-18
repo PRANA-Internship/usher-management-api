@@ -74,5 +74,18 @@ namespace UMS.Infrastructure.Email
                 htmlBody: EmailTemplates.ApplicationRejected(fullName),
                 ct: ct);
         }
+        public async Task SendPasswordResetAsync(
+        string toEmail, string fullName, string token, CancellationToken ct = default)
+        {
+            var resetUrl = $"{_settings.FrontendUrl}/reset-password?token={token}";
+
+            await SendAsync(
+                toEmail: toEmail,
+                toName: fullName,
+                subject: "Password Reset Request",
+                htmlBody: EmailTemplates.PasswordReset(fullName, resetUrl),
+                ct: ct);
+        }
+
     }
 }
