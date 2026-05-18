@@ -9,6 +9,7 @@ namespace UMS.Application.Common.Interfaces
     {
         Task SendApplicationReceivedAsync(string toEmail, string fullName, CancellationToken ct = default);
         Task SendPasswordSetupAsync(string toEmail, string fullName, string token, CancellationToken ct = default);
+        Task SendApplicationRejectedAsync(string toEmail, string fullName, CancellationToken ct = default);
     }
 
 

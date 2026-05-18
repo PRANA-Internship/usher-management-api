@@ -63,5 +63,16 @@ namespace UMS.Infrastructure.Email
             await client.SendAsync(message, ct);
             await client.DisconnectAsync(quit: true, ct);
         }
+
+        public async Task SendApplicationRejectedAsync(
+            string toEmail, string fullName, CancellationToken ct = default)
+        {
+            await SendAsync(
+                toEmail: toEmail,
+                toName: fullName,
+                subject: "Your Usher Application Status",
+                htmlBody: EmailTemplates.ApplicationRejected(fullName),
+                ct: ct);
+        }
     }
 }
