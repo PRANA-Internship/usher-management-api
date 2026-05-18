@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
+using UMS.Application.Features.Auth.Commands.RejectApplication;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
 using UMS.Contracts.Usher;
@@ -54,6 +55,28 @@ namespace UMS.api.Controllers
                 {
                     "USHER_004" => NotFound(result.Error),
                     "USHER_005" => Conflict(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
+
+        [HttpPost("{usherId:guid}/reject")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Reject(Guid usherId, CancellationToken ct)
+        {
+            var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var result = await sender.Send(
+                new RejectUsherApplicationCommand(adminId, usherId), ct);
+
+            return result.IsSuccess
+                ? Ok(new { message = "Application rejected. Notification email sent." })
+                : result.Error.Code switch
+                {
+                    "USHER_004" => NotFound(result.Error),
+                    "USHER_008" => Conflict(result.Error),
+                    "USHER_009" => Conflict(result.Error),
                     _ => BadRequest(result.Error)
                 };
         }

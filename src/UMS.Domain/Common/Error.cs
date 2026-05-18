@@ -27,6 +27,7 @@ namespace UMS.Domain.Common
             public static readonly Error AlreadyApproved = new("USHER_005", "Application is already approved.");
             public static readonly Error InvalidToken = new("USHER_006", "Token is invalid or expired.");
             public static readonly Error TokenAlreadyUsed = new("USHER_007", "Token has already been used.");
+            public static readonly Error CannotRejectApplication = new("USHER_008", "Cannot reject an application that is not in pending status.");
         }
 
     }

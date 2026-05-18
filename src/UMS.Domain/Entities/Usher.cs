@@ -92,7 +92,16 @@ namespace UMS.Domain.Entities
             IdDocumentUrl = url;
         }
 
-
+        public Error RejectApplication()
+        {
+            if (ApprovalStatus != ApprovalStatus.PENDING)
+            {
+                return new Error("", "only Usher in pending can be Rejected");
+            }
+            ApprovalStatus = ApprovalStatus.REJECTED;
+            UpdatedAt = DateTimeOffset.UtcNow;
+            return Error.None;
+        }
         public Error ApproveUsher(Guid ApprovedByUserID)
         {
             if (ApprovalStatus != ApprovalStatus.PENDING)

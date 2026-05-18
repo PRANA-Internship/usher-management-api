@@ -38,5 +38,19 @@ namespace UMS.Infrastructure.Email
               <p>Best regards,<br/>UMS Team</p>
             </div>
             """;
+        public static string ApplicationRejected(string fullName) => $"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
+      <h2 style="color:#e74c3c">Application Status Update</h2>
+      <p>Dear <strong>{fullName}</strong>,</p>
+      <p>
+        Thank you for your interest in joining our usher team.
+        After careful review, we regret to inform you that we are
+        unable to accept your application at this time.
+      </p>
+      <p>We appreciate the time you took to apply and wish you the best in your future endeavors.</p>
+      <br/>
+      <p>Best regards,<br/>UMS Team</p>
+    </div>
+    """;
     }
 }
