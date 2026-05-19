@@ -5,7 +5,7 @@ using UMS.Domain.Enums;
 
 namespace UMS.Contracts.Usher
 {
-   
+
 
     public sealed record SearchUsherResponse(
         IReadOnlyList<UsherApplicationSummary> Items,
