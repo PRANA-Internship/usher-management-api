@@ -126,6 +126,12 @@ namespace UMS.Domain.Entities
             RefreshTokenExpiry = null;
             UpdatedAt = DateTimeOffset.UtcNow;
         }
+        public void UpdatePhone(string phone)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(phone);
+            Phone = phone.Trim();
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
 
     }
 }
