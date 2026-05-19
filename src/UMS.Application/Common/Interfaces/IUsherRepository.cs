@@ -22,6 +22,7 @@ namespace UMS.Application.Common.Interfaces
          int size,
          ApprovalStatus? status,
          CancellationToken ct = default);
+        Task<IReadOnlyList<Usher>> SearchByNameAsync(string name, CancellationToken ct = default);
 
     }
 }
