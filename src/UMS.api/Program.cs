@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using UMS.Application;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
+using UMS.Infrastructure.Persistence.Seeder;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -47,13 +48,15 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
-
     app.UseOpenApi();
 
     app.UseSwaggerUi(options =>
     {
         options.DocumentPath = "/swagger/v1/swagger.json";
     });
+
+
+    await AdminSeeder.SeedAsync(app.Services);
 }
 // Configure the HTTP request pipeline.
 
