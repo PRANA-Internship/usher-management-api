@@ -29,7 +29,7 @@ namespace UMS.Application.Features.Ushers.Command
         private static readonly string[] AllowedImageTypes =
             ["image/jpeg", "image/png", "image/webp"];
 
-        private const long MaxImageSize = 5 * 1024 * 1024; 
+        private const long MaxImageSize = 5 * 1024 * 1024;
 
         public UpdateUsherProfileValidator()
         {

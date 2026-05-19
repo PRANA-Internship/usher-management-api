@@ -16,6 +16,6 @@ namespace UMS.Contracts.Usher
         public string? ExperienceSummary { get; set; }
         public string? Languages { get; set; }
         public string? Sector { get; set; }
-        public IFormFile? ProfilePhoto { get; set; } 
+        public IFormFile? ProfilePhoto { get; set; }
     }
 }
