@@ -95,7 +95,7 @@ namespace UMS.api.Controllers
 
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
         }
-        [HttpPatch("updateprofile")]
+        [HttpPatch("update-profile")]
         [Authorize]
         [Consumes("multipart/form-data")]
         [RequestSizeLimit(10 * 1024 * 1024)]
