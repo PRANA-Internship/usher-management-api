@@ -119,6 +119,33 @@ namespace UMS.Domain.Entities
 
         }
 
+        public void UpdateProfile(
+            string? address = null,
+            string? city = null,
+            string? emergencyContactName = null,
+            string? emergencyContactPhone = null,
+            string? educationLevel = null,
+            string? experienceSummary = null,
+            string? languages = null,
+            string? sector = null)
+        {
+            if (address is not null) Address = address.Trim();
+            if (city is not null) City = city.Trim();
+            if (emergencyContactName is not null) EmergencyContactName = emergencyContactName.Trim();
+            if (emergencyContactPhone is not null) EmergencyContactPhone = emergencyContactPhone.Trim();
+            if (educationLevel is not null) EducationLevel = educationLevel.Trim();
+            if (experienceSummary is not null) ExperienceSummary = experienceSummary.Trim();
+            if (languages is not null) Languages = languages.Trim();
+            if (sector is not null) Sector = sector.Trim();
+
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+        public void UpdateProfilePhoto(string url)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(url);
+            ProfilePhotoUrl = url;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
     }
 }
 

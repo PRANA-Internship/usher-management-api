@@ -5,6 +5,7 @@ using System.Security.Claims;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
 using UMS.Application.Features.Auth.Commands.SetPassword;
 using UMS.Application.Features.Auth.Commands.SubmitApplication;
+using UMS.Application.Features.Ushers.Command;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
 using UMS.Application.Features.Ushers.Queries.GetMyProfile;
@@ -93,6 +94,45 @@ namespace UMS.api.Controllers
             var result = await sender.Send(new GetMyProfileQuery(userId), ct);
 
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        }
+        [HttpPatch("update-profile")]
+        [Authorize]
+        [Consumes("multipart/form-data")]
+        [RequestSizeLimit(10 * 1024 * 1024)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateProfile(
+    [FromForm] UpdateUsherProfileRequest request,
+    CancellationToken ct)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var command = new UpdateUsherProfileCommand
+            {
+                UserId = userId,
+                Phone = request.Phone,
+                Address = request.Address,
+                City = request.City,
+                EmergencyContactName = request.EmergencyContactName,
+                EmergencyContactPhone = request.EmergencyContactPhone,
+                EducationLevel = request.EducationLevel,
+                ExperienceSummary = request.ExperienceSummary,
+                Languages = request.Languages,
+                Sector = request.Sector,
+                ProfilePhoto = request.ProfilePhoto
+            };
+
+            var result = await sender.Send(command, ct);
+
+            return result.IsSuccess
+                ? Ok(new { message = "Profile updated successfully." })
+                : result.Error.Code switch
+                {
+                    "USHER_004" => NotFound(result.Error),
+                    "USHER_002" => BadRequest(result.Error),
+                    _ => BadRequest(result.Error)
+                };
         }
     }
 }
