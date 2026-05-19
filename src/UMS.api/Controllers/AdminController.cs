@@ -6,6 +6,7 @@ using UMS.Application.Features.Auth.Commands.ApproveApplication;
 using UMS.Application.Features.Auth.Commands.RejectApplication;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
+using UMS.Application.Features.Ushers.Queries.GetUsherByName;
 using UMS.Contracts.Usher;
 using UMS.Domain.Enums;
 namespace UMS.api.Controllers
@@ -79,6 +80,18 @@ namespace UMS.api.Controllers
                     "USHER_009" => Conflict(result.Error),
                     _ => BadRequest(result.Error)
                 };
+        }
+
+        [HttpGet("search")]
+        [ProducesResponseType(typeof(SearchUsherResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Search(
+            [FromQuery] string name,
+            CancellationToken ct)
+        {
+            var result = await sender.Send(new GetUshersByNameQuery(name), ct);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
     }
 }

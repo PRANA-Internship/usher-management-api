@@ -46,6 +46,14 @@ namespace UMS.Infrastructure.Persistence.Repositories
 
             return (items, totalCount);
         }
+        public Task<IReadOnlyList<Usher>> SearchByNameAsync(string name, CancellationToken ct = default) =>
+    db.Ushers
+      .Include(u => u.User)
+      .Where(u => EF.Functions.ILike(u.User!.FullName, $"%{name}%"))  
+      .OrderBy(u => u.User!.FullName)
+      .Take(20)                                                         
+      .ToListAsync(ct)
+      .ContinueWith(t => (IReadOnlyList<Usher>)t.Result);
     }
 
 }
