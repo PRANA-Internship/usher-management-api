@@ -19,7 +19,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetApplications
             CancellationToken cancellationToken)
         {
             var (items, totalCount) = await usherRepository.GetPagedAsync(
-                query.Page, query.Size, query.Status, cancellationToken);
+                query.Page, query.Size, query.Status,
+            searchName: query.SearchName, cancellationToken);
 
             var summaries = items.Select(u => new UsherApplicationSummary(
                 UsherId: u.Id,
@@ -38,7 +39,9 @@ namespace UMS.Application.Features.Ushers.Queries.GetApplications
                 TotalCount: totalCount,
                 Page: query.Page,
                 Size: query.Size,
-                TotalPages: totalPages
+                TotalPages: totalPages,
+                AppliedSearch: query.SearchName,
+                AppliedStatus: query.Status
             ));
         }
     }

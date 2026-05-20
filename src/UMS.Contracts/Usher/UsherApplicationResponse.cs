@@ -10,6 +10,8 @@ namespace UMS.Contracts.Usher
         int TotalCount,
         int Page,
         int Size,
+        string? AppliedSearch,
+        ApprovalStatus? AppliedStatus,
         int TotalPages
     );
     public sealed record GetUsherApplicationDetailResponse(
