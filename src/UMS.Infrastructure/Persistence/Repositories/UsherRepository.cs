@@ -29,12 +29,19 @@ namespace UMS.Infrastructure.Persistence.Repositories
         }
 
         public async Task<(IReadOnlyList<Usher> Items, int TotalCount)> GetPagedAsync(
-            int page, int size, ApprovalStatus? status, CancellationToken ct = default)
+            int page, int size
+           , ApprovalStatus? status
+            , string? searchName
+            , CancellationToken ct = default)
         {
             var query = db.Ushers.Include(u => u.User).AsQueryable();
 
             if (status.HasValue)
                 query = query.Where(u => u.ApprovalStatus == status.Value);
+
+            if (!string.IsNullOrWhiteSpace(searchName))
+                query = query.Where(u =>
+                    EF.Functions.ILike(u.User!.FullName, $"%{searchName.Trim()}%"));
 
             var totalCount = await query.CountAsync(ct);
 
@@ -44,16 +51,8 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 .Take(size)
                 .ToListAsync(ct);
 
-            return (items, totalCount);
+            return ((IReadOnlyList<Usher>)items, totalCount);
         }
-        public Task<IReadOnlyList<Usher>> SearchByNameAsync(string name, CancellationToken ct = default) =>
-    db.Ushers
-      .Include(u => u.User)
-      .Where(u => EF.Functions.ILike(u.User!.FullName, $"%{name}%"))
-      .OrderBy(u => u.User!.FullName)
-      .Take(20)
-      .ToListAsync(ct)
-      .ContinueWith(t => (IReadOnlyList<Usher>)t.Result);
     }
 
 }

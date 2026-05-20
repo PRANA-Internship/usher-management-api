@@ -12,5 +12,6 @@ namespace UMS.Contracts.Usher
         public int Page { get; set; } = 1;
         public int Size { get; set; } = 10;
         public ApprovalStatus? Status { get; set; }
+        public string? SearchName { get; set; }
     }
 }
