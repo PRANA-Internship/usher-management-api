@@ -21,9 +21,18 @@ namespace UMS.tests.Entities
         public UsherBuilder WithCity(string city) { _city = city; return this; }
 
         public Usher Build() => Usher.CreateApplication(_userId, new CreateUsherData(
-            _gender, _dob, _address, _city,
-            "Emergency Person", "0612345678",
-            "Bachelor", "3 years events", "Dutch, English", "Events", "profile-photos/6d698e58-313a-4858-ab13-6a0771a25f86.jpg", "id-documents/5179e42a-60ea-471c-84ba-03db8d185a19.pdf"
+         Gender: _gender,
+        DateOfBirth: _dob,
+        Address: _address,
+        City: _city,
+        EmergencyContactName: "Emergency Person",
+        EmergencyContactPhone: "0612345678",
+        EducationLevel: EducationLevel.Bachelors,
+        ExperienceSummary: "3 years events",
+        Sector: [Sector.Agriculture],
+        Languages: [Language.English, Language.French],
+        ProfilePhotoUrl: "profile-photos/test-photo.jpg",
+        IdDocumentUrl: "id-documents/test-doc.pdf"
         ));
 
         public static Usher Default() => new UsherBuilder().Build();
@@ -209,11 +218,18 @@ namespace UMS.tests.Entities
 
 
         private static CreateUsherData ValidData() => new(
-            Gender.FEMALE,
-            new DateOnly(1995, 6, 15),
-            "123 Main St", "noah",
-            "Emergency Person", "0945675878",
-            "Bachelor", "3 years events", "Dutch, English", "Events", "\"profile-photos/6d698e58-313a-4858-ab13-6a0771a25f86.jpg\"", "id-documents/5179e42a-60ea-471c-84ba-03db8d185a19.pdf"
+           Gender: Gender.FEMALE,
+        DateOfBirth: new DateOnly(1995, 6, 15),
+        Address: "123 Main St",
+        City: "Addis Ababa",
+        EmergencyContactName: "Emergency Person",
+        EmergencyContactPhone: "0945675878",
+        EducationLevel: EducationLevel.Bachelors,
+        ExperienceSummary: "3 years events",
+        Sector: [Sector.Agriculture],
+        Languages: [Language.English, Language.French],
+        ProfilePhotoUrl: "profile-photos/test-photo.jpg",
+        IdDocumentUrl: "id-documents/test-doc.pdf"
         );
 
         private static void ApproveUsher(Usher usher, Guid? adminId = null) =>

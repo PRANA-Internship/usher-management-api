@@ -11,4 +11,42 @@ namespace UMS.Domain.Enums
     public enum ApprovalStatus { PENDING, APPROVED, REJECTED }
     public enum TokenType { EmailVerification, PasswordReset }
     public enum Gender { MALE, FEMALE };
+    public enum Sector
+    {
+        Healthcare,
+        InteriorDesign,
+        ArchitectureAndFurniture,
+        Agriculture,
+        PlasticsAndManufacturing,
+        PrintingAndPackaging,
+        AnimalHusbandry,
+        FoodBeverageCoffee,
+        HospitalityAndTourism,
+        EventsAndEntertainment,
+        RetailAndShopping,
+        RealEstateConstruction,
+        FinanceInsurance,
+        TechnologyTelecom,
+        BeautyFashionLifestyle,
+        GovernmentNGOPublicSector,
+        GeneralOther
+    }
+    public enum EducationLevel
+    {
+        None,
+        Diploma,
+        Degree,
+        Bachelors,
+        Masters,
+        PhD
+    }
+
+    public enum Language
+    {
+        Amharic,
+        English,
+        French,
+        Arabic,
+        Swahili
+    }
 }

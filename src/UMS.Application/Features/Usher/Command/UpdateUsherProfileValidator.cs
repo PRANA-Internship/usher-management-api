@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UMS.Domain.Common;
+using UMS.Domain.Enums;
 
 namespace UMS.Application.Features.Ushers.Command
 {
@@ -17,10 +18,10 @@ namespace UMS.Application.Features.Ushers.Command
         public string? City { get; init; }
         public string? EmergencyContactName { get; init; }
         public string? EmergencyContactPhone { get; init; }
-        public string? EducationLevel { get; init; }
+        public EducationLevel? EducationLevel { get; init; }
         public string? ExperienceSummary { get; init; }
-        public string? Languages { get; init; }
-        public string? Sector { get; init; }
+        public List<Language>? Languages { get; init; }
+        public List<Sector>? Sector { get; init; }
         public IFormFile? ProfilePhoto { get; init; }
     }
     public sealed class UpdateUsherProfileValidator
@@ -48,17 +49,30 @@ namespace UMS.Application.Features.Ushers.Command
             When(x => x.EmergencyContactPhone is not null, () =>
                 RuleFor(x => x.EmergencyContactPhone).NotEmpty().MaximumLength(30));
 
-            When(x => x.EducationLevel is not null, () =>
-                RuleFor(x => x.EducationLevel).NotEmpty().MaximumLength(100));
+            RuleFor(x => x.EducationLevel).IsInEnum()
+            .WithMessage("Invalid education level.");
 
             When(x => x.ExperienceSummary is not null, () =>
                 RuleFor(x => x.ExperienceSummary).NotEmpty().MaximumLength(250));
+            When(x => x.Languages is not null && x.Languages.Count > 0, () =>
+            {
+                RuleFor(x => x.Languages)
+                    .Must(l => l!.Distinct().Count() == l!.Count)
+                        .WithMessage("Duplicate languages are not allowed.")
+                    .Must(l => l!.All(v => Enum.IsDefined(typeof(Language), v)))
+                        .WithMessage("One or more languages are invalid.");
+            });
 
-            When(x => x.Languages is not null, () =>
-                RuleFor(x => x.Languages).NotEmpty().MaximumLength(255));
-
-            When(x => x.Sector is not null, () =>
-                RuleFor(x => x.Sector).NotEmpty().MaximumLength(100));
+            When(x => x.Sector is not null && x.Sector.Count > 0, () =>
+            {
+                RuleFor(x => x.Sector)
+                    .Must(s => s!.Count <= 3)
+                        .WithMessage("You can select a maximum of 3 sectors.")
+                    .Must(s => s!.Distinct().Count() == s!.Count)
+                        .WithMessage("Duplicate sectors are not allowed.")
+                    .Must(s => s!.All(v => Enum.IsDefined(typeof(Sector), v)))
+                        .WithMessage("One or more sectors are invalid.");
+            });
 
             When(x => x.ProfilePhoto is not null, () =>
             {

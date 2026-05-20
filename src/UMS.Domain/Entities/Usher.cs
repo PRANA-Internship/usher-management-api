@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UMS.Domain.Enums;
 using UMS.Domain.Common;
+using UMS.Domain.Helpers;
 
 namespace UMS.Domain.Entities
 {
@@ -17,10 +18,8 @@ namespace UMS.Domain.Entities
 
         public string EmergencyContactName { get; private set; } = string.Empty;
         public string EmergencyContactPhone { get; private set; } = string.Empty;
-        public string EducationLevel { get; private set; } = string.Empty;
-        public string ExperienceSummary { get; private set; } = string.Empty;
-        public string Languages { get; private set; } = string.Empty;
-        public string Sector { get; private set; } = string.Empty;
+        public EducationLevel EducationLevel { get; private set; } = EducationLevel.None;
+        public string? ExperienceSummary { get; private set; }
         public string ProfilePhotoUrl { get; private set; } = string.Empty;
         public string IdDocumentUrl { get; private set; } = string.Empty;
 
@@ -30,6 +29,13 @@ namespace UMS.Domain.Entities
 
         public User User { get; private set; } = null!;
         public User? ApprovedByUser { get; private set; }
+
+        private string _sectors = string.Empty;
+        private string _languages = string.Empty;
+
+        public IReadOnlyList<Sector> Sector => EnumHelpers.ParseEnum<Sector>(_sectors);
+        public IReadOnlyList<Language> Languages => EnumHelpers.ParseEnum<Language>(_languages);
+
 
         private Usher() { }
         public static Usher CreateApplication(Guid userId, CreateUsherData data)
@@ -60,8 +66,8 @@ namespace UMS.Domain.Entities
                 EmergencyContactPhone = data.EmergencyContactPhone,
                 EducationLevel = data.EducationLevel,
                 ExperienceSummary = data.ExperienceSummary,
-                Languages = data.Languages,
-                Sector = data.Sector,
+                _sectors = data.Sector is not null ? EnumHelpers.SerializeEnum(data.Sector) : string.Empty,
+                _languages = EnumHelpers.SerializeEnum(data.Languages),
                 ProfilePhotoUrl = data.ProfilePhotoUrl,
                 IdDocumentUrl = data.IdDocumentUrl,
             };
@@ -118,25 +124,37 @@ namespace UMS.Domain.Entities
             return Error.None;
 
         }
+        private static void ValidateSectors(IList<Sector>? sectors)
+        {
+            if (sectors is null) return;
+
+            if (sectors.Count > 3)
+                throw new ArgumentException("A maximum of 3 sectors can be selected.");
+
+            if (sectors.Distinct().Count() != sectors.Count)
+                throw new ArgumentException("Duplicate sectors are not allowed.");
+        }
 
         public void UpdateProfile(
-            string? address = null,
-            string? city = null,
-            string? emergencyContactName = null,
-            string? emergencyContactPhone = null,
-            string? educationLevel = null,
-            string? experienceSummary = null,
-            string? languages = null,
-            string? sector = null)
+    string? address = null,
+    string? city = null,
+    string? emergencyContactName = null,
+    string? emergencyContactPhone = null,
+    EducationLevel? educationLevel = null,
+    string? experienceSummary = null,
+    IList<Sector>? sector = null,
+    IList<Language>? languages = null)
         {
+            if (sector is not null) ValidateSectors(sector);
+
             if (address is not null) Address = address.Trim();
             if (city is not null) City = city.Trim();
             if (emergencyContactName is not null) EmergencyContactName = emergencyContactName.Trim();
             if (emergencyContactPhone is not null) EmergencyContactPhone = emergencyContactPhone.Trim();
-            if (educationLevel is not null) EducationLevel = educationLevel.Trim();
+            if (educationLevel is not null) EducationLevel = educationLevel.Value;
             if (experienceSummary is not null) ExperienceSummary = experienceSummary.Trim();
-            if (languages is not null) Languages = languages.Trim();
-            if (sector is not null) Sector = sector.Trim();
+            if (sector is not null) _sectors = EnumHelpers.SerializeEnum(sector);
+            if (languages is not null) _languages = EnumHelpers.SerializeEnum(languages);
 
             UpdatedAt = DateTimeOffset.UtcNow;
         }
@@ -152,16 +170,16 @@ namespace UMS.Domain.Entities
 // this recored updated because the Architecture changed
 // files and photos must be uploaded first thats why
 public record CreateUsherData(
-      Gender Gender,
-      DateOnly DateOfBirth,
-      string Address,
-      string City,
-      string EmergencyContactName,
-      string EmergencyContactPhone,
-      string EducationLevel,
-      string ExperienceSummary,
-      string Languages,
-      string Sector,
+    Gender Gender,
+    DateOnly DateOfBirth,
+    string Address,
+    string City,
+    string EmergencyContactName,
+    string EmergencyContactPhone,
+    EducationLevel EducationLevel,
+    string? ExperienceSummary,
+    IList<Sector>? Sector,
+    IList<Language> Languages,
     string ProfilePhotoUrl,
     string IdDocumentUrl
-  );
+);

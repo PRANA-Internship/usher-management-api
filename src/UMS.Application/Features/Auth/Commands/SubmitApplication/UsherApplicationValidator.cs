@@ -23,10 +23,10 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
         public string City { get; init; } = string.Empty;
         public string EmergencyContactName { get; init; } = string.Empty;
         public string EmergencyContactPhone { get; init; } = string.Empty;
-        public string EducationLevel { get; init; } = string.Empty;
-        public string ExperienceSummary { get; init; } = string.Empty;
-        public string Languages { get; init; } = string.Empty;
-        public string Sector { get; init; } = string.Empty;
+        public EducationLevel EducationLevel { get; init; }
+        public string? ExperienceSummary { get; init; }
+        public List<Language> Languages { get; init; } = [];
+        public List<Sector>? Sector { get; init; } = [];
         public IFormFile ProfilePhoto { get; init; } = null!;
         public IFormFile IdDocument { get; init; } = null!;
     }
@@ -51,10 +51,28 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
             RuleFor(x => x.City).NotEmpty().MaximumLength(100);
             RuleFor(x => x.EmergencyContactName).NotEmpty().MaximumLength(100);
             RuleFor(x => x.EmergencyContactPhone).NotEmpty().MaximumLength(30);
-            RuleFor(x => x.EducationLevel).NotEmpty().MaximumLength(100);
-            RuleFor(x => x.ExperienceSummary).NotEmpty().MaximumLength(300);
-            RuleFor(x => x.Languages).NotEmpty().MaximumLength(255);
-            RuleFor(x => x.Sector).NotEmpty().MaximumLength(100);
+            When(x => x.ExperienceSummary is not null, () =>
+                  RuleFor(x => x.ExperienceSummary).MaximumLength(2000));
+            RuleFor(x => x.Languages)
+                    .NotEmpty()
+                    .WithMessage("At least one language is required.")
+                    .Must(l => l.Distinct().Count() == l.Count)
+                    .WithMessage("Duplicate languages are not allowed.")
+         .Must(l => l.All(v => Enum.IsDefined(typeof(Language), v)))
+                    .WithMessage("One or more languages are invalid.");
+
+            When(x => x.Sector is not null && x.Sector.Count > 0, () =>
+            {
+                RuleFor(x => x.Sector)
+                    .Must(s => s!.Count <= 3)
+                        .WithMessage("You can select a maximum of 3 sectors.")
+                    .Must(s => s!.Distinct().Count() == s!.Count)
+                        .WithMessage("Duplicate sectors are not allowed.")
+                    .Must(s => s!.All(v => Enum.IsDefined(typeof(Sector), v)))
+                        .WithMessage("One or more sectors are invalid.");
+            });
+
+
             RuleFor(x => x.DateOfBirth)
                 .Must(dob => dob < DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-13)));
 
