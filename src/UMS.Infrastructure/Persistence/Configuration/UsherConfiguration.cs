@@ -39,21 +39,22 @@ namespace UMS.Infrastructure.Persistance.Configuration
                   .HasColumnName("emergency_contact_phone")
                   .HasMaxLength(20)
                   .IsRequired();
+
+
             builder.Property(u => u.EducationLevel)
-                .HasColumnName("education_level")
-                .HasMaxLength(25)
-                .IsRequired();
+                .HasConversion(e => e.ToString(), s => Enum.Parse<EducationLevel>(s));
             builder.Property(u => u.ExperienceSummary)
                 .HasColumnName("experience_summary")
                 .HasMaxLength(500)
-                .IsRequired();
-            builder.Property(u => u.Languages)
-                .HasColumnName("languages")
-                .HasMaxLength(100)
-                .IsRequired();
-            builder.Property(u => u.Sector)
-                .HasColumnName("sector")
-                .HasMaxLength(50)
+                .IsRequired(false);
+            builder.Property<string>("_sectors")
+                .HasColumnName("Sectors")
+                .HasMaxLength(200)
+                .IsRequired(false);
+
+            builder.Property<string>("_languages")
+                .HasColumnName("Languages")
+                .HasMaxLength(200)
                 .IsRequired();
 
             builder.Property(u => u.ProfilePhotoUrl)

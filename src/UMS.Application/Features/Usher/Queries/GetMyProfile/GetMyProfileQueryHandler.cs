@@ -44,8 +44,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyProfile
                     EmergencyContactPhone: usher.EmergencyContactPhone,
                     EducationLevel: usher.EducationLevel,
                     ExperienceSummary: usher.ExperienceSummary,
-                    Languages: usher.Languages,
-                    Sector: usher.Sector,
+                    Languages: usher.Languages.ToList(),
+                    Sector: usher.Sector.ToList(),
                     ProfilePhotoPath: profilePhotoUrl,
                     IdDocumentPath: idDocumentUrl,
                     ApplicationStatus: usher.ApprovalStatus
