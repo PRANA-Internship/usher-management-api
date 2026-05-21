@@ -19,6 +19,10 @@ namespace UMS.Domain.Common
             public static readonly Error UserNotFound = new("AUTH_007", "No account found with this email.");
             public static readonly Error InvalidResetToken = new("AUTH_008", "Password reset token is invalid or expired.");
             public static readonly Error TokenAlreadyUsed = new("AUTH_009", "Password reset token has already been used.");
+            public static readonly Error CoordinatorAlreadyExists = new("AUTH_010", "An account with this email already exists.");
+            public static readonly Error InvalidCoordinatorToken = new("AUTH_011", "Invitation token is invalid or expired.");
+            public static readonly Error InvitationAlreadyPending = new("AUTH_013", "An active invitation has already been sent to this email. It expires in 48 hours.");
+
 
         }
         public static class UsherErrors

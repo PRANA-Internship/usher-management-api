@@ -86,6 +86,19 @@ namespace UMS.Infrastructure.Email
                 htmlBody: EmailTemplates.PasswordReset(fullName, resetUrl),
                 ct: ct);
         }
+        public async Task SendCoordinatorInvitationAsync(
+                   string toEmail,
+                   string token,
+                   CancellationToken ct = default)
+        {
+            var setupUrl = $"{_settings.FrontendUrl}/coordinator/register?token={token}";
 
+            await SendAsync(
+                toEmail: toEmail,
+                toName: "Event Coordinator",
+                subject: "You're Invited — Complete Your Registration",
+                htmlBody: EmailTemplates.CoordinatorInvitation(setupUrl),
+                ct: ct);
+        }
     }
 }

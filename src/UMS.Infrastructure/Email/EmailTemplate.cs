@@ -71,5 +71,24 @@ namespace UMS.Infrastructure.Email
       <p>Best regards,<br/>UMS Team</p>
     </div>
     """;
+        public static string CoordinatorInvitation(string setupUrl) => $"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
+      <h2 style="color:#2c3e50">You're Invited as an Event Coordinator</h2>
+      <p>our Team has invited you to join the UMS platform as an <strong>Event Coordinator</strong>.</p>
+      <p>Click the button below to complete your registration:</p>
+      <div style="text-align:center;margin:30px 0">
+        <a href="{setupUrl}"
+           style="background:#2c3e50;color:#fff;padding:14px 28px;
+                  text-decoration:none;border-radius:6px;font-size:16px">
+          Complete Registration
+        </a>
+      </div>
+      <p style="color:#888;font-size:13px">
+        This link expires in 48 hours. If you did not expect this invitation, ignore this email.
+      </p>
+      <br/>
+      <p>Best regards,<br/>UMS Team</p>
+    </div>
+    """;
     }
 }

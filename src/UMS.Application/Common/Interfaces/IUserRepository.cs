@@ -14,5 +14,7 @@ namespace UMS.Application.Common.Interfaces
         Task AddAsync(User user, CancellationToken ct = default);
         Task UpdateAsync(User user, CancellationToken ct = default);
         Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken ct = default);
+
+        Task DeleteAsync(User user, CancellationToken ct = default);
     }
 }
