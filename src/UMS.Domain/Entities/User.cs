@@ -132,6 +132,42 @@ namespace UMS.Domain.Entities
             Phone = phone.Trim();
             UpdatedAt = DateTimeOffset.UtcNow;
         }
+        public bool HasPassword() => !string.IsNullOrWhiteSpace(PasswordHash);
+        public static User CreateInvitedCoordinator(string email)
+        {
+            email = email.Trim().ToLowerInvariant();
+            ArgumentException.ThrowIfNullOrWhiteSpace(email);
+
+            return new User
+            {
+                Id = Guid.NewGuid(),
+                FullName = string.Empty,
+                Email = email,
+                Phone = string.Empty,
+                Role = UserRole.GUEST,
+                Status = UserStatus.ACTIVE,
+                EmailVerified = false,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+        }
+
+        public void CompleteCoordinatorRegistration(
+            string fullName,
+            string phone,
+            string passwordHash)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(phone);
+            ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
+
+            FullName = fullName.Trim();
+            Phone = phone.Trim();
+            PasswordHash = passwordHash;
+            Role = UserRole.EVENT_COORDINATOR;
+            EmailVerified = true;
+            EmailVerifiedAt = DateTimeOffset.UtcNow;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
 
     }
 }
