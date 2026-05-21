@@ -35,7 +35,7 @@ namespace UMS.Application.Features.Auth.Commands.Login
             var refreshExpiry = tokenService.GetRefreshTokenExpiry();
             var accessExpiry = tokenService.GetAccessTokenExpiry();
 
-            //    user.SetRefreshToken(refreshToken, refreshExpiry);
+            user.SetRefreshToken(refreshToken, refreshExpiry);
             await userRepository.UpdateAsync(user, cancellationToken);
 
             return Result<AuthResponse>.Success(new AuthResponse(
