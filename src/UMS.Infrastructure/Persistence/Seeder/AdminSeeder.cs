@@ -21,6 +21,15 @@ namespace UMS.Infrastructure.Persistence.Seeder
             var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<AdminSeederMarker>>();
 
+            await SeedAdminAsync(db, passwordHasher, logger);
+            await SeedCoordinatorAsync(db, passwordHasher, logger);
+        }
+
+        private static async Task SeedAdminAsync(
+            AppDbContext db,
+            IPasswordHasher passwordHasher,
+            ILogger logger)
+        {
             const string adminEmail = "ums@gmail.com";
 
             var exists = await db.Users.AnyAsync(u => u.Email == adminEmail);
@@ -39,31 +48,33 @@ namespace UMS.Infrastructure.Persistence.Seeder
 
             logger.LogInformation("Admin user seeded.");
         }
-        public static async Task SeedCoordinatorAsync(IServiceProvider serviceProvider)
-        {
-            using var scope = serviceProvider.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<AdminSeederMarker>>();
 
+        private static async Task SeedCoordinatorAsync(
+            AppDbContext db,
+            IPasswordHasher passwordHasher,
+            ILogger logger)
+        {
             const string coordinatorEmail = "umscoordinator@gmail.com";
 
             var exists = await db.Users.AnyAsync(u => u.Email == coordinatorEmail);
             if (exists)
             {
-                logger.LogInformation("coordinator already exists — skipping seed.");
+                logger.LogInformation("Coordinator already exists — skipping seed.");
                 return;
             }
 
             var passwordHash = passwordHasher.Hash("ums@4321");
-            var coordinator = User.CreateUser("Event coordinator", coordinatorEmail, "0911000000", passwordHash);
+            var coordinator = User.CreateUser(
+                "Event Coordinator", coordinatorEmail, "0922000000", passwordHash);
+
             coordinator.SetRole(UserRole.EVENT_COORDINATOR);
 
             db.Users.Add(coordinator);
             await db.SaveChangesAsync();
 
-            logger.LogInformation("coordinator user seeded.");
+            logger.LogInformation("Coordinator user seeded.");
         }
+
         public sealed class AdminSeederMarker { }
     }
 }

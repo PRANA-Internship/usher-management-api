@@ -57,7 +57,6 @@ if (app.Environment.IsDevelopment())
 
 
     await AdminSeeder.SeedAsync(app.Services);
-    await AdminSeeder.SeedCoordinatorAsync(app.Services);
 }
 // Configure the HTTP request pipeline.
 
