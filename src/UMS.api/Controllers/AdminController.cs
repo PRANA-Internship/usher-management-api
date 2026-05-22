@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UMS.Application.Features.Admin.Queries;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
 using UMS.Application.Features.Auth.Commands.RejectApplication;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
+using UMS.Contracts.Admin;
 using UMS.Contracts.Usher;
 using UMS.Domain.Enums;
 namespace UMS.api.Controllers
@@ -81,5 +83,20 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
+        [HttpGet("coordinators")]
+        [ProducesResponseType(typeof(GetCoordinatorsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCoordinators(
+        [FromQuery] int page = 1,
+        [FromQuery] int size = 10,
+        [FromQuery] string? searchName = null,
+        CancellationToken ct = default)
+        {
+            var result = await sender.Send(
+                new GetCoordinatorsQuery(page, size, searchName), ct);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
     }
 }

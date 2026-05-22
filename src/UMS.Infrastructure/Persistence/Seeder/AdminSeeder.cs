@@ -39,7 +39,31 @@ namespace UMS.Infrastructure.Persistence.Seeder
 
             logger.LogInformation("Admin user seeded.");
         }
+        public static async Task SeedCoordinatorAsync(IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<AdminSeederMarker>>();
 
+            const string coordinatorEmail = "umscoordinator@gmail.com";
+
+            var exists = await db.Users.AnyAsync(u => u.Email == coordinatorEmail);
+            if (exists)
+            {
+                logger.LogInformation("coordinator already exists — skipping seed.");
+                return;
+            }
+
+            var passwordHash = passwordHasher.Hash("ums@4321");
+            var coordinator = User.CreateUser( "Event coordinator", coordinatorEmail, "0911000000", passwordHash);
+            coordinator.SetRole(UserRole.EVENT_COORDINATOR);
+
+            db.Users.Add(coordinator);
+            await db.SaveChangesAsync();
+
+            logger.LogInformation("coordinator user seeded.");
+        }
         public sealed class AdminSeederMarker { }
     }
 }
