@@ -56,7 +56,7 @@ namespace UMS.Infrastructure.Persistence.Seeder
             }
 
             var passwordHash = passwordHasher.Hash("ums@4321");
-            var coordinator = User.CreateUser( "Event coordinator", coordinatorEmail, "0911000000", passwordHash);
+            var coordinator = User.CreateUser("Event coordinator", coordinatorEmail, "0911000000", passwordHash);
             coordinator.SetRole(UserRole.EVENT_COORDINATOR);
 
             db.Users.Add(coordinator);
