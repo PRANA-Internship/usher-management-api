@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UMS.Application.Common.Interfaces;
 using UMS.Domain.Entities;
+using UMS.Domain.Enums;
 using UMS.Infrastructure.Persistance.Context;
 
 namespace UMS.Infrastructure.Persistence.Repositories
@@ -37,6 +38,30 @@ namespace UMS.Infrastructure.Persistence.Repositories
         {
             db.Users.Remove(user);
             return Task.CompletedTask;
+        }
+        public async Task<(IReadOnlyList<User> Items, int TotalCount)> GetCoordinatorsPagedAsync(
+    int page,
+    int size,
+    string? searchName,
+    CancellationToken ct = default)
+        {
+            var query = db.Users
+                .Where(u => u.Role == UserRole.EVENT_COORDINATOR)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchName))
+                query = query.Where(u =>
+                    EF.Functions.ILike(u.FullName, $"%{searchName.Trim()}%"));
+
+            var totalCount = await query.CountAsync(ct);
+
+            var items = await query
+                .OrderByDescending(u => u.CreatedAt)
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync(ct);
+
+            return ((IReadOnlyList<User>)items, totalCount);
         }
     }
 }

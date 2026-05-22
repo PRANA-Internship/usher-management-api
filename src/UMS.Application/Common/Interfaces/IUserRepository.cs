@@ -16,5 +16,10 @@ namespace UMS.Application.Common.Interfaces
         Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken ct = default);
 
         Task DeleteAsync(User user, CancellationToken ct = default);
+        Task<(IReadOnlyList<User> Items, int TotalCount)> GetCoordinatorsPagedAsync(
+            int page,
+            int size,
+            string? searchName,
+            CancellationToken ct = default);
     }
 }
