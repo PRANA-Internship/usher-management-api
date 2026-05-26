@@ -36,6 +36,15 @@ namespace UMS.Domain.Common
             public static readonly Error TokenAlreadyUsed = new("USHER_007", "Token has already been used.");
             public static readonly Error CannotRejectApplication = new("USHER_008", "Cannot reject an application that is not in pending status.");
         }
+        public static class ScheduleErrors
+        {
+            public static readonly Error EventNotFound = new("SCHEDULE_001", "Event not found.");
+            public static readonly Error ScheduleNotFound = new("SCHEDULE_002", "Schedule not found.");
+            public static readonly Error CoordinatorNotFound = new("SCHEDULE_003", "Coordinator not found.");
+            public static readonly Error AlreadyAssigned = new("SCHEDULE_004", "This schedule already has a coordinator assigned.");
+            public static readonly Error ExternalApiFailed = new("SCHEDULE_005", "Failed to reach events service. Please try again.");
+            public static readonly Error InvalidCoordinator = new("SCHEDULE_006", "User is not an event coordinator.");
+        }
 
     }
 

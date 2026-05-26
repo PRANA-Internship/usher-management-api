@@ -14,6 +14,7 @@ namespace UMS.Infrastructure.Persistance.Context
         public DbSet<User> Users => Set<User>();
         public DbSet<Usher> Ushers => Set<Usher>();
         public DbSet<EmailVerificationToken> EmailVerificationTokens => Set<EmailVerificationToken>();
+        public DbSet<ScheduleAssignment> ScheduleAssignments => Set<ScheduleAssignment>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
