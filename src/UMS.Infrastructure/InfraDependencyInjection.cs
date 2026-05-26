@@ -5,12 +5,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Minio;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UMS.Application.Common.Interfaces;
 using UMS.Infrastructure.Auth;
+using UMS.Infrastructure.Cache;
 using UMS.Infrastructure.Email;
+using UMS.Infrastructure.ExternalApi;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
@@ -24,6 +27,32 @@ namespace UMS.Infrastructure.Persistance
            this IServiceCollection services,
            IConfiguration configuration)
         {
+
+            var redisSettings = configuration
+                .GetSection(RedisSettings.SectionName)
+                .Get<RedisSettings>()
+                ?? throw new InvalidOperationException("Redis configuration is missing.");
+
+            services.AddSingleton<IConnectionMultiplexer>(_ =>
+                ConnectionMultiplexer.Connect(redisSettings.ConnectionString));
+
+            services.AddSingleton<ICacheService, RedisCacheService>();
+
+
+            services.Configure<PranaApiSettings>(
+                configuration.GetSection(PranaApiSettings.SectionName));
+
+
+            services.AddHttpClient<IEventsApiClient, PranaEventsClient>((sp, client) =>
+            {
+                var settings = sp.GetRequiredService<IOptions<PranaApiSettings>>().Value;
+                client.BaseAddress = new Uri(settings.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Add("X-Api-Key", settings.ApiKey);
+            });
+
+            services.AddScoped<IScheduleAssignmentRepository, ScheduleAssignmentRepository>();
+
             services.Configure<MinioSettings>(configuration.GetSection(MinioSettings.SectionName));
 
             services.AddSingleton<IMinioClient>(sp =>
