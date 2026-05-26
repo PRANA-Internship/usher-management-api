@@ -34,7 +34,13 @@ namespace UMS.Infrastructure.Persistance
                 ?? throw new InvalidOperationException("Redis configuration is missing.");
 
             services.AddSingleton<IConnectionMultiplexer>(_ =>
-                ConnectionMultiplexer.Connect(redisSettings.ConnectionString));
+            {
+                var config = ConfigurationOptions.Parse(redisSettings.ConnectionString);
+                config.AbortOnConnectFail = false;
+                config.ConnectRetry = 3;
+                config.ReconnectRetryPolicy = new ExponentialRetry(5000);
+                return ConnectionMultiplexer.Connect(config);
+            });
 
             services.AddSingleton<ICacheService, RedisCacheService>();
 
