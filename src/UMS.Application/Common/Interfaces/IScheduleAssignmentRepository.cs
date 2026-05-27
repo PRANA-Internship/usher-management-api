@@ -10,6 +10,12 @@ namespace UMS.Application.Common.Interfaces
         Task<ScheduleAssignment?> GetByScheduleIdAsync(string externalScheduleId, CancellationToken ct = default);
         Task AddAsync(ScheduleAssignment assignment, CancellationToken ct = default);
         Task UpdateAsync(ScheduleAssignment assignment, CancellationToken ct = default);
+        Task<IReadOnlyList<ScheduleAssignment>> GetByCoordinatorIdAsync(
+             Guid coordinatorId, CancellationToken ct = default);
+
+        Task<IReadOnlyList<ScheduleAssignment>> GetAllAsync(
+            CancellationToken ct = default);
+
     }
 
 }

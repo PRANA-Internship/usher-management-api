@@ -49,4 +49,10 @@ namespace UMS.Domain.Enums
         Arabic,
         Swahili
     }
+    public enum InvitationStatus
+    {
+        PENDING,
+        ACCEPTED,
+        DECLINED
+    }
 }

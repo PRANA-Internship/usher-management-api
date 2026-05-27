@@ -25,6 +25,20 @@ namespace UMS.Infrastructure.Persistence.Repositories
             db.ScheduleAssignments.Update(assignment);
             return Task.CompletedTask;
         }
+        public async Task<IReadOnlyList<ScheduleAssignment>> GetByCoordinatorIdAsync(
+              Guid coordinatorId, CancellationToken ct = default) =>
+                 await db.ScheduleAssignments
+                     .Include(a => a.Coordinator)
+                     .Where(a => a.CoordinatorId == coordinatorId)
+                     .OrderByDescending(a => a.AssignedAt)
+                     .ToListAsync(ct);
+        public async Task<IReadOnlyList<ScheduleAssignment>> GetAllAsync(
+           CancellationToken ct = default)
+        {
+            return await db.ScheduleAssignments
+                .ToListAsync(ct);
+        }
     }
+
 
 }

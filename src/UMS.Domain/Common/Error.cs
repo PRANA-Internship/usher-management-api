@@ -46,6 +46,18 @@ namespace UMS.Domain.Common
             public static readonly Error InvalidCoordinator = new("SCHEDULE_006", "User is not an event coordinator.");
         }
 
+        public static class InvitationErrors
+        {
+            public static readonly Error UsherNotFound = new("INVITE_001", "Usher not found.");
+            public static readonly Error ScheduleNotFound = new("INVITE_002", "Schedule not found.");
+            public static readonly Error NotYourSchedule = new("INVITE_003", "You are not assigned to this schedule.");
+            public static readonly Error AlreadyInvited = new("INVITE_004", "Usher has already been invited to this schedule.");
+            public static readonly Error UsherNotAvailable = new("INVITE_005", "Usher is not available for this schedule — date conflict.");
+            public static readonly Error InvitationNotFound = new("INVITE_006", "Invitation not found.");
+            public static readonly Error NotYourInvitation = new("INVITE_007", "This invitation was not sent to you.");
+            public static readonly Error UsherNotApproved = new("INVITE_008", "Only approved ushers can be invited.");
+        }
+
     }
 
 }
