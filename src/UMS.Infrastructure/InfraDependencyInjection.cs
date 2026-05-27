@@ -59,6 +59,8 @@ namespace UMS.Infrastructure.Persistance
 
             services.AddScoped<IScheduleAssignmentRepository, ScheduleAssignmentRepository>();
 
+            services.AddScoped<IUsherInvitationRepository, UsherInvitationRepository>();
+
             services.Configure<MinioSettings>(configuration.GetSection(MinioSettings.SectionName));
 
             services.AddSingleton<IMinioClient>(sp =>
