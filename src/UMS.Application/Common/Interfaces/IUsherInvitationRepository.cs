@@ -40,6 +40,15 @@ namespace UMS.Application.Common.Interfaces
             Guid usherId,
             CancellationToken ct = default);
 
+        Task<IReadOnlyList<UsherInvitation>> GetByUsherIdAndStatusAsync(
+            Guid usherId,
+            InvitationStatus status,
+            CancellationToken ct = default);
+        Task<int> CountAcceptedAsync(Guid usherId, CancellationToken ct = default);
+        Task<IReadOnlyList<UsherInvitation>> GetAcceptedPagedAsync(
+            Guid usherId, int skip, int take, CancellationToken ct = default);
+
+
     }
 
 }

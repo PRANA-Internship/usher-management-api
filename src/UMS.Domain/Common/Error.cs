@@ -57,7 +57,19 @@ namespace UMS.Domain.Common
             public static readonly Error NotYourInvitation = new("INVITE_007", "This invitation was not sent to you.");
             public static readonly Error UsherNotApproved = new("INVITE_008", "Only approved ushers can be invited.");
         }
-
+        public static class UsherScheduleErrors
+        {
+            public static readonly Error ScheduleNotFound = new("USHER_SCH_001", "Schedule not found.");
+            public static readonly Error ScheduleNotAssigned = new("USHER_SCH_002", "This schedule has no coordinator assigned yet.");
+            public static readonly Error AlreadyApplied = new("USHER_SCH_003", "You have already applied to this schedule.");
+            public static readonly Error NotAvailable = new("USHER_SCH_004", "You have a confirmed event on these dates.");
+            public static readonly Error UsherNotApproved = new("USHER_SCH_005", "Only approved ushers can apply or accept invitations.");
+            public static readonly Error ApplicationNotFound = new("USHER_SCH_006", "Application not found.");
+            public static readonly Error InvitationNotFound = new("USHER_SCH_007", "Invitation not found.");
+            public static readonly Error NotYourInvitation = new("USHER_SCH_008", "This invitation does not belong to you.");
+            public static readonly Error AlreadyResponded = new("USHER_SCH_009", "You have already responded to this invitation.");
+            public static readonly Error ExternalApiFailed = new("USHER_SCH_010", "Failed to reach events service. Please try again.");
+        }
     }
 
 }
