@@ -146,22 +146,22 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyPendingDecline
                     );
                 }).ToList();
         }
-
-        private async Task<Dictionary<string, dynamic>> BuildScheduleMapAsync(
-            List<string> eventIds, CancellationToken ct)
+        private async Task<Dictionary<string, (string EventName, ScheduleDto Schedule)>> BuildScheduleMapAsync(
+        List<string> eventIds,
+        CancellationToken ct)
         {
             var eventDetails = new List<ExternalEventDetailDto>();
-
             foreach (var id in eventIds)
             {
                 var detail = await eventsApiClient.GetEventByIdAsync(id, ct);
-                if (detail is not null) eventDetails.Add(detail);
+                if (detail is not null)
+                    eventDetails.Add(detail);
             }
 
-            var map = new Dictionary<string, dynamic>();
+            var map = new Dictionary<string, (string EventName, ScheduleDto Schedule)>();
             foreach (var e in eventDetails)
                 foreach (var s in e.Schedules)
-                    map[s.EventScheduleId] = new { e.Event.EventName, Schedule = s };
+                    map[s.EventScheduleId] = (e.Event.EventName, s);
 
             return map;
         }
