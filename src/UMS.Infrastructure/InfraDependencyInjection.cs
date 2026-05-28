@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UMS.Application.Common.Interfaces;
+using UMS.Application.Common.Services;
 using UMS.Infrastructure.Auth;
 using UMS.Infrastructure.Cache;
 using UMS.Infrastructure.Email;
@@ -57,6 +58,9 @@ namespace UMS.Infrastructure.Persistance
                 client.DefaultRequestHeaders.Add("X-Api-Key", settings.ApiKey);
             });
 
+            services.AddScoped<IUsherScheduleApplicationRepository, UsherScheduleApplicationRepository>();
+
+            services.AddScoped<IUsherAvailablityService, UsherAvailabilityService>();
             services.AddScoped<IScheduleAssignmentRepository, ScheduleAssignmentRepository>();
 
             services.AddScoped<IUsherInvitationRepository, UsherInvitationRepository>();
