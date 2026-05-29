@@ -11,7 +11,7 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyPendingDecline
 {
     public sealed record GetMyPendingDeclinedQuery(
     Guid UserId,
-    MyScheduleStatusFilter? Filter,
+    MyScheduleStatusFilter Filter,
     int Page,
     int Size
 ) : IRequest<Result<PagedScheduleResponse>>;
