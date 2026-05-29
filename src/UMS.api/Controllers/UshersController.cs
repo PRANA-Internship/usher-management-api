@@ -202,7 +202,7 @@ namespace UMS.api.Controllers
         [Authorize]
         [ProducesResponseType(typeof(PagedScheduleResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMySchedules(
-            [FromQuery] MyScheduleStatusFilter filter ,
+            [FromQuery] MyScheduleStatusFilter filter,
             [FromQuery] int page = 1,
             [FromQuery] int size = 10,
             CancellationToken ct = default)
