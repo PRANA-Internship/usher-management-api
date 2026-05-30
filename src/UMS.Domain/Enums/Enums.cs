@@ -55,4 +55,12 @@ namespace UMS.Domain.Enums
         ACCEPTED,
         DECLINED
     }
+    public enum MyScheduleStatusFilter
+    {
+        PendingApplication,
+        DeclinedApplication,
+        PendingInvitation,
+        DeclinedInvitation
+    }
+
 }

@@ -48,25 +48,24 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 i.ScheduleStartDate <= endDate &&
                 i.ScheduleEndDate >= startDate, ct);
         public async Task<IReadOnlyList<UsherInvitation>> GetByScheduleIdAsync(
-     string externalScheduleId, CancellationToken ct = default) =>
-     await db.UsherInvitations
-         .Include(i => i.Usher).ThenInclude(u => u.User)
-         .Where(i => i.ExternalScheduleId == externalScheduleId)
-         .OrderByDescending(i => i.CreatedAt)
-         .ToListAsync(ct);
+            string externalScheduleId, CancellationToken ct = default) => await db.UsherInvitations
+                              .Include(i => i.Usher).ThenInclude(u => u.User)
+                              .Where(i => i.ExternalScheduleId == externalScheduleId)
+                              .OrderByDescending(i => i.CreatedAt)
+                              .ToListAsync(ct);
 
         public async Task<(IReadOnlyList<UsherInvitation> Items, int TotalCount)>
-              GetByScheduleIdPagedAsync(
-        string externalScheduleId,
-        int page,
-        int size,
-        InvitationStatus? status,
-        CancellationToken ct = default)
+            GetByScheduleIdPagedAsync(
+                      string externalScheduleId,
+                      int page,
+                      int size,
+                      InvitationStatus? status,
+                      CancellationToken ct = default)
         {
             var query = db.UsherInvitations
-       .Include(i => i.Usher).ThenInclude(u => u.User)
-       .Where(i => i.ExternalScheduleId == externalScheduleId)
-       .AsQueryable();
+                  .Include(i => i.Usher).ThenInclude(u => u.User)
+                  .Where(i => i.ExternalScheduleId == externalScheduleId)
+                  .AsQueryable();
 
             if (status.HasValue)
                 query = query.Where(i => i.Status == status.Value);
@@ -111,6 +110,30 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 .Include(i => i.InvitedByCoordinator)
                 .Where(i => i.UsherId == usherId)
                 .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync(ct);
+        public async Task<IReadOnlyList<UsherInvitation>> GetByUsherIdAndStatusAsync(
+            Guid usherId,
+            InvitationStatus status,
+            CancellationToken ct = default)
+        {
+            return await db.UsherInvitations
+                .Where(i => i.UsherId == usherId && i.Status == status)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync(ct);
+        }
+        public Task<int> CountAcceptedAsync(Guid usherId, CancellationToken ct = default) =>
+    db.UsherInvitations
+      .CountAsync(i => i.UsherId == usherId
+                    && i.Status == InvitationStatus.ACCEPTED, ct);
+
+        public async Task<IReadOnlyList<UsherInvitation>> GetAcceptedPagedAsync(
+            Guid usherId, int skip, int take, CancellationToken ct = default) =>
+            await db.UsherInvitations
+                .Where(i => i.UsherId == usherId
+                         && i.Status == InvitationStatus.ACCEPTED)
+                .OrderBy(i => i.ScheduleStartDate)
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync(ct);
 
     }
