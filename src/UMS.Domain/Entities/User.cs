@@ -21,6 +21,8 @@ namespace UMS.Domain.Entities
         public string? RefreshToken { get; set; }
         public DateTimeOffset? RefreshTokenExpiry { get; set; }
 
+        public Guid? CreatedByAdminId { get; private set; }
+
         public Usher? Usher { get; private set; }
         public ICollection<EmailVerificationToken> VerificationTokens { get; private set; } = null!;
         private User() { }
@@ -133,42 +135,47 @@ namespace UMS.Domain.Entities
             UpdatedAt = DateTimeOffset.UtcNow;
         }
         public bool HasPassword() => !string.IsNullOrWhiteSpace(PasswordHash);
-        public static User CreateInvitedCoordinator(string email)
+    
+        public static User CreateStaff(
+            string fullName,
+            string email,
+            string phone,
+            UserRole role,
+            Guid createdByAdminId
+
+            )
         {
-            email = email.Trim().ToLowerInvariant();
+            ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
             ArgumentException.ThrowIfNullOrWhiteSpace(email);
+            ArgumentException.ThrowIfNullOrWhiteSpace(phone);
+
+            if (role != UserRole.ADMIN && role != UserRole.EVENT_COORDINATOR)
+                throw new ArgumentException("Role must be ADMIN or EVENT_COORDINATOR.");
 
             return new User
             {
                 Id = Guid.NewGuid(),
-                FullName = string.Empty,
+                FullName = fullName,
                 Email = email,
-                Phone = string.Empty,
-                Role = UserRole.GUEST,
-                Status = UserStatus.ACTIVE,
+                Phone = phone,
+                Role = role,
+                Status = UserStatus.INACTIVE,
                 EmailVerified = false,
+                CreatedByAdminId = createdByAdminId,
                 CreatedAt = DateTimeOffset.UtcNow
             };
-        }
 
-        public void CompleteCoordinatorRegistration(
-            string fullName,
-            string phone,
-            string passwordHash)
+        }
+        public void ActivateWithPassword(string passwordHash)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
-            ArgumentException.ThrowIfNullOrWhiteSpace(phone);
             ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
 
-            FullName = fullName.Trim();
-            Phone = phone.Trim();
             PasswordHash = passwordHash;
-            Role = UserRole.EVENT_COORDINATOR;
+            Status = UserStatus.ACTIVE;
             EmailVerified = true;
             EmailVerifiedAt = DateTimeOffset.UtcNow;
             UpdatedAt = DateTimeOffset.UtcNow;
         }
-
     }
 }
 public record CreateGuest(

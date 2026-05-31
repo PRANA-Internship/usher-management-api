@@ -70,6 +70,19 @@ namespace UMS.Domain.Common
             public static readonly Error AlreadyResponded = new("USHER_SCH_009", "You have already responded to this invitation.");
             public static readonly Error ExternalApiFailed = new("USHER_SCH_010", "Failed to reach events service. Please try again.");
         }
+        public static class StaffErrors
+        {
+            public static readonly Error EmailAlreadyExists = new("STAFF_001", "An account with this email already exists.");
+            public static readonly Error InvalidRole = new("STAFF_002", "Role must be ADMIN or EVENT_COORDINATOR.");
+            public static readonly Error InvalidSetupToken = new("STAFF_003", "Setup token is invalid or expired.");
+            public static readonly Error TokenAlreadyUsed = new("STAFF_004", "Setup token has already been used.");
+            public static readonly Error StaffNotFound = new("STAFF_005", "Staff member not found.");
+            public static readonly Error AccountInactive = new("STAFF_006", "Account is inactive. Please check your email to set your password.");
+            public static readonly Error AlreadyActive = new("STAFF_007", "Account is already active.");
+            public static readonly Error CannotRemoveSelf = new("STAFF_008", "You cannot remove your own account.");
+            public static readonly Error CannotRemoveUsher = new("STAFF_009", "This endpoint is for staff only.");
+            public static readonly Error NotYourStaff = new("STAFF_010", "You can only remove staff members you created.");
+        }
     }
 
 }
