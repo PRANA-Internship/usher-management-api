@@ -135,7 +135,7 @@ namespace UMS.Domain.Entities
             UpdatedAt = DateTimeOffset.UtcNow;
         }
         public bool HasPassword() => !string.IsNullOrWhiteSpace(PasswordHash);
-    
+
         public static User CreateStaff(
             string fullName,
             string email,
