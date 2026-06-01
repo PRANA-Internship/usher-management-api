@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UMS.Domain.Entities;
+using UMS.Domain.Enums;
 
 namespace UMS.Application.Common.Interfaces
 {
@@ -19,6 +20,13 @@ namespace UMS.Application.Common.Interfaces
         Task<(IReadOnlyList<User> Items, int TotalCount)> GetCoordinatorsPagedAsync(
             int page,
             int size,
+            string? searchName,
+            CancellationToken ct = default);
+        Task<(IReadOnlyList<User> Items, int TotalCount)> GetStaffPagedAsync(
+            int page,
+            int size,
+            UserRole? role,
+            UserStatus? status,
             string? searchName,
             CancellationToken ct = default);
     }

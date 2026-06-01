@@ -60,6 +60,8 @@ namespace UMS.Infrastructure.Persistance.Configuration
                   .HasColumnName("refresh_token_expiry")
                   .IsRequired(false);
 
+            builder.Property(u => u.CreatedByAdminId)
+                   .IsRequired(false);
             builder.Property(u => u.CreatedAt)
                   .HasColumnName("created_at")
                   .HasDefaultValueSql("CURRENT_TIMESTAMP")

@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using UMS.Application.Features.Auth.Commands.CreateUser;
 using UMS.Application.Features.Auth.Commands.ForgotPassword;
-using UMS.Application.Features.Auth.Commands.InviteCoordinator;
 using UMS.Application.Features.Auth.Commands.Login;
 using UMS.Application.Features.Auth.Commands.RefreshToken;
-using UMS.Application.Features.Auth.Commands.RegisterCoordinator;
 using UMS.Application.Features.Auth.Commands.ResetPassword;
 using UMS.Contracts.Auth;
 using UMS.Domain.Entities;
@@ -104,52 +102,5 @@ namespace UMS.api.Controllers
                 };
         }
 
-        [HttpPost("coordinator/invite")]
-        [Authorize(Roles = "ADMIN")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> InviteCoordinator(
-           [FromBody] InviteCoordinatorRequest request,
-            CancellationToken ct)
-        {
-            var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-            var result = await sender.Send(
-                new InviteCoordinatorCommand(adminId, request.Email), ct);
-
-            return result.IsSuccess
-                ? Ok(new { message = "Invitation sent successfully." })
-                : result.Error.Code switch
-                {
-                    "AUTH_010" => Conflict(result.Error),
-                    _ => BadRequest(result.Error)
-                };
-        }
-        [HttpPost("coordinator/register")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(RegisterCoordinatorResponse), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RegisterCoordinator(
-    [FromBody] RegisterCoordinatorRequest request,
-    CancellationToken ct)
-        {
-            var result = await sender.Send(
-                new RegisterCoordinatorCommand(
-                    request.Token,
-                    request.FullName,
-                    request.Phone,
-                    request.Password,
-                    request.ConfirmPassword), ct);
-
-            return result.IsSuccess
-                ? CreatedAtAction(nameof(RegisterCoordinator),
-                    new { id = result.Value!.UserId }, result.Value)
-                : result.Error.Code switch
-                {
-                    "AUTH_011" => BadRequest(result.Error),
-                    "AUTH_012" => Conflict(result.Error),
-                    _ => BadRequest(result.Error)
-                };
-        }
     }
 }

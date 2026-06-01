@@ -63,5 +63,38 @@ namespace UMS.Infrastructure.Persistence.Repositories
 
             return ((IReadOnlyList<User>)items, totalCount);
         }
+        public async Task<(IReadOnlyList<User> Items, int TotalCount)> GetStaffPagedAsync(
+            int page,
+            int size,
+            UserRole? role,
+            UserStatus? status,
+            string? searchName,
+            CancellationToken ct = default)
+        {
+            var query = db.Users
+                .Where(u => u.Role == UserRole.ADMIN ||
+                            u.Role == UserRole.EVENT_COORDINATOR)
+                .AsQueryable();
+
+            if (role.HasValue)
+                query = query.Where(u => u.Role == role.Value);
+
+            if (status.HasValue)
+                query = query.Where(u => u.Status == status.Value);
+
+            if (!string.IsNullOrWhiteSpace(searchName))
+                query = query.Where(u =>
+                    EF.Functions.ILike(u.FullName, $"%{searchName.Trim()}%"));
+
+            var totalCount = await query.CountAsync(ct);
+
+            var items = await query
+                .OrderByDescending(u => u.CreatedAt)
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync(ct);
+
+            return ((IReadOnlyList<User>)items, totalCount);
+        }
     }
 }

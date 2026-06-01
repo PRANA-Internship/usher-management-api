@@ -45,5 +45,21 @@ namespace UMS.Infrastructure.Persistence.Repositories
 
             db.EmailVerificationTokens.RemoveRange(tokens);
         }
+        public async Task InvalidateByUserIdAsync(
+                Guid userId,
+                TokenType tokenType,
+                CancellationToken ct = default)
+        {
+            var tokens = await db.EmailVerificationTokens
+                .Where(t => t.UserId == userId &&
+                            t.TokenType == tokenType &&
+                            t.UsedAt == null)
+                .ToListAsync(ct);
+
+            foreach (var token in tokens)
+                token.MarkAsUsed();
+
+        }
+
     }
 }

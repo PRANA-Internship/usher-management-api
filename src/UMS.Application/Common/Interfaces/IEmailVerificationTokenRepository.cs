@@ -16,5 +16,10 @@ namespace UMS.Application.Common.Interfaces
                      TokenType tokenType,
                      CancellationToken ct = default);
         Task DeleteByUserIdAsync(Guid userId, CancellationToken ct = default);
+        Task InvalidateByUserIdAsync(
+             Guid userId,
+             TokenType tokenType,
+             CancellationToken ct = default);
+
     }
 }
