@@ -9,7 +9,7 @@ namespace UMS.Domain.Enums
     public enum UserRole { GUEST, USHER, EVENT_COORDINATOR, ADMIN }
     public enum UserStatus { ACTIVE, INACTIVE, BANNED }
     public enum ApprovalStatus { PENDING, APPROVED, REJECTED }
-    public enum TokenType { EmailVerification, PasswordReset, StaffSetup }
+    public enum TokenType { EmailVerification, PasswordReset, CoordinatorInvitation, StaffSetup }
     public enum Gender { MALE, FEMALE };
     public enum Sector
     {
