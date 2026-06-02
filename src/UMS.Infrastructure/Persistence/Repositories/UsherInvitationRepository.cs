@@ -135,6 +135,56 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync(ct);
+        public Task<int> CountAcceptedByScheduleAsync(
+             string scheduleId, CancellationToken ct = default) =>
+                 db.UsherInvitations
+                  .CountAsync(i => i.ExternalScheduleId == scheduleId
+                    && i.Status == InvitationStatus.ACCEPTED, ct);
 
+        public async Task<IReadOnlyList<UsherInvitation>> GetAcceptedBySchedulePagedAsync(
+            string scheduleId, int skip, int take, CancellationToken ct = default) =>
+            await db.UsherInvitations
+                .Include(i => i.Usher).ThenInclude(u => u.User)
+                .Where(i => i.ExternalScheduleId == scheduleId
+                         && i.Status == InvitationStatus.ACCEPTED)
+                .OrderBy(i => i.CreatedAt)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync(ct);
+        public async Task<IReadOnlyList<Guid>> GetConflictedUsherIdsAsync(
+                  DateOnly start, DateOnly end, CancellationToken ct = default) =>
+              await db.UsherInvitations
+         .Where(a => a.Status == InvitationStatus.ACCEPTED
+                 && a.ScheduleStartDate <= end
+                 && a.ScheduleEndDate >= start)
+        .Select(a => a.UsherId)
+        .Distinct()
+        .ToListAsync(ct);
+        public async Task<(IReadOnlyList<UsherInvitation>, int)>
+    GetBySchedulePagedAsync(
+        string scheduleId, InvitationStatus status,
+        int page, int size, CancellationToken ct = default)
+        {
+            var query = db.UsherInvitations
+                .Include(a => a.Usher).ThenInclude(u => u.User)
+                .Where(a => a.ExternalScheduleId == scheduleId
+                         && a.Status == status);
+
+            var total = await query.CountAsync(ct);
+            var items = await query
+                .OrderByDescending(a => a.CreatedAt)
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync(ct);
+
+            return (items, total);
+        }
+        public async Task<IReadOnlyList<Guid>> GetUsherIdsByScheduleAsync(
+    string scheduleId, CancellationToken ct = default) =>
+    await db.UsherInvitations
+        .Where(a => a.ExternalScheduleId == scheduleId
+                 && a.Status != InvitationStatus.DECLINED)
+        .Select(a => a.UsherId)
+        .ToListAsync(ct);
     }
 }

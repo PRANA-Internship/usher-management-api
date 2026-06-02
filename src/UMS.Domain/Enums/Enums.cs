@@ -62,5 +62,13 @@ namespace UMS.Domain.Enums
         PendingInvitation,
         DeclinedInvitation
     }
+    //similar from the above just for more declarative purpose
+    public enum CoordinatorScheduleFilter
+    {
+        PendingApplication,
+        DeclinedApplication,
+        PendingInvitation,
+        DeclinedInvitation
+    }
 
 }

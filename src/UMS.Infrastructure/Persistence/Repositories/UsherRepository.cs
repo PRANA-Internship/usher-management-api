@@ -53,6 +53,23 @@ namespace UMS.Infrastructure.Persistence.Repositories
 
             return ((IReadOnlyList<Usher>)items, totalCount);
         }
+        public async Task<(IReadOnlyList<Usher>, int)> GetAvailablePagedAsync(
+    ISet<Guid> excludedIds, int page, int size, CancellationToken ct = default)
+        {
+            var query = db.Ushers
+                .Include(u => u.User)
+                .Where(u => u.ApprovalStatus == ApprovalStatus.APPROVED
+                         && !excludedIds.Contains(u.Id));
+
+            var total = await query.CountAsync(ct);
+            var items = await query
+                .OrderBy(u => u.User!.FullName)
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync(ct);
+
+            return (items, total);
+        }
     }
 
 }

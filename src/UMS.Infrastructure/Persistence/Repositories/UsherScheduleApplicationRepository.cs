@@ -79,5 +79,61 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync(ct);
+        public async Task<(IReadOnlyList<UsherScheduleApplication>, int)>
+    GetBySchedulePagedAsync(
+        string scheduleId, InvitationStatus status,
+        int page, int size, CancellationToken ct = default)
+        {
+            var query = db.UsherScheduleApplications
+                .Include(a => a.Usher).ThenInclude(u => u.User)
+                .Where(a => a.ExternalScheduleId == scheduleId
+                         && a.Status == status);
+
+            var total = await query.CountAsync(ct);
+            var items = await query
+                .OrderByDescending(a => a.CreatedAt)
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync(ct);
+
+            return (items, total);
+        }
+
+        public async Task<IReadOnlyList<Guid>> GetConflictedUsherIdsAsync(
+            DateOnly start, DateOnly end, CancellationToken ct = default) =>
+            await db.UsherScheduleApplications
+                .Where(a => a.Status == InvitationStatus.ACCEPTED
+                         && a.ScheduleStartDate <= end
+                         && a.ScheduleEndDate >= start)
+                .Select(a => a.UsherId)
+                .Distinct()
+                .ToListAsync(ct);
+
+        public async Task<IReadOnlyList<Guid>> GetUsherIdsByScheduleAsync(
+            string scheduleId, CancellationToken ct = default) =>
+            await db.UsherScheduleApplications
+                .Where(a => a.ExternalScheduleId == scheduleId
+                         && a.Status != InvitationStatus.DECLINED)
+                .Select(a => a.UsherId)
+                .ToListAsync(ct);
+
+        public Task<int> CountApprovedByScheduleAsync(
+            string scheduleId, CancellationToken ct = default) =>
+            db.UsherScheduleApplications
+              .CountAsync(a => a.ExternalScheduleId == scheduleId
+                            && a.Status == InvitationStatus.ACCEPTED, ct);
+
+        public async Task<IReadOnlyList<UsherScheduleApplication>>
+            GetApprovedBySchedulePagedAsync(
+                string scheduleId, int skip, int take, CancellationToken ct = default) =>
+            await db.UsherScheduleApplications
+                .Include(a => a.Usher).ThenInclude(u => u.User)
+                .Where(a => a.ExternalScheduleId == scheduleId
+                         && a.Status == InvitationStatus.ACCEPTED)
+                .OrderBy(a => a.CreatedAt)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync(ct);
+
     }
 }

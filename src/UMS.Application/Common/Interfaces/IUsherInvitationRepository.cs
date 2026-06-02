@@ -47,8 +47,18 @@ namespace UMS.Application.Common.Interfaces
         Task<int> CountAcceptedAsync(Guid usherId, CancellationToken ct = default);
         Task<IReadOnlyList<UsherInvitation>> GetAcceptedPagedAsync(
             Guid usherId, int skip, int take, CancellationToken ct = default);
+        Task<(IReadOnlyList<UsherInvitation> Items, int TotalCount)> GetBySchedulePagedAsync(
+           string scheduleId, InvitationStatus status,
+           int page, int size, CancellationToken ct = default);
+        Task<int> CountAcceptedByScheduleAsync(
+             string scheduleId, CancellationToken ct = default);
+        Task<IReadOnlyList<Guid>> GetUsherIdsByScheduleAsync(
+    string scheduleId, CancellationToken ct = default);
+        Task<IReadOnlyList<Guid>> GetConflictedUsherIdsAsync(
+            DateOnly start, DateOnly end, CancellationToken ct = default);
 
-
+        Task<IReadOnlyList<UsherInvitation>> GetAcceptedBySchedulePagedAsync(
+            string scheduleId, int skip, int take, CancellationToken ct = default);
     }
 
 }
