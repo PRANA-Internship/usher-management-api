@@ -17,7 +17,8 @@ namespace UMS.Contracts.Usher
     bool IsUpcoming,
     bool IsCompleted,
     string Type,
-    string Status
+    string Status,
+    Guid? InvitationId
 );
 
     public sealed record PagedScheduleResponse(
@@ -41,7 +42,8 @@ namespace UMS.Contracts.Usher
         bool IsUpcoming,
         bool IsCompleted,
         string Type,
-        DateTimeOffset ConfirmedAt
+        DateTimeOffset ConfirmedAt,
+        Guid? InvitationId
     );
     public sealed record PagedConfirmedScheduleResponse(
         IReadOnlyList<ConfirmedScheduleItem> Items,

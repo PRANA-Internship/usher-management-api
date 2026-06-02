@@ -77,7 +77,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetConfirmedApplication
                     IsUpcoming: info.Schedule.IsUpcoming,
                     IsCompleted: info.Schedule.IsCompleted,
                     Type: "APPLICATION",
-                    ConfirmedAt: app.ReviewedAt ?? app.CreatedAt
+                    ConfirmedAt: app.ReviewedAt ?? app.CreatedAt,
+                      InvitationId: null
                 ));
             }
 
@@ -99,7 +100,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetConfirmedApplication
                     IsUpcoming: info.Schedule.IsUpcoming,
                     IsCompleted: info.Schedule.IsCompleted,
                     Type: "INVITATION",
-                    ConfirmedAt: invite.UpdatedAt
+                    ConfirmedAt: invite.UpdatedAt,
+                      InvitationId: invite.Id
                 ));
             }
 

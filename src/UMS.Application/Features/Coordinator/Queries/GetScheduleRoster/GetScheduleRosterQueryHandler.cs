@@ -11,8 +11,7 @@ namespace UMS.Application.Features.Coordinator.Queries.GetScheduleRoster
 {
     public sealed class GetScheduleRosterQueryHandler(
     IUsherScheduleApplicationRepository applicationRepository,
-    IUsherInvitationRepository invitationRepository,
-    IUsherRepository usherRepository
+    IUsherInvitationRepository invitationRepository
 ) : IRequestHandler<GetScheduleRosterQuery, Result<object>>
     {
         public async Task<Result<object>> Handle(
