@@ -129,7 +129,7 @@ namespace UMS.api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ReviewApplication(
-       RespondToApplicationRequest request,
+       ApplicationReviewRequest request,
        CancellationToken ct = default)
         {
             var result = await sender.Send(new ReviewApplicationCommand(

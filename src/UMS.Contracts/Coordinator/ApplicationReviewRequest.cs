@@ -4,5 +4,5 @@ using System.Text;
 
 namespace UMS.Contracts.Coordinator
 {
-    public sealed record RespondToApplicationRequest(bool Accept, Guid ApplicationId);
+    public sealed record ApplicationReviewRequest(bool Accept, Guid ApplicationId);
 }
