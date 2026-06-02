@@ -96,5 +96,94 @@ namespace UMS.api.Controllers
     };
 
         }
+<<<<<<< Updated upstream
+=======
+
+        [HttpGet("schedules/{eventId}/{scheduleId}/roster")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetRoster(
+               string eventId,
+               string scheduleId,
+               [FromQuery] CoordinatorScheduleFilter filter,
+               [FromQuery] int page = 1,
+               [FromQuery] int size = 10,
+               CancellationToken ct = default)
+        {
+            var result = await sender.Send(new GetScheduleRosterQuery(
+                CoordinatorId: CoordinatorId,
+                ExternalEventId: eventId,
+                ExternalScheduleId: scheduleId,
+                Filter: filter,
+                Page: page,
+                Size: size), ct);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpPost("applications/review")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ReviewApplication(
+       ApplicationReviewRequest request,
+       CancellationToken ct = default)
+        {
+            var result = await sender.Send(new ReviewApplicationCommand(
+                CoordinatorId: CoordinatorId,
+                ApplicationId: request.ApplicationId,
+                Approve: request.Accept), ct);
+
+            return result.IsSuccess
+                ? Ok(new { message = request.Accept ? "Application approved." : "Application rejected." })
+                : result.Error.Code switch
+                {
+                    "USHER_SCH_006" => NotFound(result.Error),
+                    "SCHEDULE_008" => Forbid(),
+                    _ => BadRequest(result.Error)
+                };
+        }
+        [HttpGet("schedules/{eventId}/{scheduleId}/available-ushers")]
+        [ProducesResponseType(typeof(PagedAvailableUshersResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAvailableUshers(
+       string eventId,
+       string scheduleId,
+       [FromQuery] int page = 1,
+       [FromQuery] int size = 10,
+       CancellationToken ct = default)
+        {
+            var result = await sender.Send(new GetAvailableUshersQuery(
+                ExternalScheduleId: scheduleId,
+                ExternalEventId: eventId,
+                CoordinatorId: CoordinatorId,
+                Page: page,
+                Size: size), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.Error.Code switch
+                {
+                    "SCHEDULE_002" => NotFound(result.Error),
+                    "SCHEDULE_005" => StatusCode(StatusCodes.Status502BadGateway, result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
+        [HttpGet("schedules/{eventId}/{scheduleId}/confirmed")]
+        [ProducesResponseType(typeof(PagedConfirmedRosterResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetConfirmedRoster(
+       string eventId,
+       string scheduleId,
+       [FromQuery] int page = 1,
+       [FromQuery] int size = 10,
+       CancellationToken ct = default)
+        {
+            var result = await sender.Send(new GetConfirmedRosterQuery(
+                ExternalScheduleId: scheduleId,
+                CoordinatorId: CoordinatorId,
+                Page: page,
+                Size: size), ct);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+>>>>>>> Stashed changes
     }
 }
