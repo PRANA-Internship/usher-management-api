@@ -23,6 +23,8 @@ namespace UMS.Application.Common.Interfaces
          ApprovalStatus? status,
          string? searchName,
          CancellationToken ct = default);
+        Task<(IReadOnlyList<Usher> Items, int TotalCount)> GetAvailablePagedAsync(
+    ISet<Guid> excludedUsherIds, int page, int size, CancellationToken ct = default);
 
     }
 }
