@@ -112,7 +112,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyPendingDecline
                         IsUpcoming: info.Schedule.IsUpcoming,
                         IsCompleted: info.Schedule.IsCompleted,
                         Type: "APPLICATION",
-                        Status: a.Status.ToString()
+                        Status: a.Status.ToString(),
+                        InvitationId: null
                     );
                 }).ToList();
         }
@@ -142,7 +143,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyPendingDecline
                         IsUpcoming: info.Schedule.IsUpcoming,
                         IsCompleted: info.Schedule.IsCompleted,
                         Type: "INVITATION",
-                        Status: i.Status.ToString()
+                        Status: i.Status.ToString(),
+                        InvitationId: i.Id
                     );
                 }).ToList();
         }
