@@ -16,10 +16,10 @@ namespace UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery
       IUsherInvitationRepository invitationRepository,
       IScheduleAssignmentRepository assignmentRepository,
       IEventsApiClient eventsApiClient
-  ) : IRequestHandler<GetAvailableUshersQuery, Result<PagedAvailableUshersResponse>>
+  ) : IRequestHandler<AvailableUshersQuery, Result<PagedAvailableUshersResponse>>
     {
         public async Task<Result<PagedAvailableUshersResponse>> Handle(
-            GetAvailableUshersQuery query,
+            AvailableUshersQuery query,
             CancellationToken cancellationToken)
         {
             var assignment = await assignmentRepository

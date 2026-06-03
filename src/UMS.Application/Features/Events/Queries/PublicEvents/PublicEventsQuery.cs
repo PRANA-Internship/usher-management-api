@@ -9,15 +9,15 @@ using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Events.Queries.GetPublicEvents
 {
-    public sealed record GetPublicEventsQuery : IRequest<Result<IReadOnlyList<PublicEventResponse>>>;
+    public sealed record PublicEventsQuery : IRequest<Result<IReadOnlyList<PublicEventResponse>>>;
 
     public sealed class GetPublicEventsQueryHandler(
         IEventsApiClient eventsApiClient,
         IScheduleAssignmentRepository assignmentRepository
-    ) : IRequestHandler<GetPublicEventsQuery, Result<IReadOnlyList<PublicEventResponse>>>
+    ) : IRequestHandler<PublicEventsQuery, Result<IReadOnlyList<PublicEventResponse>>>
     {
         public async Task<Result<IReadOnlyList<PublicEventResponse>>> Handle(
-            GetPublicEventsQuery query,
+            PublicEventsQuery query,
             CancellationToken cancellationToken)
         {
             try

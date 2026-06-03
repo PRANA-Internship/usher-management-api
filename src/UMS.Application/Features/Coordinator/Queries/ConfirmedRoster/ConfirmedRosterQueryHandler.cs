@@ -10,14 +10,14 @@ using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Coordinator.Queries.GetConfirmed
 {
-    public sealed class GetConfirmedRosterQueryHandler(
+    public sealed class ConfirmedRosterQueryHandler(
     IUsherScheduleApplicationRepository applicationRepository,
     IUsherInvitationRepository invitationRepository,
     IScheduleAssignmentRepository assignmentRepository
-) : IRequestHandler<GetConfirmedRosterQuery, Result<PagedConfirmedRosterResponse>>
+) : IRequestHandler<ConfirmedRosterQuery, Result<PagedConfirmedRosterResponse>>
     {
         public async Task<Result<PagedConfirmedRosterResponse>> Handle(
-            GetConfirmedRosterQuery query,
+            ConfirmedRosterQuery query,
             CancellationToken cancellationToken)
         {
             var assignment = await assignmentRepository

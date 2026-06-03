@@ -155,7 +155,7 @@ namespace UMS.api.Controllers
        [FromQuery] int size = 10,
        CancellationToken ct = default)
         {
-            var result = await sender.Send(new GetAvailableUshersQuery(
+            var result = await sender.Send(new AvailableUshersQuery(
                 ExternalScheduleId: scheduleId,
                 ExternalEventId: eventId,
                 CoordinatorId: CoordinatorId,

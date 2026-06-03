@@ -8,7 +8,7 @@ using UMS.Domain.Common;
 
 namespace UMS.Application.Features.Coordinator.Queries.GetConfirmed
 {
-    public sealed record GetConfirmedRosterQuery(
+    public sealed record ConfirmedUshersRosterQuery(
      string ExternalScheduleId,
      Guid CoordinatorId,
      int Page,
@@ -16,7 +16,7 @@ namespace UMS.Application.Features.Coordinator.Queries.GetConfirmed
  ) : IRequest<Result<PagedConfirmedRosterResponse>>;
 
     public sealed class GetConfirmedRosterValidator
-        : AbstractValidator<GetConfirmedRosterQuery>
+        : AbstractValidator<ConfirmedUshersRosterQuery>
     {
         public GetConfirmedRosterValidator()
         {
