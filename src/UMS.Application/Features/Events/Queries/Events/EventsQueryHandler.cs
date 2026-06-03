@@ -11,7 +11,7 @@ namespace UMS.Application.Features.Events.Queries.GetEvents
 {
 
     public sealed record GetEventsQuery : IRequest<Result<IReadOnlyList<EventSummaryResponse>>>;
-    public sealed class GetEventsQueryHandler(
+    public sealed class EventsQueryHandler(
          IEventsApiClient eventsApiClient
      ) : IRequestHandler<GetEventsQuery, Result<IReadOnlyList<EventSummaryResponse>>>
     {
