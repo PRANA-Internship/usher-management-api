@@ -18,7 +18,7 @@ namespace UMS.api.Controllers
         [ProducesResponseType(StatusCodes.Status502BadGateway)]
         public async Task<IActionResult> GetPublicEvents(CancellationToken ct)
         {
-            var result = await sender.Send(new GetPublicEventsQuery(), ct);
+            var result = await sender.Send(new PublicEventsQuery(), ct);
 
             return result.IsSuccess
                 ? Ok(result.Value)

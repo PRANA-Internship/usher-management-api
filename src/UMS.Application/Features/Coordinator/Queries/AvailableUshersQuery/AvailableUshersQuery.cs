@@ -9,7 +9,7 @@ using UMS.Domain.Common;
 namespace UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery
 {
 
-    public sealed record GetAvailableUshersQuery(
+    public sealed record AvailableUshersQuery(
         string ExternalScheduleId,
         string ExternalEventId,
         Guid CoordinatorId,
@@ -18,7 +18,7 @@ namespace UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery
     ) : IRequest<Result<PagedAvailableUshersResponse>>;
 
     public sealed class GetAvailableUshersValidator
-        : AbstractValidator<GetAvailableUshersQuery>
+        : AbstractValidator<AvailableUshersQuery>
     {
         public GetAvailableUshersValidator()
         {

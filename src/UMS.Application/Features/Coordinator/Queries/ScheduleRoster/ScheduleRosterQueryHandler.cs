@@ -9,7 +9,7 @@ using UMS.Domain.Enums;
 
 namespace UMS.Application.Features.Coordinator.Queries.GetScheduleRoster
 {
-    public sealed class GetScheduleRosterQueryHandler(
+    public sealed class ScheduleRosterQueryHandler(
     IUsherScheduleApplicationRepository applicationRepository,
     IUsherInvitationRepository invitationRepository
 ) : IRequestHandler<GetScheduleRosterQuery, Result<object>>
