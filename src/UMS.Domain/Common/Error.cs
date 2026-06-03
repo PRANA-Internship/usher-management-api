@@ -83,6 +83,16 @@ namespace UMS.Domain.Common
             public static readonly Error CannotRemoveUsher = new("STAFF_009", "This endpoint is for staff only.");
             public static readonly Error NotYourStaff = new("STAFF_010", "You can only remove staff members you created.");
         }
+        public static class AttendanceErrors
+        {
+            public static readonly Error AlreadyMarked = new("ATT_001", "Attendance already marked for this session.");
+            public static readonly Error NotFound = new("ATT_002", "Attendance record not found.");
+            public static readonly Error InvalidDate = new("ATT_003", "Attendance date must be within the schedule dates.");
+            public static readonly Error FutureDateNotAllowed = new("ATT_004", "Cannot mark attendance for a future date.");
+            public static readonly Error ScheduleNotOngoing = new("ATT_005", "Attendance can only be marked for ongoing or past schedule days.");
+            public static readonly Error NotYourSchedule = new("ATT_006", "This schedule is not assigned to you.");
+            public static readonly Error UsherNotConfirmed = new("ATT_007", "Usher is not confirmed for this schedule.");
+        }
     }
 
 }
