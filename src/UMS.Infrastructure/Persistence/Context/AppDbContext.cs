@@ -17,6 +17,7 @@ namespace UMS.Infrastructure.Persistance.Context
         public DbSet<ScheduleAssignment> ScheduleAssignments => Set<ScheduleAssignment>();
         public DbSet<UsherInvitation> UsherInvitations => Set<UsherInvitation>();
         public DbSet<UsherScheduleApplication> UsherScheduleApplications => Set<UsherScheduleApplication>();
+        public DbSet<UsherAttendance> UsherAttendances => Set<UsherAttendance>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
