@@ -180,7 +180,7 @@ namespace UMS.api.Controllers
        [FromQuery] int size = 10,
        CancellationToken ct = default)
         {
-            var result = await sender.Send(new GetConfirmedRosterQuery(
+            var result = await sender.Send(new ConfirmedRosterQuery(
                 ExternalScheduleId: scheduleId,
                 CoordinatorId: CoordinatorId,
                 Page: page,
