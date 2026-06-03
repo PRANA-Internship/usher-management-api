@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UMS.Application.Features.Coordinator.Commands.MarkAttendance;
 using UMS.Application.Features.Coordinator.Commands.ReviewApplication;
+using UMS.Application.Features.Coordinator.Queries.AttendanceSheet;
 using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
 using UMS.Application.Features.Coordinator.Queries.GetConfirmed;
 using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
@@ -10,6 +12,7 @@ using UMS.Application.Features.Events.Commands.InviteUsher;
 using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
 using UMS.Contracts.Coordinator;
+using UMS.Contracts.Coordinator.Attendance;
 using UMS.Contracts.Events;
 using UMS.Contracts.Usher;
 using UMS.Domain.Entities;
@@ -188,5 +191,62 @@ namespace UMS.api.Controllers
 
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
+        [HttpGet("schedules/{eventId}/{scheduleId}/attendance")]
+        [ProducesResponseType(typeof(AttendanceSheetResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAttendanceSheet(
+    string eventId,
+    string scheduleId,
+    [FromQuery] DateOnly date,
+    [FromQuery] DayStatus dayStatus,
+    CancellationToken ct = default)
+        {
+            var result = await sender.Send(new AttendanceSheetQuery(
+                CoordinatorId: CoordinatorId,
+                ExternalEventId: eventId,
+                ExternalScheduleId: scheduleId,
+                AttendanceDate: date,
+                DayStatus: dayStatus), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.Error.Code switch
+                {
+                    "ATT_003" => BadRequest(result.Error),
+                    "ATT_006" => Forbid(),
+                    "SCHEDULE_002" => NotFound(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
+        [HttpPost("schedules/attendance")]
+        [ProducesResponseType(typeof(MarkAttendanceResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> MarkAttendance(
+    [FromBody] MarkAttendanceRequest request,
+    CancellationToken ct = default)
+        {
+            if (!Enum.IsDefined(typeof(AttendanceStatus), request.Status) ||
+                request.Status == (int)AttendanceStatus.NotMarked)
+                return BadRequest("Status must be 0 (Absent), 1 (Late), or 2 (Present).");
+
+            var result = await sender.Send(new MarkAttendanceCommand(
+                CoordinatorId: CoordinatorId,
+                ExternalEventId: request.eventId,
+                ExternalScheduleId: request.scheduleId,
+                AttendanceDate: DateOnly.FromDateTime(DateTime.UtcNow),
+                DayStatus: request.DayStatus,
+                UsherId: request.UsherId,
+                Status: (AttendanceStatus)request.Status), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.Error.Code switch
+                {
+                    "ATT_004" => BadRequest(result.Error),
+                    "ATT_006" => Forbid(),
+                    "ATT_007" => BadRequest(result.Error),
+                    "SCHEDULE_002" => NotFound(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
+
     }
 }
