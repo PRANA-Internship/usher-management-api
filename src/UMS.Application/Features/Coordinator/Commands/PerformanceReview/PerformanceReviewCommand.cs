@@ -24,6 +24,8 @@ namespace UMS.Application.Features.Coordinator.Commands.PerformanceReview
     public sealed class SubmitPerformanceReviewValidator
         : AbstractValidator<SubmitPerformanceReviewCommand>
     {
+        private const int Min = 1;
+        private const int Max = 5;
         public SubmitPerformanceReviewValidator()
         {
             RuleFor(x => x.CoordinatorId).NotEmpty();
@@ -32,19 +34,19 @@ namespace UMS.Application.Features.Coordinator.Commands.PerformanceReview
             RuleFor(x => x.UsherId).NotEmpty();
 
             RuleFor(x => x.Grooming)
-                .InclusiveBetween(1, 5)
+                .InclusiveBetween(Min, Max)
                 .WithMessage("Grooming rating must be between 1 and 5.");
             RuleFor(x => x.Professionalism)
-                .InclusiveBetween(1, 5)
+                .InclusiveBetween(Min, Max)
                 .WithMessage("Professionalism rating must be between 1 and 5.");
             RuleFor(x => x.Communication)
-                .InclusiveBetween(1, 5)
+                .InclusiveBetween(Min, Max)
                 .WithMessage("Communication rating must be between 1 and 5.");
             RuleFor(x => x.Teamwork)
-                .InclusiveBetween(1, 5)
+                .InclusiveBetween(Min, Max)
                 .WithMessage("Teamwork rating must be between 1 and 5.");
             RuleFor(x => x.OverallScore)
-                .InclusiveBetween(1, 5)
+                .InclusiveBetween(Min, Max)
                 .WithMessage("Overall score must be between 1 and 5.");
 
             When(x => x.Remarks is not null, () =>
