@@ -60,6 +60,7 @@ namespace UMS.Infrastructure.Persistance
 
             services.AddScoped<IUsherScheduleApplicationRepository, UsherScheduleApplicationRepository>();
 
+            services.AddScoped<IUsherPerformanceReviewRepository, UsherPerformanceReviewRepository>();
             services.AddScoped<IUsherAvailablityService, UsherAvailabilityService>();
             services.AddScoped<IScheduleAssignmentRepository, ScheduleAssignmentRepository>();
 
@@ -95,6 +96,7 @@ namespace UMS.Infrastructure.Persistance
             services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
 
             services.AddScoped<IUserRepository, UserRepository>();
+
             var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
 
             if (string.IsNullOrWhiteSpace(jwtSettings.SecretKey) || jwtSettings.SecretKey.Length < 32)
