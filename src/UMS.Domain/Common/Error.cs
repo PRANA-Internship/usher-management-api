@@ -93,6 +93,16 @@ namespace UMS.Domain.Common
             public static readonly Error NotYourSchedule = new("ATT_006", "This schedule is not assigned to you.");
             public static readonly Error UsherNotConfirmed = new("ATT_007", "Usher is not confirmed for this schedule.");
         }
+        public static class PerformanceReviewErrors
+        {
+            public static readonly Error AlreadyReviewed = new("REVIEW_001", "A performance review has already been submitted for this usher on this schedule.");
+            public static readonly Error NotFound = new("REVIEW_002", "Performance review not found.");
+            public static readonly Error ScheduleNotEnded = new("REVIEW_003", "Performance review can only be between the start and end date of an event.");
+            public static readonly Error UsherNotConfirmed = new("REVIEW_004", "Usher is not confirmed for this schedule.");
+            public static readonly Error NotYourSchedule = new("REVIEW_005", "This schedule is not assigned to you.");
+            public static readonly Error InvalidRating = new("REVIEW_006", "All ratings must be between 1 and 5.");
+        }
+
     }
 
 }
