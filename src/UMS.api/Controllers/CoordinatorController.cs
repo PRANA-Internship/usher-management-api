@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UMS.Application.Features.Coordinator.Commands.MarkAttendance;
+using UMS.Application.Features.Coordinator.Commands.PerformanceReview;
 using UMS.Application.Features.Coordinator.Commands.ReviewApplication;
 using UMS.Application.Features.Coordinator.Queries.AttendanceSheet;
 using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
 using UMS.Application.Features.Coordinator.Queries.GetConfirmed;
 using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
+using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
 using UMS.Application.Features.Events.Commands.InviteUsher;
 using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
 using UMS.Contracts.Coordinator;
 using UMS.Contracts.Coordinator.Attendance;
+using UMS.Contracts.Coordinator.Performance;
 using UMS.Contracts.Events;
 using UMS.Contracts.Usher;
 using UMS.Domain.Entities;
@@ -247,6 +250,62 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
+
+        [HttpGet("schedules/{eventId}/{scheduleId}/reviews")]
+        [ProducesResponseType(typeof(PerformanceReviewListResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPerformanceReviews(
+            string eventId,
+            string scheduleId,
+            CancellationToken ct = default)
+        {
+            var result = await sender.Send(new PerformanceReviewListQuery(
+                CoordinatorId: CoordinatorId,
+                ExternalEventId: eventId,
+                ExternalScheduleId: scheduleId), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.Error.Code switch
+                {
+                    "REVIEW_005" => Forbid(),
+                    _ => BadRequest(result.Error)
+                };
+        }
+
+        [HttpPost("schedules/reviews")]
+        [ProducesResponseType(typeof(PerformanceReviewResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> SubmitPerformanceReview(
+            [FromBody] PerformanceReviewRequest request,
+            CancellationToken ct = default)
+        {
+            var result = await sender.Send(new SubmitPerformanceReviewCommand(
+                CoordinatorId: CoordinatorId,
+                ExternalEventId: request.eventId,
+                ExternalScheduleId: request.scheduleId,
+                UsherId: request.UsherId,
+                Grooming: request.Grooming,
+                Professionalism: request.Professionalism,
+                Communication: request.Communication,
+                Teamwork: request.Teamwork,
+                OverallScore: request.OverallScore,
+                Remarks: request.Remarks), ct);
+
+            return result.IsSuccess
+                ? CreatedAtAction(nameof(GetPerformanceReviews),
+                    new { request.eventId, request.scheduleId }, result.Value)
+                : result.Error.Code switch
+                {
+                    "REVIEW_001" => Conflict(result.Error),
+                    "REVIEW_003" => BadRequest(result.Error),
+                    "REVIEW_004" => BadRequest(result.Error),
+                    "REVIEW_005" => Forbid(),
+                    _ => BadRequest(result.Error)
+                };
+        }
+
+
 
     }
 }
