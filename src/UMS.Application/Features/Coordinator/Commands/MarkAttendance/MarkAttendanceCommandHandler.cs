@@ -6,8 +6,9 @@ using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Coordinator.Attendance;
 using UMS.Domain.Common;
-using static UMS.Domain.Common.Error;
 using UMS.Domain.Entities;
+using UMS.Infrastructure.Cache;
+using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Coordinator.Commands.MarkAttendance
 {
@@ -19,7 +20,8 @@ namespace UMS.Application.Features.Coordinator.Commands.MarkAttendance
         IUsherInvitationRepository invitationRepository,
         IUsherRepository usherRepository,
         IEventsApiClient eventsApiClient,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        ICacheService cache
     ) : IRequestHandler<MarkAttendanceCommand, Result<MarkAttendanceResponse>>
     {
         public async Task<Result<MarkAttendanceResponse>> Handle(
@@ -114,6 +116,7 @@ namespace UMS.Application.Features.Coordinator.Commands.MarkAttendance
                 }
             }, cancellationToken);
 
+            await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
             return Result<MarkAttendanceResponse>.Success(new MarkAttendanceResponse(
                 AttendanceId: existing!.Id,
                 UsherId: command.UsherId,

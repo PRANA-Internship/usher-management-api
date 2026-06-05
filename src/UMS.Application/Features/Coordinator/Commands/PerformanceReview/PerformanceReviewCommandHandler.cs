@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Text;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
+using UMS.Contracts.Coordinator.Performance;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
+using UMS.Infrastructure.Cache;
 using static UMS.Domain.Common.Error;
-using UMS.Contracts.Coordinator.Performance;
 
 namespace UMS.Application.Features.Coordinator.Commands.PerformanceReview
 {
@@ -18,7 +19,8 @@ namespace UMS.Application.Features.Coordinator.Commands.PerformanceReview
      IUsherInvitationRepository invitationRepository,
      IUsherRepository usherRepository,
      IEventsApiClient eventsApiClient,
-     IUnitOfWork unitOfWork
+     IUnitOfWork unitOfWork,
+     ICacheService cache
  ) : IRequestHandler<SubmitPerformanceReviewCommand, Result<PerformanceReviewResponse>>
     {
         public async Task<Result<PerformanceReviewResponse>> Handle(
@@ -92,6 +94,7 @@ namespace UMS.Application.Features.Coordinator.Commands.PerformanceReview
                 await reviewRepository.AddAsync(review, cancellationToken);
             }, cancellationToken);
 
+            await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
             return Result<PerformanceReviewResponse>.Success(
                 new PerformanceReviewResponse(
                     ReviewId: review.Id,
