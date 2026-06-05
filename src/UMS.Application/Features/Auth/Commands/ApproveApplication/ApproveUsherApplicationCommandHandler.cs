@@ -9,6 +9,7 @@ using UMS.Contracts.Auth;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
+using UMS.Infrastructure.Cache;
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Auth.Commands.ApproveApplication
@@ -19,7 +20,8 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
         IUserRepository userRepository,
         IEmailVerificationTokenRepository tokenRepository,
         IEmailService emailService,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        ICacheService cache
     ) : IRequestHandler<ApproveUsherApplicationCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(
@@ -53,6 +55,7 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
                 await tokenRepository.AddAsync(verificationToken, cancellationToken);
             }, cancellationToken);
 
+            await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
             // Send password setup email outside transaction
             try
             {

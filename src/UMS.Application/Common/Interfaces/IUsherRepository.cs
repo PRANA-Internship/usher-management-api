@@ -25,6 +25,8 @@ namespace UMS.Application.Common.Interfaces
          CancellationToken ct = default);
         Task<(IReadOnlyList<Usher> Items, int TotalCount)> GetAvailablePagedAsync(
     ISet<Guid> excludedUsherIds, int page, int size, CancellationToken ct = default);
+        Task<int> CountApprovedAsync(CancellationToken ct = default);
+        Task<int> CountPendingAsync(CancellationToken ct = default);
 
     }
 }
