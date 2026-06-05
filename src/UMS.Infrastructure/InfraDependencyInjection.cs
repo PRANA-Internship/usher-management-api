@@ -45,6 +45,7 @@ namespace UMS.Infrastructure.Persistance
 
             services.AddSingleton<ICacheService, RedisCacheService>();
 
+            services.AddScoped<IAttendanceAnalyticsRepository, AttendanceAnalyticsRepository>();
 
             services.Configure<PranaApiSettings>(
                 configuration.GetSection(PranaApiSettings.SectionName));
