@@ -18,6 +18,7 @@ namespace UMS.Contracts.Auth
         string Email,
         string Phone,
         string Password,
+
            UserRole Role
     );
 }

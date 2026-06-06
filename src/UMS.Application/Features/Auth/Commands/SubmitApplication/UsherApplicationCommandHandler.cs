@@ -80,6 +80,13 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
                         IdDocumentUrl: idDocumentPath);
 
                     var usher = Usher.CreateApplication(user.Id, UsherData);
+                    if (!string.IsNullOrWhiteSpace(request.ExternalEventId) &&
+    !string.IsNullOrWhiteSpace(request.ExternalScheduleId))
+                    {
+                        usher.SetPendingApplication(
+                            request.ExternalEventId,
+                            request.ExternalScheduleId);
+                    }
                     await usherRepository.AddAsync(usher, cancellationToken);
                 }, cancellationToken);
                 try

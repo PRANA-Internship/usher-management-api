@@ -32,6 +32,7 @@ namespace UMS.api.Controllers
 
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
+
         [HttpGet("{usherId:guid}")]
         [ProducesResponseType(typeof(GetUsherApplicationDetailResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
