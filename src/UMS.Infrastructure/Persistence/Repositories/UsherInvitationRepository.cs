@@ -186,5 +186,13 @@ namespace UMS.Infrastructure.Persistence.Repositories
                  && a.Status != InvitationStatus.DECLINED)
         .Select(a => a.UsherId)
         .ToListAsync(ct);
+        public async Task<IReadOnlyList<UsherInvitation>> GetAcceptedByUsherAsync(
+        Guid usherId, CancellationToken ct = default) =>
+           await db.UsherInvitations
+                .Where(i => i.UsherId == usherId
+                 && i.Status == InvitationStatus.ACCEPTED)
+                .ToListAsync(ct);
+
     }
+
 }

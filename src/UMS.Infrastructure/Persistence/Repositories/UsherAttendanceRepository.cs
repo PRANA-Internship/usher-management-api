@@ -79,6 +79,11 @@ namespace UMS.Infrastructure.Persistence.Repositories
             IReadOnlyList<UsherAttendance> records,
             CancellationToken ct = default) =>
             await db.UsherAttendances.AddRangeAsync(records, ct);
+        public async Task<IReadOnlyList<UsherAttendance>> GetRawByUsherAsync(
+           Guid usherId, CancellationToken ct = default) =>
+           await db.UsherAttendances
+                   .Where(a => a.UsherId == usherId)
+                   .ToListAsync(ct);
     }
 
 }

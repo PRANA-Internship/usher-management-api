@@ -49,7 +49,8 @@ namespace UMS.Application.Common.Interfaces
         Task<IReadOnlyList<UsherScheduleApplication>> GetApprovedBySchedulePagedAsync(
             string scheduleId, int skip, int take, CancellationToken ct = default);
 
-
+        Task<IReadOnlyList<UsherScheduleApplication>> GetConfirmedByUsherAsync(
+            Guid usherId, CancellationToken ct = default);
 
 
 

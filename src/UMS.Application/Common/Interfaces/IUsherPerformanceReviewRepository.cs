@@ -24,5 +24,7 @@ namespace UMS.Application.Common.Interfaces
             string scheduleId,
             CancellationToken ct = default);
         Task<double> GetAverageRatingAsync(CancellationToken ct = default);
+        Task<IReadOnlyList<UsherPerformanceReview>> GetByUsherAsync(
+             Guid usherId, CancellationToken ct = default);
     }
 }
