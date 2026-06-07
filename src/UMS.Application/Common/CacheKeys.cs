@@ -15,7 +15,7 @@ namespace UMS.Infrastructure.Cache
 
         public static class TTL
         {
-            public static readonly TimeSpan Events = TimeSpan.FromMinutes(5);
+            public static readonly TimeSpan Events = TimeSpan.FromHours(12);
 
             public static readonly TimeSpan AdminDashboardDuration = TimeSpan.FromHours(1);
 
