@@ -72,6 +72,9 @@ namespace UMS.Domain.Entities
                 _languages = EnumHelpers.SerializeEnum(data.Languages),
                 ProfilePhotoUrl = data.ProfilePhotoUrl,
                 IdDocumentUrl = data.IdDocumentUrl,
+                PendingEventId = data.PendingEventId,
+                PendingScheduleId = data.PendingScheduleId
+                
             };
         }
 
@@ -199,5 +202,7 @@ public record CreateUsherData(
     IList<Sector>? Sector,
     IList<Language> Languages,
     string ProfilePhotoUrl,
-    string IdDocumentUrl
+    string IdDocumentUrl,
+    string? PendingEventId = null,
+    string? PendingScheduleId = null
 );

@@ -15,24 +15,27 @@ namespace UMS.Contracts.Usher
         int TotalPages
     );
     public sealed record GetUsherApplicationDetailResponse(
-        Guid UsherId,
-        Guid UserId,
-        string FullName,
-        string Email,
-        string Phone,
-        string Gender,
-        DateOnly DateOfBirth,
-        string Address,
-        string City,
-        string EmergencyContactName,
-        string EmergencyContactPhone,
-        EducationLevel EducationLevel,
-        string? ExperienceSummary,
-        List<Language> Languages,
-        List<Sector>? Sector,
-        string ProfilePhotoPath,
-        string IdDocumentPath,
-        ApprovalStatus ApplicationStatus,
-        DateTimeOffset SubmittedAt
-    );
+     Guid UsherId,
+     Guid UserId,
+     string FullName,
+     string Email,
+     string Phone,
+     string Gender,
+     DateOnly DateOfBirth,
+     string Address,
+     string City,
+     string EmergencyContactName,
+     string EmergencyContactPhone,
+     EducationLevel EducationLevel,
+     string? ExperienceSummary,
+     List<Language> Languages,
+     List<Sector>? Sector,
+     string ProfilePhotoPath,
+     string IdDocumentPath,
+     ApprovalStatus ApplicationStatus,
+     DateTimeOffset SubmittedAt,
+     string? PendingEventId,
+     string? PendingScheduleId
+ );
+
 }

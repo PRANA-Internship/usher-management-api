@@ -34,26 +34,31 @@ namespace UMS.Application.Features.Ushers.Queries.GetApplicationsDetail
 
             return Result<GetUsherApplicationDetailResponse>.Success(
                 new GetUsherApplicationDetailResponse(
-                    UsherId: usher.Id,
-                    UserId: usher.UserId,
-                    FullName: usher.User!.FullName,
-                    Email: usher.User.Email,
-                    Phone: usher.User.Phone,
-                    Gender: usher.Gender.ToString(),
-                    DateOfBirth: usher.DateOfBirth,
-                    Address: usher.Address,
-                    City: usher.City,
-                    EmergencyContactName: usher.EmergencyContactName,
-                    EmergencyContactPhone: usher.EmergencyContactPhone,
-                    EducationLevel: usher.EducationLevel,
-                    ExperienceSummary: usher.ExperienceSummary,
-                    Languages: usher.Languages.ToList(),
-                    Sector: usher.Sector.ToList(),
-                    ProfilePhotoPath: profilePhotoUrl,
-                    IdDocumentPath: idDocumentUrl,
-                    ApplicationStatus: usher.ApprovalStatus,
-                    SubmittedAt: usher.CreatedAt
-                ));
+    UsherId: usher.Id,
+    UserId: usher.UserId,
+    FullName: usher.User!.FullName,
+    Email: usher.User.Email,
+    Phone: usher.User.Phone,
+    Gender: usher.Gender.ToString(),
+    DateOfBirth: usher.DateOfBirth,
+    Address: usher.Address,
+    City: usher.City,
+    EmergencyContactName: usher.EmergencyContactName,
+    EmergencyContactPhone: usher.EmergencyContactPhone,
+    EducationLevel: usher.EducationLevel,
+    ExperienceSummary: usher.ExperienceSummary,
+    Languages: usher.Languages.ToList(),
+    Sector: usher.Sector.ToList(),
+    ProfilePhotoPath: profilePhotoUrl,
+    IdDocumentPath: idDocumentUrl,
+    ApplicationStatus: usher.ApprovalStatus,
+    SubmittedAt: usher.CreatedAt,
+    PendingEventId: usher.PendingEventId,
+    PendingScheduleId: usher.PendingScheduleId
+)
+            );
+
+
         }
     }
 }
