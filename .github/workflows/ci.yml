@@ -17,8 +17,8 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore
+    - - name: Restore dependencies
+     run: dotnet restore UMS.sln
 
     
     - name: Check formatting
