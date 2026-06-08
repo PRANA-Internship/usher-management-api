@@ -74,7 +74,7 @@ namespace UMS.Domain.Entities
                 IdDocumentUrl = data.IdDocumentUrl,
                 PendingEventId = data.PendingEventId,
                 PendingScheduleId = data.PendingScheduleId
-                
+
             };
         }
 
