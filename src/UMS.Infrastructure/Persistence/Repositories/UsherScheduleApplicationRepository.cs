@@ -134,6 +134,13 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync(ct);
+        public async Task<IReadOnlyList<UsherScheduleApplication>>
+    GetConfirmedByUsherAsync(
+        Guid usherId, CancellationToken ct = default) =>
+    await db.UsherScheduleApplications
+        .Where(a => a.UsherId == usherId
+                 && a.Status == InvitationStatus.ACCEPTED)
+        .ToListAsync(ct);
 
     }
 }

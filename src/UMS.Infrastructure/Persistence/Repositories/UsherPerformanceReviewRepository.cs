@@ -50,5 +50,10 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 (r.Grooming + r.Professionalism +
                  r.Communication + r.Teamwork + r.OverallScore) / 5.0, ct);
         }
+        public async Task<IReadOnlyList<UsherPerformanceReview>> GetByUsherAsync(
+        Guid usherId, CancellationToken ct = default) =>
+        await db.UsherPerformanceReviews
+        .Where(r => r.UsherId == usherId)
+        .ToListAsync(ct);
     }
 }

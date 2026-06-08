@@ -41,5 +41,8 @@ namespace UMS.Application.Common.Interfaces
         Task AddRangeAsync(
             IReadOnlyList<UsherAttendance> records,
             CancellationToken ct = default);
+        Task<IReadOnlyList<UsherAttendance>> GetRawByUsherAsync(
+            Guid usherId, CancellationToken ct = default);
+
     }
 }
