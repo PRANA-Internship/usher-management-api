@@ -41,5 +41,19 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 .Include(r => r.Usher).ThenInclude(u => u.User)
                 .Where(r => r.ExternalScheduleId == scheduleId)
                 .ToListAsync(ct);
+        public async Task<double> GetAverageRatingAsync(CancellationToken ct = default)
+        {
+            var hasAny = await db.UsherPerformanceReviews.AnyAsync(ct);
+            if (!hasAny) return 0;
+
+            return await db.UsherPerformanceReviews.AverageAsync(r =>
+                (r.Grooming + r.Professionalism +
+                 r.Communication + r.Teamwork + r.OverallScore) / 5.0, ct);
+        }
+        public async Task<IReadOnlyList<UsherPerformanceReview>> GetByUsherAsync(
+        Guid usherId, CancellationToken ct = default) =>
+        await db.UsherPerformanceReviews
+        .Where(r => r.UsherId == usherId)
+        .ToListAsync(ct);
     }
 }

@@ -70,6 +70,11 @@ namespace UMS.Infrastructure.Persistence.Repositories
 
             return (items, total);
         }
+        public Task<int> CountApprovedAsync(CancellationToken ct = default) =>
+            db.Ushers.CountAsync(u => u.ApprovalStatus == ApprovalStatus.APPROVED, ct);
+
+        public Task<int> CountPendingAsync(CancellationToken ct = default) =>
+              db.Ushers.CountAsync(u => u.ApprovalStatus == ApprovalStatus.PENDING, ct);
     }
 
 }
