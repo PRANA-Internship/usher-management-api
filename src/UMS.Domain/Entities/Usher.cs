@@ -34,7 +34,7 @@ namespace UMS.Domain.Entities
 
         public IReadOnlyList<Sector> Sector => EnumHelpers.ParseEnum<Sector>(_sectors);
         public IReadOnlyList<Language> Languages => EnumHelpers.ParseEnum<Language>(_languages);
-        
+
         public String? PendingEventId { get; private set; }
         public String? PendingScheduleId { get; private set; }
 
