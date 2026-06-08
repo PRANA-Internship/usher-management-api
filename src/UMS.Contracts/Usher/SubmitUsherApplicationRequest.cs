@@ -8,8 +8,6 @@ namespace UMS.Contracts.Usher
 
     public sealed class SubmitUsherApplicationRequest
     {
-        public string? ExternalEventId { get; set; }
-        public string? ExternalScheduleId { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
@@ -27,5 +25,8 @@ namespace UMS.Contracts.Usher
 
         public IFormFile ProfilePhoto { get; set; } = null!;
         public IFormFile IdDocument { get; set; } = null!;
+
+        public string? ExternalEventId { get; set; }
+        public string? ExternalScheduleId { get; set; }
     }
 }

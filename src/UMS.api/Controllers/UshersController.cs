@@ -51,7 +51,6 @@ namespace UMS.api.Controllers
                 Sector = request.Sector,
                 ProfilePhoto = request.ProfilePhoto,
                 IdDocument = request.IdDocument,
-
                 ExternalEventId = request.ExternalEventId,
                 ExternalScheduleId = request.ExternalScheduleId
             };
@@ -68,7 +67,6 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
-
         [HttpPost("set-password")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -89,7 +87,6 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
-
         [HttpGet("me")]
         [Authorize]
         [ProducesResponseType(typeof(GetUsherApplicationDetailResponse), StatusCodes.Status200OK)]
@@ -103,8 +100,6 @@ namespace UMS.api.Controllers
 
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
         }
-
-
         [HttpPatch("update-profile")]
         [Authorize]
         [Consumes("multipart/form-data")]
@@ -175,8 +170,6 @@ namespace UMS.api.Controllers
                 _ => BadRequest(result.Error)
             };
         }
-
-
         [HttpPost("invitations/respond")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -205,7 +198,6 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
-
         [HttpGet("schedules/me")]
         [Authorize]
         [ProducesResponseType(typeof(PagedScheduleResponse), StatusCodes.Status200OK)]

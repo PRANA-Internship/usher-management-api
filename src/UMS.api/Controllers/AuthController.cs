@@ -32,8 +32,6 @@ namespace UMS.api.Controllers
             var response = await sender.Send(command, ct);
             return Ok(response);
         }
-
-
         [HttpPost("refresh")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(RefreshTokenResponse), StatusCodes.Status200OK)]

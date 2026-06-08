@@ -32,7 +32,6 @@ namespace UMS.api.Controllers
 
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
-
         [HttpGet("{usherId:guid}")]
         [ProducesResponseType(typeof(GetUsherApplicationDetailResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -62,7 +61,6 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
-
         [HttpPost("{usherId:guid}/reject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
