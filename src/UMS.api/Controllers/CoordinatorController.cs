@@ -10,12 +10,15 @@ using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
 using UMS.Application.Features.Coordinator.Queries.GetConfirmed;
 using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
 using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
+using UMS.Application.Features.Coordinator.Queries.UsherDetail;
+using UMS.Application.Features.Coordinator.Queries.UsherEventHistory;
 using UMS.Application.Features.Events.Commands.InviteUsher;
 using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
 using UMS.Contracts.Coordinator;
 using UMS.Contracts.Coordinator.Attendance;
 using UMS.Contracts.Coordinator.Performance;
+using UMS.Contracts.Coordinator.Usher;
 using UMS.Contracts.Events;
 using UMS.Contracts.Usher;
 using UMS.Domain.Entities;
@@ -301,6 +304,42 @@ namespace UMS.api.Controllers
                     "REVIEW_003" => BadRequest(result.Error),
                     "REVIEW_004" => BadRequest(result.Error),
                     "REVIEW_005" => Forbid(),
+                    _ => BadRequest(result.Error)
+                };
+        }
+        [HttpGet("{usherId}/detail")]
+        [ProducesResponseType(typeof(UsherDetailResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUsherDetail(
+            Guid usherId,
+            CancellationToken ct)
+        {
+            var result = await sender.Send(
+                new UsherDetailQuery(usherId), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.Error.Code switch
+                {
+                    "USHER_004" => NotFound(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
+        [HttpGet("{usherId}/events")]
+        [ProducesResponseType(typeof(UsherEventHistoryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUsherEventHistory(
+       Guid usherId,
+       CancellationToken ct)
+        {
+            var result = await sender.Send(
+                new UsherEventHistoryQuery(usherId), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.Error.Code switch
+                {
+                    "USHER_004" => NotFound(result.Error),
                     _ => BadRequest(result.Error)
                 };
         }
