@@ -33,8 +33,8 @@ namespace UMS.tests.Entities
         Languages: [Language.English, Language.French],
         ProfilePhotoUrl: "profile-photos/test-photo.jpg",
         IdDocumentUrl: "id-documents/test-doc.pdf",
-        PendingEventId: null,        
-        PendingScheduleId: null   
+        PendingEventId: null,
+        PendingScheduleId: null
         ));
 
         public static Usher Default() => new UsherBuilder().Build();
@@ -232,8 +232,8 @@ namespace UMS.tests.Entities
         Languages: [Language.English, Language.French],
         ProfilePhotoUrl: "profile-photos/test-photo.jpg",
         IdDocumentUrl: "id-documents/test-doc.pdf",
-        PendingEventId: null,       
-        PendingScheduleId: null   
+        PendingEventId: null,
+        PendingScheduleId: null
         );
 
         private static void ApproveUsher(Usher usher, Guid? adminId = null) =>
