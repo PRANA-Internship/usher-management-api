@@ -50,7 +50,9 @@ namespace UMS.api.Controllers
                 Languages = request.Languages,
                 Sector = request.Sector,
                 ProfilePhoto = request.ProfilePhoto,
-                IdDocument = request.IdDocument
+                IdDocument = request.IdDocument,
+                ExternalEventId = request.ExternalEventId,
+                ExternalScheduleId = request.ExternalScheduleId
             };
 
             var result = await sender.Send(command, ct);
@@ -65,7 +67,6 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
-
         [HttpPost("set-password")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -197,7 +198,6 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
-
         [HttpGet("schedules/me")]
         [Authorize]
         [ProducesResponseType(typeof(PagedScheduleResponse), StatusCodes.Status200OK)]
