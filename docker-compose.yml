@@ -12,7 +12,7 @@
 # Then:
 #   docker compose up --build
 #
-# API: http://localhost:8080  |  MinIO console: http://localhost:9001 (minioadmin / minioadmin)
+# API: http://localhost:8080  |  MinIO console: http://localhost:9001 | Redis: 6379
 
 services:
   postgres:
@@ -59,6 +59,16 @@ services:
     entrypoint: /bin/sh
     command: -c "mc alias set local http://minio:9000 minioadmin minioadmin && mc mb local/ums-files --ignore-existing"
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   api:
     build:
       context: .
@@ -67,6 +77,8 @@ services:
       - .env
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
