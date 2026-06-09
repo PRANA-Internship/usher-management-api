@@ -29,5 +29,8 @@ namespace UMS.Application.Common.Interfaces
             UserStatus? status,
             string? searchName,
             CancellationToken ct = default);
+        Task<IReadOnlyList<Guid>> GetUserIdsByRoleAsync(
+            UserRole role, CancellationToken ct = default);
+
     }
 }
