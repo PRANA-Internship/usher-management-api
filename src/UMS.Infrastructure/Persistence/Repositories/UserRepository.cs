@@ -95,6 +95,16 @@ namespace UMS.Infrastructure.Persistence.Repositories
                 .ToListAsync(ct);
 
             return ((IReadOnlyList<User>)items, totalCount);
+
         }
+
+        public async Task<IReadOnlyList<Guid>>
+            GetUserIdsByRoleAsync(
+                UserRole role, CancellationToken ct = default) =>
+            await db.Users
+                .Where(u => u.Role == role)
+                .Select(u => u.Id)
+                .ToListAsync(ct);
+
     }
 }
