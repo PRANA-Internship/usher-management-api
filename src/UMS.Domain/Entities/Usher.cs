@@ -10,7 +10,6 @@ namespace UMS.Domain.Entities
     public class Usher : BaseEntity
     {
         public Guid UserId { get; private set; }
-
         public Gender Gender { get; private set; }
         public DateOnly DateOfBirth { get; private set; }
         public string Address { get; private set; } = string.Empty;
@@ -36,6 +35,8 @@ namespace UMS.Domain.Entities
         public IReadOnlyList<Sector> Sector => EnumHelpers.ParseEnum<Sector>(_sectors);
         public IReadOnlyList<Language> Languages => EnumHelpers.ParseEnum<Language>(_languages);
 
+        public String? PendingEventId { get; private set; }
+        public String? PendingScheduleId { get; private set; }
 
         private Usher() { }
         public static Usher CreateApplication(Guid userId, CreateUsherData data)
@@ -70,6 +71,8 @@ namespace UMS.Domain.Entities
                 _languages = EnumHelpers.SerializeEnum(data.Languages),
                 ProfilePhotoUrl = data.ProfilePhotoUrl,
                 IdDocumentUrl = data.IdDocumentUrl,
+                PendingEventId = data.PendingEventId,
+                PendingScheduleId = data.PendingScheduleId
             };
         }
 
@@ -135,6 +138,7 @@ namespace UMS.Domain.Entities
                 throw new ArgumentException("Duplicate sectors are not allowed.");
         }
 
+
         public void UpdateProfile(
     string? address = null,
     string? city = null,
@@ -164,6 +168,7 @@ namespace UMS.Domain.Entities
             ProfilePhotoUrl = url;
             UpdatedAt = DateTimeOffset.UtcNow;
         }
+
     }
 }
 
@@ -181,5 +186,7 @@ public record CreateUsherData(
     IList<Sector>? Sector,
     IList<Language> Languages,
     string ProfilePhotoUrl,
-    string IdDocumentUrl
+    string IdDocumentUrl,
+    string? PendingEventId,
+    string? PendingScheduleId
 );

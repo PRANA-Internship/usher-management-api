@@ -78,7 +78,11 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
                         Languages: request.Languages,
                         Sector: request.Sector,
                         ProfilePhotoUrl: profilePhotoPath,
-                        IdDocumentUrl: idDocumentPath);
+                        IdDocumentUrl: idDocumentPath,
+                        PendingEventId: request.ExternalEventId,
+                        PendingScheduleId: request.ExternalScheduleId
+                        );
+
 
                     var usher = Usher.CreateApplication(user.Id, UsherData);
                     await usherRepository.AddAsync(usher, cancellationToken);

@@ -25,5 +25,8 @@ namespace UMS.Contracts.Usher
 
         public IFormFile ProfilePhoto { get; set; } = null!;
         public IFormFile IdDocument { get; set; } = null!;
+
+        public string? ExternalEventId { get; set; }
+        public string? ExternalScheduleId { get; set; }
     }
 }

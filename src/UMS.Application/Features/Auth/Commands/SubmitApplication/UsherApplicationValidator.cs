@@ -29,6 +29,8 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
         public List<Sector>? Sector { get; init; } = [];
         public IFormFile ProfilePhoto { get; init; } = null!;
         public IFormFile IdDocument { get; init; } = null!;
+        public string? ExternalEventId { get; init; }
+        public string? ExternalScheduleId { get; init; }
     }
     public sealed class SubmitUsherApplicationValidator
     : AbstractValidator<SubmitUsherApplicationCommand>
@@ -89,6 +91,12 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
                     .WithMessage("ID document must not exceed 10MB.")
                 .Must(f => AllowedDocumentTypes.Contains(f.ContentType.ToLowerInvariant()))
                     .WithMessage("ID document must be JPEG, PNG, or PDF.");
+
+            RuleFor(x => x.ExternalEventId)
+.MaximumLength(100);
+
+            RuleFor(x => x.ExternalScheduleId)
+                .MaximumLength(100);
         }
     }
 }
