@@ -61,6 +61,7 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
+
         [HttpPost("{usherId:guid}/reject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
