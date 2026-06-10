@@ -5,12 +5,12 @@ using System.Security.Claims;
 using UMS.Application.Features.Events.Commands.AssignCoordinator;
 using UMS.Application.Features.Events.Commands.RemoveCoordinator;
 using UMS.Application.Features.Events.Queries.GetEvents;
-using UMS.Application.Features.Events.Queries.GetEvents;
 using UMS.Contracts.Events;
-using UMS.Domain.Entities;
+
 
 namespace UMS.api.Controllers
 {
+    public record UnassignCoordinatorRequest(string eventId, string scheduleId);
 
     [ApiController]
     [Route("api/events")]
@@ -77,9 +77,30 @@ namespace UMS.api.Controllers
                     _ => BadRequest(result.Error)
                 };
         }
+
+        [HttpDelete("schedules/remove")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UnassignCoordinator(
+            [FromBody] UnassignCoordinatorRequest request,
+            CancellationToken ct)
+        {
+            var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var result = await sender.Send(new RemoveCoordinatorCommand(
+                ExternalEventId: request.eventId,
+                ExternalScheduleId: request.scheduleId,
+                AdminId: adminId), ct);
+
+            return result.IsSuccess
+                ? Ok(new { Message = "Coordinator unassigned successfully", ScheduleId = request.scheduleId })
+                : result.Error.Code switch
+                {
+                    "SCHEDULE_002" => NotFound(result.Error),
+                    "SCHEDULE_008" => BadRequest(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
     }
-
 }
-
-
-
