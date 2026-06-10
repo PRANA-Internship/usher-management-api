@@ -44,6 +44,7 @@ namespace UMS.Domain.Common
             public static readonly Error AlreadyAssigned = new("SCHEDULE_004", "This schedule already has a coordinator assigned.");
             public static readonly Error ExternalApiFailed = new("SCHEDULE_005", "Failed to reach events service. Please try again.");
             public static readonly Error InvalidCoordinator = new("SCHEDULE_006", "User is not an event coordinator.");
+            public static readonly Error AssignmentNotFound = new("SCHEDULE_008", "No coordinator assignment found for this schedule.");
         }
 
         public static class InvitationErrors
