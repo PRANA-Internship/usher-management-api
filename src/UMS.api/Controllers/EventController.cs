@@ -1,8 +1,10 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UMS.Application.Features.Events.Commands.AssignCoordinator;
+using UMS.Application.Features.Events.Commands.RemoveCoordinator;
+using UMS.Application.Features.Events.Queries.GetEvents;
 using UMS.Application.Features.Events.Queries.GetEvents;
 using UMS.Contracts.Events;
 using UMS.Domain.Entities;
