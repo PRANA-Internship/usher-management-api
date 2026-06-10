@@ -11,6 +11,7 @@ using UMS.Domain.Entities;
 using UMS.Domain.Enums;
 using UMS.Infrastructure.Cache;
 using static UMS.Domain.Common.Error;
+using Microsoft.Extensions.Logging;
 
 namespace UMS.Application.Features.Auth.Commands.ApproveApplication
 {
@@ -21,7 +22,10 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
         IEmailVerificationTokenRepository tokenRepository,
         IEmailService emailService,
         IUnitOfWork unitOfWork,
-        ICacheService cache
+        ICacheService cache,
+        IUsherScheduleApplicationRepository applicationRepository,
+        IEventsApiClient eventsApiClient,
+        ILogger<ApproveUsherApplicationCommandHandler> logger
     ) : IRequestHandler<ApproveUsherApplicationCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(
@@ -46,14 +50,48 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
                 validFor: TimeSpan.FromHours(48));
 
             await unitOfWork.ExecuteInTransactionAsync(async () =>
-            {
-                usher.ApproveUsher(command.AdminId);
-                await usherRepository.UpdateAsync(usher, cancellationToken);
-                user.SetRole(UserRole.USHER);
-                await userRepository.UpdateAsync(user, cancellationToken);
+  {
+      usher.ApproveUsher(command.AdminId);
+      await usherRepository.UpdateAsync(usher, cancellationToken);
 
-                await tokenRepository.AddAsync(verificationToken, cancellationToken);
-            }, cancellationToken);
+      user.SetRole(UserRole.USHER);
+      await userRepository.UpdateAsync(user, cancellationToken);
+
+      await tokenRepository.AddAsync(verificationToken, cancellationToken);
+
+      if (!string.IsNullOrWhiteSpace(usher.PendingEventId) &&
+          !string.IsNullOrWhiteSpace(usher.PendingScheduleId))
+      {
+          try
+          {
+              var schedule = await eventsApiClient.GetScheduleByIdAsync(
+                  usher.PendingEventId,
+                  usher.PendingScheduleId,
+                  cancellationToken);
+
+              if (schedule is not null)
+              {
+                  var application = UsherScheduleApplication.Create(
+                      externalScheduleId: usher.PendingScheduleId,
+                      externalEventId: usher.PendingEventId,
+                      usherId: usher.Id,
+                      startDate: DateOnly.Parse(schedule.StartDate),
+                      endDate: DateOnly.Parse(schedule.EndDate));
+
+                  await applicationRepository.AddAsync(application, cancellationToken);
+
+              }
+          }
+          catch (Exception ex)
+          {
+              logger.LogWarning(ex,
+                  "Failed to auto-enroll usher {UsherId} into schedule {ScheduleId}. Approval will proceed.",
+                  usher.Id, usher.PendingScheduleId);
+          }
+      }
+
+  }, cancellationToken);
+
 
             await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
             // Send password setup email outside transaction
@@ -70,6 +108,8 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
             }
 
             return Result<Guid>.Success(usher.Id);
+
+
         }
     }
 
