@@ -78,7 +78,7 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
                   application,
                   cancellationToken);
 
-          
+
 
               await usherRepository.UpdateAsync(
                   usher,
