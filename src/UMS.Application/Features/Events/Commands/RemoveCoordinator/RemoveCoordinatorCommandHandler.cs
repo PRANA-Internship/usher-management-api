@@ -5,7 +5,6 @@ using UMS.Application.Common.Models;
 using UMS.Contracts.Events;
 using UMS.Domain.Common;
 using MediatR;
-using System;
 using System.Threading;
 using static UMS.Domain.Common.Error;
 
@@ -16,18 +15,15 @@ namespace UMS.Application.Features.Events.Commands.RemoveCoordinator
         private readonly IScheduleAssignmentRepository _assignmentRepository;
         private readonly ICacheService _cache;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IEventsApiClient _eventsApiClient;
 
         public RemoveCoordinatorCommandHandler(
             IScheduleAssignmentRepository assignmentRepository,
             ICacheService cache,
-            IUnitOfWork unitOfWork,
-            IEventsApiClient eventsApiClient)
+            IUnitOfWork unitOfWork)
         {
             _assignmentRepository = assignmentRepository;
             _cache = cache;
             _unitOfWork = unitOfWork;
-            _eventsApiClient = eventsApiClient;
         }
 
         public async Task<Result<RemoveCoordinatorResponse>> Handle(
