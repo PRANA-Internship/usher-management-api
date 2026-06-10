@@ -24,8 +24,7 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
         IUnitOfWork unitOfWork,
         ICacheService cache,
         IUsherScheduleApplicationRepository applicationRepository,
-        IEventsApiClient eventsApiClient,
-        ILogger<ApproveUsherApplicationCommandHandler> logger
+        IEventsApiClient eventsApiClient
     ) : IRequestHandler<ApproveUsherApplicationCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(
@@ -82,11 +81,9 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
 
               }
           }
-          catch (Exception ex)
+          catch (Exception)
           {
-              logger.LogWarning(ex,
-                  "Failed to auto-enroll usher {UsherId} into schedule {ScheduleId}. Approval will proceed.",
-                  usher.Id, usher.PendingScheduleId);
+
           }
       }
 
