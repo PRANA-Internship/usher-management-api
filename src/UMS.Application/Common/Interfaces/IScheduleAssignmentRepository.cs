@@ -13,8 +13,8 @@ namespace UMS.Application.Common.Interfaces
         Task<IReadOnlyList<ScheduleAssignment>> GetByCoordinatorIdAsync(
              Guid coordinatorId, CancellationToken ct = default);
 
-        Task<IReadOnlyList<ScheduleAssignment>> GetAllAsync(
-            CancellationToken ct = default);
+        Task<IReadOnlyList<ScheduleAssignment>> GetAllAsync(CancellationToken ct = default);
+        Task DeleteAsync(ScheduleAssignment assignment, CancellationToken ct = default);
 
     }
 

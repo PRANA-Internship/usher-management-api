@@ -17,13 +17,22 @@ namespace UMS.Infrastructure.Persistence.Repositories
               .Include(a => a.Coordinator)
               .FirstOrDefaultAsync(a => a.ExternalScheduleId == externalScheduleId, ct);
 
-        public async Task AddAsync(ScheduleAssignment assignment, CancellationToken ct = default) =>
+        public async Task AddAsync(ScheduleAssignment assignment, CancellationToken ct = default)
+        {
             await db.ScheduleAssignments.AddAsync(assignment, ct);
+            await db.SaveChangesAsync(ct);
+        }
 
-        public Task UpdateAsync(ScheduleAssignment assignment, CancellationToken ct = default)
+        public async Task UpdateAsync(ScheduleAssignment assignment, CancellationToken ct = default)
         {
             db.ScheduleAssignments.Update(assignment);
-            return Task.CompletedTask;
+            await db.SaveChangesAsync(ct);
+        }
+
+        public async Task DeleteAsync(ScheduleAssignment assignment, CancellationToken ct = default)
+        {
+            db.ScheduleAssignments.Remove(assignment);
+            await db.SaveChangesAsync(ct);
         }
         public async Task<IReadOnlyList<ScheduleAssignment>> GetByCoordinatorIdAsync(
               Guid coordinatorId, CancellationToken ct = default) =>
