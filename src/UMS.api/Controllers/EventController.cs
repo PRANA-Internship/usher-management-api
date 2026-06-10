@@ -10,7 +10,6 @@ using UMS.Contracts.Events;
 
 namespace UMS.api.Controllers
 {
-    public record UnassignCoordinatorRequest(string eventId, string scheduleId);
 
     [ApiController]
     [Route("api/events")]
@@ -83,7 +82,7 @@ namespace UMS.api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UnassignCoordinator(
-            [FromBody] UnassignCoordinatorRequest request,
+            [FromBody] RemoveCoordinatorRequest request,
             CancellationToken ct)
         {
             var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
