@@ -11,7 +11,6 @@ using UMS.Domain.Entities;
 using UMS.Domain.Enums;
 using UMS.Infrastructure.Cache;
 using static UMS.Domain.Common.Error;
-using Microsoft.Extensions.Logging;
 
 namespace UMS.Application.Features.Auth.Commands.ApproveApplication
 {
