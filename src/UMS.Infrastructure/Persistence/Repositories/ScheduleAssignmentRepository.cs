@@ -47,6 +47,13 @@ namespace UMS.Infrastructure.Persistence.Repositories
             return await db.ScheduleAssignments
                 .ToListAsync(ct);
         }
+        public Task<bool> ExistsAsync(
+            string externalScheduleId,
+            string externalEventId,
+            CancellationToken ct = default) =>
+            db.ScheduleAssignments
+                .AnyAsync(a => a.ExternalScheduleId == externalScheduleId &&
+                       a.ExternalEventId == externalEventId, ct);
     }
 
 

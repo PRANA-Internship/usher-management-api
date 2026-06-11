@@ -23,7 +23,8 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
         IUnitOfWork unitOfWork,
         ICacheService cache,
         IUsherScheduleApplicationRepository applicationRepository,
-        IEventsApiClient eventsApiClient
+        IEventsApiClient eventsApiClient,
+        IScheduleAssignmentRepository scheduleAssignmentRepository
     ) : IRequestHandler<ApproveUsherApplicationCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(
@@ -58,7 +59,7 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
       await tokenRepository.AddAsync(verificationToken, cancellationToken);
 
       if (!string.IsNullOrWhiteSpace(usher.PendingEventId) &&
-          !string.IsNullOrWhiteSpace(usher.PendingScheduleId))
+        !string.IsNullOrWhiteSpace(usher.PendingScheduleId))
       {
           try
           {
@@ -69,15 +70,22 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
 
               if (schedule is not null)
               {
-                  var application = UsherScheduleApplication.Create(
-                      externalScheduleId: usher.PendingScheduleId,
-                      externalEventId: usher.PendingEventId,
-                      usherId: usher.Id,
-                      startDate: DateOnly.Parse(schedule.StartDate),
-                      endDate: DateOnly.Parse(schedule.EndDate));
+                  var isAssigned = await scheduleAssignmentRepository.ExistsAsync(
+                      usher.PendingScheduleId,
+                      usher.PendingEventId,
+                      cancellationToken);
 
-                  await applicationRepository.AddAsync(application, cancellationToken);
+                  if (isAssigned)
+                  {
+                      var application = UsherScheduleApplication.Create(
+                          externalScheduleId: usher.PendingScheduleId,
+                          externalEventId: usher.PendingEventId,
+                          usherId: usher.Id,
+                          startDate: DateOnly.Parse(schedule.StartDate),
+                          endDate: DateOnly.Parse(schedule.EndDate));
 
+                      await applicationRepository.AddAsync(application, cancellationToken);
+                  }
               }
           }
           catch (Exception)
