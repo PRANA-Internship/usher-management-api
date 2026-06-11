@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Infrastructure.Cache;

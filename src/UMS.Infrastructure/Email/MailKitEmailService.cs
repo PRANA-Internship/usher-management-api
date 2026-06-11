@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Extensions.Options;
-using MimeKit;
+
 using MailKit.Net.Smtp;
 using MailKit.Security;
+
+using Microsoft.Extensions.Options;
+
+using MimeKit;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Infrastructure.Settings;
 

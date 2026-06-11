@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+
+using Microsoft.Extensions.Logging;
+
+using StackExchange.Redis;
+
 using UMS.Application.Common.Interfaces;
 
 namespace UMS.Infrastructure.Cache

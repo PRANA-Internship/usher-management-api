@@ -1,15 +1,18 @@
 ﻿
 
-using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Auth;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
 using UMS.Infrastructure.Cache;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Auth.Commands.ApproveApplication

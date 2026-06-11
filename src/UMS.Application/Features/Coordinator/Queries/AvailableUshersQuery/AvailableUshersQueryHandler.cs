@@ -1,11 +1,14 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Coordinator;
 using UMS.Domain.Common;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery

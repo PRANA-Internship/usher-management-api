@@ -1,10 +1,14 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+
+using FluentValidation;
+
+using MediatR;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using UMS.Application.Common.Behaviours;
 
 namespace UMS.Application

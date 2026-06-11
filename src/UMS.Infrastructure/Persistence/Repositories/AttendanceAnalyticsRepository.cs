@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using Microsoft.EntityFrameworkCore;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Admin.Dashboard;
 using UMS.Infrastructure.Persistance.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace UMS.Infrastructure.Persistence.Repositories
 {

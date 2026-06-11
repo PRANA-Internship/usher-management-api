@@ -1,8 +1,11 @@
-﻿using FluentValidation;
-using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using FluentValidation;
+
+using MediatR;
+
 using UMS.Domain.Common;
 
 namespace UMS.Application.Features.Staff.Commands.SetUpPassword

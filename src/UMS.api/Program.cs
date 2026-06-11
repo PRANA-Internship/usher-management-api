@@ -1,8 +1,11 @@
-using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+
+using Scalar.AspNetCore;
+
 using UMS.Application;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;

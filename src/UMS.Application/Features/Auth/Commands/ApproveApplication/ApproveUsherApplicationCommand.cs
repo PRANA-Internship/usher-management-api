@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using FluentValidation;
-using UMS.Domain.Common;
+
 using MediatR;
+
+using UMS.Domain.Common;
 
 
 namespace UMS.Application.Features.Auth.Commands.ApproveApplication

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using UMS.Domain.Entities;
 
 namespace UMS.Application.Common.Interfaces

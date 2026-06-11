@@ -14,5 +14,3 @@ namespace UMS.Application.Common.Interfaces
     // we can roll back the entire transaction to maintain data integrity. 
 
 }
-
-
