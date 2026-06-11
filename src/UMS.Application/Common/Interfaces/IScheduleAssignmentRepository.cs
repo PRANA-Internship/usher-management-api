@@ -16,6 +16,7 @@ namespace UMS.Application.Common.Interfaces
 
         Task<IReadOnlyList<ScheduleAssignment>> GetAllAsync(CancellationToken ct = default);
         Task DeleteAsync(ScheduleAssignment assignment, CancellationToken ct = default);
+        Task<bool> ExistsAsync(string externalScheduleId, string externalEventId, CancellationToken ct = default);
 
     }
 
