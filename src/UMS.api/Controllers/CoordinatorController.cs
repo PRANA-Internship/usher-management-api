@@ -1,7 +1,10 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+
+using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+
 using UMS.Application.Features.Coordinator.Commands.MarkAttendance;
 using UMS.Application.Features.Coordinator.Commands.PerformanceReview;
 using UMS.Application.Features.Coordinator.Commands.ReviewApplication;

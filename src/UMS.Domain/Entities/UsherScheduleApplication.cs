@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Text;
-using UMS.Domain.Enums;
+
 using UMS.Domain.Common;
+using UMS.Domain.Enums;
 namespace UMS.Domain.Entities
 {
     public class UsherScheduleApplication : BaseEntity

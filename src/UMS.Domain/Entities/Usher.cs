@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UMS.Domain.Enums;
+
 using UMS.Domain.Common;
+using UMS.Domain.Enums;
 using UMS.Domain.Helpers;
 
 namespace UMS.Domain.Entities

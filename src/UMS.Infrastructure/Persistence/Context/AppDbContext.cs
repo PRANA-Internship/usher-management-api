@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+
+using Microsoft.EntityFrameworkCore;
+
 using UMS.Domain.Entities;
 
 namespace UMS.Infrastructure.Persistance.Context

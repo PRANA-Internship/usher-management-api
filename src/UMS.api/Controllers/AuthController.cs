@@ -1,8 +1,11 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+
+using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using System.Security.Claims;
+
 using UMS.Application.Features.Auth.Commands.CreateUser;
 using UMS.Application.Features.Auth.Commands.ForgotPassword;
 using UMS.Application.Features.Auth.Commands.Login;

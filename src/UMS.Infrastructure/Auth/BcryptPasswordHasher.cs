@@ -1,7 +1,8 @@
-﻿using UMS.Application.Common.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using UMS.Application.Common.Interfaces;
 
 namespace UMS.Infrastructure.Auth
 {
