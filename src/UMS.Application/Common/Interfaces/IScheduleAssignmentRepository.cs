@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using UMS.Domain.Entities;
 
 namespace UMS.Application.Common.Interfaces
@@ -15,6 +16,7 @@ namespace UMS.Application.Common.Interfaces
 
         Task<IReadOnlyList<ScheduleAssignment>> GetAllAsync(CancellationToken ct = default);
         Task DeleteAsync(ScheduleAssignment assignment, CancellationToken ct = default);
+        Task<bool> ExistsAsync(string externalScheduleId, string externalEventId, CancellationToken ct = default);
 
     }
 

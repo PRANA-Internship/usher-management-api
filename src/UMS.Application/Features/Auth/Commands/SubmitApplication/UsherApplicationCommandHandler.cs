@@ -1,11 +1,14 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Usher;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Auth.Commands.SubmitApplication

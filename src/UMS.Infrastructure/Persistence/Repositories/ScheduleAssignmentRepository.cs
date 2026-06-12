@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UMS.Application.Common.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
+
+using UMS.Application.Common.Interfaces;
 using UMS.Domain.Entities;
 using UMS.Infrastructure.Persistance.Context;
 
@@ -47,6 +49,13 @@ namespace UMS.Infrastructure.Persistence.Repositories
             return await db.ScheduleAssignments
                 .ToListAsync(ct);
         }
+        public Task<bool> ExistsAsync(
+            string externalScheduleId,
+            string externalEventId,
+            CancellationToken ct = default) =>
+            db.ScheduleAssignments
+                .AnyAsync(a => a.ExternalScheduleId == externalScheduleId &&
+                       a.ExternalEventId == externalEventId, ct);
     }
 
 

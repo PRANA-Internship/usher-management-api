@@ -1,13 +1,17 @@
-﻿using FluentValidation;
-using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using FluentValidation;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Usher;
 using UMS.Domain.Common;
 using UMS.Domain.Enums;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Ushers.Queries.GetConfirmedApplication

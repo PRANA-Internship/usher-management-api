@@ -1,7 +1,9 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Domain.Common;
 
 namespace UMS.Application.Features.Ushers.Command.RespondToInvitaion

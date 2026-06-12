@@ -1,6 +1,8 @@
 ﻿using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using UMS.Application.Features.Events.Queries.GetPublicEvents;
 using UMS.Contracts.Events;
 

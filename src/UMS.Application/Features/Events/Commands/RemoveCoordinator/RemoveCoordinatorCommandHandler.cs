@@ -1,11 +1,14 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Events;
 using UMS.Domain.Common;
-using MediatR;
-using System.Threading;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Events.Commands.RemoveCoordinator

@@ -1,9 +1,13 @@
-﻿using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using FluentValidation;
+
+using MediatR;
+
+using Microsoft.AspNetCore.Http;
+
 using UMS.Contracts.Usher;
 using UMS.Domain.Common;
 using UMS.Domain.Enums;

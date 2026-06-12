@@ -20,9 +20,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    
     - name: Check formatting
-      run: dotnet format --verify-no-changes --verbosity diagnostic
+      run: dotnet format UMS.slnx --verify-no-changes --verbosity diagnostic
 
     - name: Build
       run: dotnet build --no-restore

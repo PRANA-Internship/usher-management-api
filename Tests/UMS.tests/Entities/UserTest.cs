@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Xunit;
+
+using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
-using UMS.Domain.Common;
+
+using Xunit;
 namespace UMS.tests.Entities
 {
     public class UserTest

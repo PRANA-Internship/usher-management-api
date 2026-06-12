@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -25,4 +25,12 @@ namespace UMS.Application.Common.Models
       ExternalEventDto Event,
       IReadOnlyList<ScheduleDto> Schedules
   );
+
+    public sealed record ExternalPaginatedEventsDto(
+        IReadOnlyList<ExternalEventDto> Events,
+        int PageNumber,
+        int PageSize,
+        bool HasNextPage,
+        bool HasPreviousPage
+    );
 }
