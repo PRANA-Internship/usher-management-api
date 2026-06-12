@@ -52,6 +52,34 @@ namespace UMS.Infrastructure.ExternalApi
             }
         }
 
+        public async Task<ExternalPaginatedEventsDto> GetPaginatedEventsAsync(
+            int pageNumber, int pageSize, CancellationToken ct = default)
+        {
+            var cacheKey = CacheKeys.PaginatedEvents(pageNumber, pageSize);
+            var cached = await cache.GetAsync<ExternalPaginatedEventsDto>(cacheKey, ct);
+            if (cached is not null)
+                return cached;
+
+            try
+            {
+                var response = await httpClient.GetAsync($"events/public?pageNumber={pageNumber}&pageSize={pageSize}", ct);
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync(ct);
+                var events = JsonSerializer.Deserialize<List<ExternalEventDto>>(json, JsonOptions) ?? [];
+
+                var result = new ExternalPaginatedEventsDto(events, pageNumber, pageSize, events.Count == pageSize, pageNumber > 1);
+
+                await cache.SetAsync(cacheKey, result, CacheKeys.TTL.Events, ct);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to fetch paginated events from Prana Events API.");
+                throw;
+            }
+        }
+
         public async Task<ExternalEventDetailDto?> GetEventByIdAsync(
             string eventId, CancellationToken ct = default)
         {

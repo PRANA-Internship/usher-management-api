@@ -9,6 +9,7 @@ using UMS.Application.Features.Events.Commands.AssignCoordinator;
 using UMS.Application.Features.Events.Commands.RemoveCoordinator;
 using UMS.Application.Features.Events.Queries.GetEvents;
 using UMS.Contracts.Events;
+using UMS.Domain.Common;
 
 
 namespace UMS.api.Controllers
@@ -22,11 +23,17 @@ namespace UMS.api.Controllers
     {
 
         [HttpGet]
-        [ProducesResponseType(typeof(IReadOnlyList<EventSummaryResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status502BadGateway)]
-        public async Task<IActionResult> GetEvents(CancellationToken ct)
+        [ProducesResponseType(typeof(PaginatedEventsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status502BadGateway)]
+        public async Task<IActionResult> GetEvents(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken ct = default)
         {
-            var result = await sender.Send(new GetEventsQuery(), ct);
+            var validatedPageNumber = pageNumber < 1 ? 1 : pageNumber;
+            var validatedPageSize = pageSize < 10 ? 10 : (pageSize > 100 ? 100 : pageSize);
+
+            var result = await sender.Send(new GetEventsQuery(validatedPageNumber, validatedPageSize), ct);
 
             return result.IsSuccess
                 ? Ok(result.Value)

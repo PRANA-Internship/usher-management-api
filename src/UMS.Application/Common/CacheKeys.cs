@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,6 +12,7 @@ namespace UMS.Infrastructure.Cache
         public static string AdminAttendanceTrend => "admin:attendance:trend";
 
         public static string EventById(string id) => $"prana:events:{id}";
+        public static string PaginatedEvents(int pageNumber, int pageSize) => $"prana:events:page:{pageNumber}:size:{pageSize}";
 
         public static class TTL
         {
