@@ -31,7 +31,7 @@ namespace UMS.api.Controllers
             CancellationToken ct = default)
         {
             var validatedPageNumber = pageNumber < 1 ? 1 : pageNumber;
-            var validatedPageSize = pageSize < 1 ? 10 : (pageSize > 100 ? 100 : pageSize);
+            var validatedPageSize = pageSize < 10 ? 10 : (pageSize > 100 ? 100 : pageSize);
 
             var result = await sender.Send(new GetEventsQuery(validatedPageNumber, validatedPageSize), ct);
 
