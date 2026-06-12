@@ -23,7 +23,6 @@ namespace UMS.api.Controllers
     {
 
         [HttpGet]
-        [AllowAnonymous]
         [ProducesResponseType(typeof(PaginatedEventsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Error), StatusCodes.Status502BadGateway)]
         public async Task<IActionResult> GetEvents(
