@@ -1,7 +1,9 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Contracts.Notification;
 using UMS.Domain.Common;
 

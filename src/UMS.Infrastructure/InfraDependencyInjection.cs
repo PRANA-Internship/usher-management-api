@@ -1,13 +1,17 @@
+using System.Security.Claims;
 using System.Text;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
 using Minio;
+
 using StackExchange.Redis;
-using System.Security.Claims;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Services;
 using UMS.Infrastructure.Auth;

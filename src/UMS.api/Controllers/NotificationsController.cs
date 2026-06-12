@@ -1,11 +1,14 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+
+using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+
 using UMS.Application.Features.Notification.Command;
+using UMS.Application.Features.Notification.Query;
 using UMS.Contracts.Notification;
 using UMS.Domain.Entities;
-using UMS.Application.Features.Notification.Query;
 
 namespace UMS.api.Controllers
 {
