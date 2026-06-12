@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
@@ -62,14 +62,13 @@ namespace UMS.Infrastructure.ExternalApi
 
             try
             {
-                var response = await httpClient.GetAsync($"events/public?pageNumber={pageNumber}&size={pageSize}", ct);
+                var response = await httpClient.GetAsync($"events/public?pageNumber={pageNumber}&pageSize={pageSize}", ct);
                 response.EnsureSuccessStatusCode();
 
                 var json = await response.Content.ReadAsStringAsync(ct);
                 var events = JsonSerializer.Deserialize<List<ExternalEventDto>>(json, JsonOptions) ?? [];
 
-                var result = new ExternalPaginatedEventsDto(
-                    events, pageNumber, pageSize, events.Count == pageSize, pageNumber > 1);
+                var result = new ExternalPaginatedEventsDto(events, pageNumber, pageSize, events.Count == pageSize, pageNumber > 1);
 
                 await cache.SetAsync(cacheKey, result, CacheKeys.TTL.Events, ct);
                 return result;
