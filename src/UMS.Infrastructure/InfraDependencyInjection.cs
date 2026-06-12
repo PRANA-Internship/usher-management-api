@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +18,7 @@ using UMS.Infrastructure.Auth;
 using UMS.Infrastructure.Cache;
 using UMS.Infrastructure.Email;
 using UMS.Infrastructure.ExternalApi;
+using UMS.Infrastructure.Notifications;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
@@ -49,6 +49,8 @@ namespace UMS.Infrastructure.Persistance
 
             services.AddSingleton<ICacheService, RedisCacheService>();
 
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IAttendanceAnalyticsRepository, AttendanceAnalyticsRepository>();
 
             services.Configure<PranaApiSettings>(
@@ -126,6 +128,23 @@ namespace UMS.Infrastructure.Persistance
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
                         ClockSkew = TimeSpan.FromSeconds(30)
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                path.StartsWithSegments("/hubs/notifications"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+
                     };
                 });
             services.AddDatabase(configuration);

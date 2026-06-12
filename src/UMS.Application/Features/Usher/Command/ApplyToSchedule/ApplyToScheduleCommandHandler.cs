@@ -22,7 +22,8 @@ namespace UMS.Application.Features.Ushers.Command.ApplyToSchedule
         IUsherScheduleApplicationRepository applicationRepository,
         IUsherAvailablityService availabilityService,
         IEventsApiClient eventsApiClient,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        INotificationService notificationService
     ) : IRequestHandler<ApplyToScheduleCommand, Result<ApplyToScheduleResponse>>
     {
         public async Task<Result<ApplyToScheduleResponse>> Handle(
@@ -85,7 +86,18 @@ namespace UMS.Application.Features.Ushers.Command.ApplyToSchedule
             {
                 await applicationRepository.AddAsync(application, cancellationToken);
             }, cancellationToken);
+            try
+            {
 
+                await notificationService
+                    .NotifyCoordinatorUsherAppliedAsync(
+                        assignment!.CoordinatorId,
+                        usherFullName: usher.User!.FullName,
+                        cancellationToken);
+            }
+            catch (Exception)
+            {
+            }
             return Result<ApplyToScheduleResponse>.Success(new ApplyToScheduleResponse(
                 ApplicationId: application.Id,
                 ExternalScheduleId: application.ExternalScheduleId,

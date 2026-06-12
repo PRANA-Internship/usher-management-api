@@ -18,7 +18,8 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
     IUsherRepository usherRepository,
     IFileStorageService fileStorage,
     IUnitOfWork unitOfWork,
-    IEmailService emailService
+    IEmailService emailService,
+    INotificationService notificationService
 ) : IRequestHandler<SubmitUsherApplicationCommand, Result<SubmitUsherApplicationResponse>>
     {
         public async Task<Result<SubmitUsherApplicationResponse>> Handle(
@@ -96,6 +97,14 @@ namespace UMS.Application.Features.Auth.Commands.SubmitApplication
                 catch (Exception)
                 {
                 }
+                try
+                {
+                    await notificationService
+                           .NotifyAdminsNewUsherApplicationAsync(
+                               request.FullName, cancellationToken);
+                }
+                catch (Exception) { }
+
                 return Result<SubmitUsherApplicationResponse>.Success(new SubmitUsherApplicationResponse(
 
                     FullName: request.FullName

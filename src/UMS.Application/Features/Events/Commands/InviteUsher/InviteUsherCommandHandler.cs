@@ -22,7 +22,8 @@ namespace UMS.Application.Features.Events.Commands.InviteUsher
         IUsherRepository usherRepository,
         IUsherInvitationRepository invitationRepository,
         IEventsApiClient eventsApiClient,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        INotificationService notificationService
     ) : IRequestHandler<InviteUsherCommand, Result<InviteUsherResponse>>
     {
         public async Task<Result<InviteUsherResponse>> Handle(
@@ -87,6 +88,17 @@ namespace UMS.Application.Features.Events.Commands.InviteUsher
                 await invitationRepository.AddAsync(invitation, cancellationToken);
             }, cancellationToken);
 
+            try
+            {
+                await notificationService.NotifyUsherInvitedAsync(
+                 userId: usher.User!.Id,
+                 venue: schedule!.Venue,
+                 startDate: schedule.StartDate,
+                 cancellationToken);
+            }
+            catch (Exception)
+            {
+            }
             return Result<InviteUsherResponse>.Success(new InviteUsherResponse(
                 InvitationId: invitation.Id,
                 UsherId: usher.Id,
