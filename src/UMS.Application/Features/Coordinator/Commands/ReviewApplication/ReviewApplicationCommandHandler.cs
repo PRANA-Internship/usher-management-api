@@ -1,9 +1,12 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Domain.Common;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Coordinator.Commands.ReviewApplication
@@ -11,7 +14,8 @@ namespace UMS.Application.Features.Coordinator.Commands.ReviewApplication
     public sealed class ReviewApplicationCommandHandler(
       IUsherScheduleApplicationRepository applicationRepository,
       IScheduleAssignmentRepository assignmentRepository,
-      IUnitOfWork unitOfWork
+      IUnitOfWork unitOfWork,
+      INotificationService notificationService
   ) : IRequestHandler<ReviewApplicationCommand, Result<bool>>
     {
         public async Task<Result<bool>> Handle(
@@ -42,6 +46,20 @@ namespace UMS.Application.Features.Coordinator.Commands.ReviewApplication
             {
                 await applicationRepository.UpdateAsync(application, cancellationToken);
             }, cancellationToken);
+            try
+            {
+                if (command.Approve)
+                {
+                    await notificationService
+                        .NotifyUsherApplicationApprovedAsync(
+                            userId: application.Usher.User!.Id,
+                            cancellationToken);
+                }
+
+            }
+            catch (Exception)
+            {
+            }
 
             return Result<bool>.Success(true);
         }

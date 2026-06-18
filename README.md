@@ -64,6 +64,20 @@ Install the EF CLI if needed: `dotnet tool install --global dotnet-ef`.
 dotnet test Tests/UMS.tests/UMS.tests.csproj
 ```
 
+## Code formatting
+
+Formatting rules live in [`.editorconfig`](.editorconfig). From the repository root:
+
+```bash
+# Apply formatting fixes
+dotnet format UMS.slnx
+
+# Check only (same as CI — fails if anything would change)
+dotnet format UMS.slnx --verify-no-changes
+```
+
+`dotnet format` ships with the .NET 10 SDK. Run the verify command before opening a PR so the CI formatting step passes.
+
 ## CI (`ci.yml`)
 
 On every **pull request**, GitHub Actions:
@@ -71,7 +85,7 @@ On every **pull request**, GitHub Actions:
 1. Checks out the repo  
 2. Installs **.NET SDK 10.0.x**  
 3. Runs `dotnet restore`  
-4. Runs `dotnet format --verify-no-changes` (formatting must match the repo)  
+4. Runs `dotnet format UMS.slnx --verify-no-changes` (formatting must match the repo)  
 5. Runs `dotnet build --no-restore`  
 6. Runs `dotnet test --no-build`
 

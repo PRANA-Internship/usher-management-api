@@ -1,9 +1,13 @@
-using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+
+using Scalar.AspNetCore;
+
 using UMS.Application;
+using UMS.Infrastructure.Hubs;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence.Seeder;
@@ -42,6 +46,7 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddApplication();
 builder.Services.AddControllers();
 
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -60,10 +65,12 @@ if (app.Environment.IsDevelopment())
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
-
-app.UseRateLimiter();
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseRateLimiter();
 
+app.MapControllers();
+app.MapHub<NotificationHub>("/hubs/notifications").DisableRateLimiting();
 app.Run();

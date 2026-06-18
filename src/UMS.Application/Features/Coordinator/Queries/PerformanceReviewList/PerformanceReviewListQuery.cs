@@ -1,10 +1,13 @@
-﻿using FluentValidation;
-using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UMS.Domain.Common;
+
+using FluentValidation;
+
+using MediatR;
+
 using UMS.Contracts.Coordinator.Performance;
+using UMS.Domain.Common;
 
 namespace UMS.Application.Features.Coordinator.Queries.PerformanceReviewList
 {

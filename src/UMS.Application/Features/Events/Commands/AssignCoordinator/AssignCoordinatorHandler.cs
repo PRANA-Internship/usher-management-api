@@ -1,14 +1,17 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Events;
-using System.Linq;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Events.Commands.AssignCoordinator
@@ -19,7 +22,9 @@ namespace UMS.Application.Features.Events.Commands.AssignCoordinator
         IUserRepository userRepository,
         IScheduleAssignmentRepository assignmentRepository,
         ICacheService cache,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        INotificationService notificationService
+
     ) : IRequestHandler<AssignCoordinatorCommand, Result<AssignCoordinatorResponse>>
     {
         public async Task<Result<AssignCoordinatorResponse>> Handle(
@@ -77,8 +82,17 @@ namespace UMS.Application.Features.Events.Commands.AssignCoordinator
 
             var saved = await assignmentRepository.GetByScheduleIdAsync(
                 command.ExternalScheduleId, cancellationToken);
-
-
+            try
+            {
+                await notificationService.NotifyCoordinatorScheduleAssignedAsync(
+                          coordinator.Id,
+                          venue: schedule.Venue,
+                          startDate: schedule.StartDate,
+                          cancellationToken);
+            }
+            catch (Exception)
+            {
+            }
             return Result<AssignCoordinatorResponse>.Success(new AssignCoordinatorResponse(
                 AssignmentId: saved!.Id,
                 ExternalScheduleId: saved.ExternalScheduleId,

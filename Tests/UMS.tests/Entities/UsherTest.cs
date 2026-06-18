@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
-using UMS.Domain.Common;
 namespace UMS.tests.Entities
 {
 
     internal sealed class UsherBuilder
     {
         private Guid _userId = Guid.NewGuid();
-        private Gender _gender = Gender.FEMALE;
+        private readonly Gender _gender = Gender.FEMALE;
         private DateOnly _dob = new(1995, 6, 15);
         private string _address = "123 Main St";
         private string _city = "addis ababa";

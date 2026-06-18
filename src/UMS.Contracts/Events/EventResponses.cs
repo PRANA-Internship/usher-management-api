@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -32,4 +32,11 @@ namespace UMS.Contracts.Events
         IReadOnlyList<ScheduleSummary> Schedules
     );
 
+    public sealed record PaginatedEventsResponse(
+        IReadOnlyList<EventSummaryResponse> Items,
+        int PageNumber,
+        int PageSize,
+        bool HasNextPage,
+        bool HasPreviousPage
+    );
 }

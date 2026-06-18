@@ -1,20 +1,24 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
+using System.Text;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
 using Minio;
+
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Services;
 using UMS.Infrastructure.Auth;
 using UMS.Infrastructure.Cache;
 using UMS.Infrastructure.Email;
 using UMS.Infrastructure.ExternalApi;
+using UMS.Infrastructure.Notifications;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
@@ -45,6 +49,8 @@ namespace UMS.Infrastructure.Persistance
 
             services.AddSingleton<ICacheService, RedisCacheService>();
 
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IAttendanceAnalyticsRepository, AttendanceAnalyticsRepository>();
 
             services.Configure<PranaApiSettings>(
@@ -122,6 +128,23 @@ namespace UMS.Infrastructure.Persistance
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
                         ClockSkew = TimeSpan.FromSeconds(30)
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                path.StartsWithSegments("/hubs/notifications"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+
                     };
                 });
             services.AddDatabase(configuration);

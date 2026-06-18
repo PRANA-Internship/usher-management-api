@@ -1,13 +1,16 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Usher;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Ushers.Command.ApplyToSchedule
@@ -19,7 +22,8 @@ namespace UMS.Application.Features.Ushers.Command.ApplyToSchedule
         IUsherScheduleApplicationRepository applicationRepository,
         IUsherAvailablityService availabilityService,
         IEventsApiClient eventsApiClient,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        INotificationService notificationService
     ) : IRequestHandler<ApplyToScheduleCommand, Result<ApplyToScheduleResponse>>
     {
         public async Task<Result<ApplyToScheduleResponse>> Handle(
@@ -82,7 +86,18 @@ namespace UMS.Application.Features.Ushers.Command.ApplyToSchedule
             {
                 await applicationRepository.AddAsync(application, cancellationToken);
             }, cancellationToken);
+            try
+            {
 
+                await notificationService
+                    .NotifyCoordinatorUsherAppliedAsync(
+                        assignment!.CoordinatorId,
+                        usherFullName: usher.User!.FullName,
+                        cancellationToken);
+            }
+            catch (Exception)
+            {
+            }
             return Result<ApplyToScheduleResponse>.Success(new ApplyToScheduleResponse(
                 ApplicationId: application.Id,
                 ExternalScheduleId: application.ExternalScheduleId,

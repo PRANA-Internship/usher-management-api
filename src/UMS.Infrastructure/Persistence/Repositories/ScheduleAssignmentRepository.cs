@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UMS.Application.Common.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
+
+using UMS.Application.Common.Interfaces;
 using UMS.Domain.Entities;
 using UMS.Infrastructure.Persistance.Context;
 

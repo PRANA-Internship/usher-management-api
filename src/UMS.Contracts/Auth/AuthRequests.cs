@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using UMS.Domain.Enums;
 
 namespace UMS.Contracts.Auth
@@ -21,4 +22,3 @@ namespace UMS.Contracts.Auth
            UserRole Role
     );
 }
-

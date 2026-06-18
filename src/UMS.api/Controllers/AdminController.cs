@@ -1,7 +1,10 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+
+using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+
 using UMS.Application.Features.Admin.Queries;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
 using UMS.Application.Features.Auth.Commands.RejectApplication;

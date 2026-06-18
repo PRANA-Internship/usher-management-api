@@ -1,13 +1,16 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Events;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Events.Commands.InviteUsher
@@ -19,7 +22,8 @@ namespace UMS.Application.Features.Events.Commands.InviteUsher
         IUsherRepository usherRepository,
         IUsherInvitationRepository invitationRepository,
         IEventsApiClient eventsApiClient,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        INotificationService notificationService
     ) : IRequestHandler<InviteUsherCommand, Result<InviteUsherResponse>>
     {
         public async Task<Result<InviteUsherResponse>> Handle(
@@ -84,6 +88,17 @@ namespace UMS.Application.Features.Events.Commands.InviteUsher
                 await invitationRepository.AddAsync(invitation, cancellationToken);
             }, cancellationToken);
 
+            try
+            {
+                await notificationService.NotifyUsherInvitedAsync(
+                 userId: usher.User!.Id,
+                 venue: schedule!.Venue,
+                 startDate: schedule.StartDate,
+                 cancellationToken);
+            }
+            catch (Exception)
+            {
+            }
             return Result<InviteUsherResponse>.Success(new InviteUsherResponse(
                 InvitationId: invitation.Id,
                 UsherId: usher.Id,

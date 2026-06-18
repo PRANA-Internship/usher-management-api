@@ -1,10 +1,13 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Domain.Common;
 using UMS.Domain.Enums;
+
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Staff.Commands.SetUpPassword
@@ -13,7 +16,8 @@ namespace UMS.Application.Features.Staff.Commands.SetUpPassword
     IEmailVerificationTokenRepository tokenRepository,
     IUserRepository userRepository,
     IPasswordHasher passwordHasher,
-    IUnitOfWork unitOfWork
+    IUnitOfWork unitOfWork,
+    INotificationService notificationService
 ) : IRequestHandler<SetupPasswordCommand, Result<bool>>
     {
         public async Task<Result<bool>> Handle(
@@ -45,7 +49,17 @@ namespace UMS.Application.Features.Staff.Commands.SetUpPassword
                 await userRepository.UpdateAsync(user, cancellationToken);
                 await tokenRepository.UpdateAsync(token, cancellationToken);
             }, cancellationToken);
+            try
+            {
+                await notificationService.NotifyAdminsStaffPasswordSetAsync(
+                   user.FullName,
+                   user.Role.ToString(),
+                   cancellationToken);
+            }
+            catch (Exception)
+            {
 
+            }
             return Result<bool>.Success(true);
         }
     }
