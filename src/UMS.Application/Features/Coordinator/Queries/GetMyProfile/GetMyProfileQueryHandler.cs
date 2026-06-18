@@ -29,6 +29,6 @@ public sealed class GetMyProfileQueryHandler(
                 Phone: user.Phone,
                 Role: user.Role,
                 CreatedAt: user.CreatedAt
-    ));
+            ));
     }
 }
