@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 
 using MediatR;
 
@@ -11,6 +12,7 @@ using UMS.Application.Features.Coordinator.Commands.ReviewApplication;
 using UMS.Application.Features.Coordinator.Queries.AttendanceSheet;
 using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
 using UMS.Application.Features.Coordinator.Queries.GetConfirmed;
+using UMS.Application.Features.Coordinator.Queries.GetMyProfile;
 using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
 using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
 using UMS.Application.Features.Coordinator.Queries.UsherDetail;
@@ -29,7 +31,6 @@ using UMS.Domain.Enums;
 
 namespace UMS.api.Controllers
 {
-
     [ApiController]
     [Route("api/coordinator")]
     [Produces("application/json")]
@@ -49,6 +50,21 @@ namespace UMS.api.Controllers
             return result.IsSuccess
                 ? Ok(result.Value)
                 : StatusCode(StatusCodes.Status502BadGateway, result.Error);
+        }
+
+        [HttpGet("me")]
+        [ProducesResponseType(typeof(GetMyProfileCoordinator), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMyProfile(
+            CancellationToken ct)
+        {
+            var result = await sender.Send(
+                new GetMyProfileQuery(CoordinatorId), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : NotFound(result.Error);
         }
 
         [HttpPost("schedules/invite")]

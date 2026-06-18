@@ -104,6 +104,12 @@ namespace UMS.Domain.Common
             public static readonly Error InvalidRating = new("REVIEW_006", "All ratings must be between 1 and 5.");
         }
 
+        public static class UserErrors
+        {
+            public static readonly Error NotFound =
+                new("USER_001", "User not found.");
+        }
+
     }
 
 }
