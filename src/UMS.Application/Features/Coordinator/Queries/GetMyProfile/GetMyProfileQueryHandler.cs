@@ -1,6 +1,8 @@
 using MediatR;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Coordinator;
+
 using UMS.Domain.Common;
 using static UMS.Domain.Common.Error;
 
