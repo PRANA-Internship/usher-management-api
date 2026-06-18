@@ -35,7 +35,6 @@ using UMS.Domain.Enums;
 
 namespace UMS.api.Controllers
 {
-
     [ApiController]
     [Route("api/coordinator")]
     [Produces("application/json")]
