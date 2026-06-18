@@ -15,12 +15,14 @@ using UMS.Application.Features.Coordinator.Queries.UsherEventHistory;
 using UMS.Application.Features.Events.Commands.InviteUsher;
 using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
+using UMS.Application.Features.Coordinator.Queries.GetMyProfile;
 using UMS.Contracts.Coordinator;
 using UMS.Contracts.Coordinator.Attendance;
 using UMS.Contracts.Coordinator.Performance;
 using UMS.Contracts.Coordinator.Usher;
 using UMS.Contracts.Events;
 using UMS.Contracts.Usher;
+using UMS.Contracts.Coordinator;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
 
@@ -46,6 +48,21 @@ namespace UMS.api.Controllers
             return result.IsSuccess
                 ? Ok(result.Value)
                 : StatusCode(StatusCodes.Status502BadGateway, result.Error);
+        }
+
+        [HttpGet("me")]
+        [ProducesResponseType(typeof(GetMyProfileCoordinator), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMyProfile(
+            CancellationToken ct)
+        {
+            var result = await sender.Send(
+                new GetMyProfileQuery(CoordinatorId), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : NotFound(result.Error);
         }
 
         [HttpPost("schedules/invite")]
