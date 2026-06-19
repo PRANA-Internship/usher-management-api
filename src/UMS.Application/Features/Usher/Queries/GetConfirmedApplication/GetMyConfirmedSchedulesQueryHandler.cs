@@ -138,18 +138,13 @@ namespace UMS.Application.Features.Ushers.Queries.GetConfirmedApplication
             var inviteSkip = Math.Max(0, skip - appTotal);
             var inviteTake = size - appTake;
 
-            var appsTask = appTake > 0
-                ? applicationRepository.GetApprovedPagedAsync(
-                    usherId, appSkip, appTake, ct)
-                : Task.FromResult<IReadOnlyList<UsherScheduleApplication>>([]);
+            var apps = appTake > 0
+                ? await applicationRepository.GetApprovedPagedAsync(usherId, appSkip, appTake, ct)
+                : (IReadOnlyList<UsherScheduleApplication>)[];
 
-            var invitesTask = inviteTake > 0
-                ? invitationRepository.GetAcceptedPagedAsync(
-                    usherId, inviteSkip, inviteTake, ct)
-                : Task.FromResult<IReadOnlyList<UsherInvitation>>([]);
-
-            var apps = await appsTask;
-            var invites = await invitesTask;
+            var invites = inviteTake > 0
+                ? await invitationRepository.GetAcceptedPagedAsync(usherId, inviteSkip, inviteTake, ct)
+                : (IReadOnlyList<UsherInvitation>)[];
 
             return (apps, invites);
         }
