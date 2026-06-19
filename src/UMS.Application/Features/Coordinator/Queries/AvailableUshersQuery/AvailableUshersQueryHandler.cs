@@ -79,7 +79,7 @@ namespace UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery
             var totalPages = (int)Math.Ceiling(totalCount / (double)query.Size);
 
             var items = ushers.Select(u => new AvailableUsherItem(
-                UsherId: u.UserId,
+                UsherId: u.Id,
                 FullName: u.User!.FullName,
                 Email: u.User.Email,
                 Phone: u.User.Phone,
