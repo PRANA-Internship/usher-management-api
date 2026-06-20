@@ -74,6 +74,7 @@ namespace UMS.Infrastructure.Persistance
             services.AddScoped<IUsherInvitationRepository, UsherInvitationRepository>();
 
             services.AddScoped<IUsherAttendanceRepository, UsherAttendanceRepository>();
+            services.AddScoped<IUsherAnalyticsRepository, UsherAnalyticsRepository>();
             services.Configure<MinioSettings>(configuration.GetSection(MinioSettings.SectionName));
 
             services.AddSingleton<IMinioClient>(sp =>
