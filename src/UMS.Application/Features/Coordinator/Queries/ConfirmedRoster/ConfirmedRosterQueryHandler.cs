@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -73,7 +73,7 @@ namespace UMS.Application.Features.Coordinator.Queries.GetConfirmed
 
             foreach (var app in apps)
                 items.Add(new ConfirmedRosterItem(
-                    UsherId: app.Usher.UserId,
+                    UsherId: app.Usher.Id,
                     FullName: app.Usher.User!.FullName,
                     Email: app.Usher.User.Email,
                     Phone: app.Usher.User.Phone,
@@ -84,7 +84,7 @@ namespace UMS.Application.Features.Coordinator.Queries.GetConfirmed
 
             foreach (var invite in invites)
                 items.Add(new ConfirmedRosterItem(
-                    UsherId: invite.Usher.UserId,
+                    UsherId: invite.Usher.Id,
                     FullName: invite.Usher.User!.FullName,
                     Email: invite.Usher.User.Email,
                     Phone: invite.Usher.User.Phone,

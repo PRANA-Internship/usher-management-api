@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -46,7 +46,7 @@ namespace UMS.Application.Features.Coordinator.Queries.UsherEventHistory
             if (!confirmedMap.Any())
                 return Result<UsherEventHistoryResponse>.Success(
                     new UsherEventHistoryResponse(
-                        UsherId: usher.UserId,
+                        UsherId: usher.Id,
                         FullName: usher.User!.FullName,
                         TotalEvents: 0,
                         Events: []
@@ -114,7 +114,7 @@ namespace UMS.Application.Features.Coordinator.Queries.UsherEventHistory
 
             return Result<UsherEventHistoryResponse>.Success(
                 new UsherEventHistoryResponse(
-                    UsherId: usher.UserId,
+                    UsherId: usher.Id,
                     FullName: usher.User!.FullName,
                     TotalEvents: sorted.Count,
                     Events: sorted

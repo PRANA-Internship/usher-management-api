@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
 using MediatR;
 
@@ -10,6 +10,7 @@ using UMS.Application.Features.Auth.Commands.SetPassword;
 using UMS.Application.Features.Auth.Commands.SubmitApplication;
 using UMS.Application.Features.Ushers.Command;
 using UMS.Application.Features.Ushers.Command.ApplyToSchedule;
+using UMS.Application.Common.Interfaces;
 using UMS.Application.Features.Ushers.Command.RespondToInvitaion;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
@@ -24,8 +25,9 @@ namespace UMS.api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
-    public sealed class UshersController(ISender sender) : ControllerBase
+    public sealed class UshersController(ISender sender, IUsherRepository usherRepository) : ControllerBase
     {
+        private readonly IUsherRepository _usherRepository = usherRepository;
 
         [HttpPost("apply")]
         [Consumes("multipart/form-data")]
@@ -153,8 +155,10 @@ namespace UMS.api.Controllers
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var result = await sender.Send(new ApplyToScheduleCommand(
-                UsherId: userId,
+            var usher = await _usherRepository.GetByUserIdAsync(userId, ct);
+                if (usher is null) return NotFound();
+                var result = await sender.Send(new ApplyToScheduleCommand(
+                UsherId: usher.Id,
                 ExternalEventId: request.ExternalEventId,
                 ExternalScheduleId: request.ExternalScheduleId), ct);
             if (result.IsSuccess)
@@ -185,8 +189,10 @@ namespace UMS.api.Controllers
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var result = await sender.Send(new RespondToInvitationCommand(
-                UsherId: userId,
+            var usher = await _usherRepository.GetByUserIdAsync(userId, ct);
+                if (usher is null) return NotFound();
+                var result = await sender.Send(new RespondToInvitationCommand(
+                UsherId: usher.Id,
                 InvitationId: request.invitationId,
                 Accept: request.Accept), ct);
 

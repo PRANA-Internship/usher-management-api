@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -84,7 +84,7 @@ namespace UMS.Application.Features.Coordinator.Queries.AttendanceSheet
                 attendanceMap.TryGetValue(app.UsherId, out var record);
 
                 usherItems.Add(new AttendanceUsherItem(
-                    UsherId: app.Usher.UserId,
+                    UsherId: app.Usher.Id,
                     AttendanceId: record?.Id ?? Guid.Empty,
                     FullName: app.Usher.User!.FullName,
                     Phone: app.Usher.User.Phone,
@@ -98,13 +98,13 @@ namespace UMS.Application.Features.Coordinator.Queries.AttendanceSheet
 
             foreach (var invite in confirmedFromInvites)
             {
-                if (usherItems.Any(u => u.UsherId == invite.Usher.UserId))
+                if (usherItems.Any(u => u.UsherId == invite.Usher.Id))
                     continue;
 
                 attendanceMap.TryGetValue(invite.UsherId, out var record);
 
                 usherItems.Add(new AttendanceUsherItem(
-                    UsherId: invite.Usher.UserId,
+                    UsherId: invite.Usher.Id,
                     AttendanceId: record?.Id ?? Guid.Empty,
                     FullName: invite.Usher.User!.FullName,
                     Phone: invite.Usher.User.Phone,
