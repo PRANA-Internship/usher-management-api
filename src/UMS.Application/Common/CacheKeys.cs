@@ -13,6 +13,8 @@ namespace UMS.Infrastructure.Cache
 
         public static string EventById(string id) => $"prana:events:{id}";
         public static string PaginatedEvents(int pageNumber, int pageSize) => $"prana:events:page:{pageNumber}:size:{pageSize}";
+        public static string UsherAnalytics(Guid usherId) => $"usher:analytics:{usherId}";
+
 
         public static class TTL
         {
@@ -21,6 +23,8 @@ namespace UMS.Infrastructure.Cache
             public static readonly TimeSpan AdminDashboardDuration = TimeSpan.FromHours(1);
 
             private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
+            public static readonly TimeSpan UsherAnalytics = TimeSpan.FromMinutes(15);
+
         }
     }
 }
