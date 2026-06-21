@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -119,7 +119,8 @@ namespace UMS.Application.Features.Coordinator.Commands.MarkAttendance
                 }
             }, cancellationToken);
 
-            await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
+            await cache.RemoveAsync(CacheKeys.CoordinatorDashboard(command.CoordinatorId), cancellationToken);
+
             return Result<MarkAttendanceResponse>.Success(new MarkAttendanceResponse(
                 AttendanceId: existing!.Id,
                 UsherId: command.UsherId,
