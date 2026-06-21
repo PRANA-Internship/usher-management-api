@@ -9,9 +9,12 @@ using UMS.Application.Features.Admin.Queries;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
 using UMS.Application.Features.Auth.Commands.RejectApplication;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
+using UMS.Application.Features.Coordinator.Queries.GetMyProfile;
+using UMS.Application.Features.Coordinator.Commands.UpdateProfile;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
 using UMS.Contracts.Admin;
 using UMS.Contracts.Usher;
+using UMS.Contracts.Coordinator;
 using UMS.Domain.Enums;
 namespace UMS.api.Controllers
 {
@@ -35,6 +38,48 @@ namespace UMS.api.Controllers
 
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
+        [HttpGet("me")]
+        [ProducesResponseType(typeof(GetMyProfileCoordinator), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMyProfile(
+           CancellationToken ct)
+        {
+            var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var result = await sender.Send(
+                new GetMyProfileQuery(adminId), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : NotFound(result.Error);
+        }
+
+         [HttpPatch("me/update-profile")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateProfile(
+          [FromBody] UpdateCoordinatorProfileRequest request,
+           CancellationToken ct)
+        {
+            var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var result = await sender.Send(new UpdateCoordinatorProfileCommand(
+                UserId: adminId,
+                FullName: request.FullName,
+                Phone: request.Phone,
+                CurrentPassword: request.CurrentPassword,
+                NewPassword: request.NewPassword), ct);
+
+            return result.IsSuccess
+                ? Ok(new { message = "Profile updated successfully." })
+                : result.Error.Code switch
+                {
+                    "USER_NOT_FOUND" => NotFound(result.Error),
+                    "AUTH_010" => BadRequest(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+        }
+
         [HttpGet("{usherId:guid}")]
         [ProducesResponseType(typeof(GetUsherApplicationDetailResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
