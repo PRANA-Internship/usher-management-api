@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security.Claims;
 
 using MediatR;
@@ -17,6 +17,7 @@ using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
 using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
 using UMS.Application.Features.Coordinator.Queries.UsherDetail;
 using UMS.Application.Features.Coordinator.Queries.UsherEventHistory;
+using UMS.Application.Features.Coordinator.Queries.DashboardAnalytics;
 using UMS.Application.Features.Events.Commands.InviteUsher;
 using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
@@ -363,7 +364,15 @@ namespace UMS.api.Controllers
                 };
         }
 
+        [HttpGet("dashboard/analytics")]
+        [ProducesResponseType(typeof(CoordinatorDashboardAnalyticsResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDashboardAnalytics(CancellationToken ct)
+        {
+            var result = await sender.Send(new DashboardAnalyticsQuery(CoordinatorId), ct);
 
-
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : BadRequest(result.Error);
+        }
     }
 }
