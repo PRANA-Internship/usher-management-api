@@ -15,6 +15,7 @@ using StackExchange.Redis;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Services;
 using UMS.Infrastructure.Auth;
+using UMS.Infrastructure.BackgroundServices;
 using UMS.Infrastructure.Cache;
 using UMS.Infrastructure.Email;
 using UMS.Infrastructure.ExternalApi;
@@ -148,6 +149,7 @@ namespace UMS.Infrastructure.Persistance
                     };
                 });
             services.AddDatabase(configuration);
+            services.AddHostedService<CoordinatorDashboardAnalyticsBackgroundService>();
             return services;
         }
 

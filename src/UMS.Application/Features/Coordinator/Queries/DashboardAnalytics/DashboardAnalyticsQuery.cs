@@ -6,33 +6,50 @@ using System.Threading.Tasks;
 
 using MediatR;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Coordinator;
 using UMS.Domain.Common;
+using UMS.Infrastructure.Cache;
 
 namespace UMS.Application.Features.Coordinator.Queries.DashboardAnalytics
 {
-    public sealed record DashboardAnalyticsQuery(Guid CoordinatorId)
+    public sealed record DashboardAnalyticsQuery(Guid CoordinatorId, bool ForceRefresh = false)
         : IRequest<Result<CoordinatorDashboardAnalyticsResponse>>;
 
     public sealed class DashboardAnalyticsQueryHandler(
         IScheduleAssignmentRepository assignmentRepository,
         IUsherScheduleApplicationRepository applicationRepository,
         IUsherInvitationRepository invitationRepository,
-        IEventsApiClient eventsApiClient
-    ) : IRequestHandler<DashboardAnalyticsQuery, Result<CoordinatorDashboardAnalyticsResponse>>
+        IEventsApiClient eventsApiClient,
+        ICacheService cache,
+        IServiceProvider serviceProvider)
+        : IRequestHandler<DashboardAnalyticsQuery, Result<CoordinatorDashboardAnalyticsResponse>>
     {
         public async Task<Result<CoordinatorDashboardAnalyticsResponse>> Handle(
             DashboardAnalyticsQuery query,
             CancellationToken cancellationToken)
         {
+            var cacheKey = CacheKeys.CoordinatorDashboard(query.CoordinatorId);
+
+            if (!query.ForceRefresh)
+            {
+                var cachedResponse = await cache.GetAsync<CoordinatorDashboardAnalyticsResponse>(cacheKey, cancellationToken);
+                if (cachedResponse is not null)
+                {
+                    return Result<CoordinatorDashboardAnalyticsResponse>.Success(cachedResponse);
+                }
+            }
+
             var assignments = await assignmentRepository.GetByCoordinatorIdAsync(
                 query.CoordinatorId, cancellationToken);
 
             if (assignments.Count == 0)
             {
-                return Result<CoordinatorDashboardAnalyticsResponse>.Success(
-                    new CoordinatorDashboardAnalyticsResponse(0, 0));
+                var emptyResponse = new CoordinatorDashboardAnalyticsResponse(0, 0);
+                await cache.SetAsync(cacheKey, emptyResponse, CacheKeys.TTL.CoordinatorDashboardDuration, cancellationToken);
+                return Result<CoordinatorDashboardAnalyticsResponse>.Success(emptyResponse);
             }
 
             var scheduleIds = assignments
@@ -40,14 +57,18 @@ namespace UMS.Application.Features.Coordinator.Queries.DashboardAnalytics
                 .Distinct()
                 .ToList();
 
-            var totalConfirmedTasks = scheduleIds.Select(async id =>
+            // Parallelize per‑schedule count queries while avoiding shared DbContext concurrency.
+            var scopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
+            var countTasks = scheduleIds.Select(async scheduleId =>
             {
-                var appCount = await applicationRepository.CountApprovedByScheduleAsync(id, cancellationToken);
-                var inviteCount = await invitationRepository.CountAcceptedByScheduleAsync(id, cancellationToken);
-                return appCount + inviteCount;
+                using var scope = scopeFactory.CreateScope();
+                var appRepo = scope.ServiceProvider.GetRequiredService<IUsherScheduleApplicationRepository>();
+                var invRepo = scope.ServiceProvider.GetRequiredService<IUsherInvitationRepository>();
+                var approved = await appRepo.CountApprovedByScheduleAsync(scheduleId, cancellationToken);
+                var accepted = await invRepo.CountAcceptedByScheduleAsync(scheduleId, cancellationToken);
+                return approved + accepted;
             });
-
-            var confirmedCounts = await Task.WhenAll(totalConfirmedTasks);
+            var confirmedCounts = await Task.WhenAll(countTasks);
             var totalUshersConfirmed = confirmedCounts.Sum();
 
             var uniqueEventIds = assignments
@@ -65,8 +86,11 @@ namespace UMS.Application.Features.Coordinator.Queries.DashboardAnalytics
                 activeEventsCount = 0;
             }
 
-            return Result<CoordinatorDashboardAnalyticsResponse>.Success(
-                new CoordinatorDashboardAnalyticsResponse(totalUshersConfirmed, activeEventsCount));
+            var response = new CoordinatorDashboardAnalyticsResponse(totalUshersConfirmed, activeEventsCount);
+
+            await cache.SetAsync(cacheKey, response, CacheKeys.TTL.CoordinatorDashboardDuration, cancellationToken);
+
+            return Result<CoordinatorDashboardAnalyticsResponse>.Success(response);
         }
     }
 }
