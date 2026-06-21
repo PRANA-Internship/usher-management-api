@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using UMS.Application.Features.Admin.Queries;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
 using UMS.Application.Features.Auth.Commands.RejectApplication;
-using UMS.Application.Features.Ushers.Queries.GetApplications;
-using UMS.Application.Features.Coordinator.Queries.GetMyProfile;
 using UMS.Application.Features.Coordinator.Commands.UpdateProfile;
+using UMS.Application.Features.Coordinator.Queries.GetMyProfile;
+using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
 using UMS.Contracts.Admin;
-using UMS.Contracts.Usher;
 using UMS.Contracts.Coordinator;
+using UMS.Contracts.Usher;
 using UMS.Domain.Enums;
 namespace UMS.api.Controllers
 {
@@ -54,13 +54,13 @@ namespace UMS.api.Controllers
                 : NotFound(result.Error);
         }
 
-         [HttpPatch("me/update-profile")]
+        [HttpPatch("me/update-profile")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateProfile(
-          [FromBody] UpdateCoordinatorProfileRequest request,
-           CancellationToken ct)
+         [FromBody] UpdateCoordinatorProfileRequest request,
+          CancellationToken ct)
         {
             var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var result = await sender.Send(new UpdateCoordinatorProfileCommand(
