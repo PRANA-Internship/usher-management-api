@@ -20,8 +20,6 @@ namespace UMS.Application.Features.Coordinator.Queries.DashboardAnalytics
 
     public sealed class DashboardAnalyticsQueryHandler(
         IScheduleAssignmentRepository assignmentRepository,
-        IUsherScheduleApplicationRepository applicationRepository,
-        IUsherInvitationRepository invitationRepository,
         IEventsApiClient eventsApiClient,
         ICacheService cache,
         IServiceProvider serviceProvider)
