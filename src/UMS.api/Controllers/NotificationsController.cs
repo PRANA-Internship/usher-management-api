@@ -47,7 +47,7 @@ namespace UMS.api.Controllers
             var result = await sender.Send(
                 new MarkNotificationsCommand(UserId, notificationId), ct);
 
-            return result.IsSuccess ? Ok() : BadRequest(result.Error);
+            return result.IsSuccess ? Ok(new { message = "Marked as read." }) : BadRequest(result.Error);
         }
     }
 }
