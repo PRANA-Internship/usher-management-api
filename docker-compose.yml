@@ -59,6 +59,16 @@ services:
     entrypoint: /bin/sh
     command: -c "mc alias set local http://minio:9000 minioadmin minioadmin && mc mb local/ums-files --ignore-existing"
 
+  redis:
+  image: redis:7-alpine
+  ports:
+    - "6379:6379"
+  volumes:
+    - redis_data:/data
+
+volumes:
+  redis_data:  
+
   api:
     build:
       context: .

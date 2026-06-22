@@ -7,6 +7,7 @@ using MediatR;
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Usher;
 using UMS.Domain.Common;
+using UMS.Application.Common;
 
 public sealed record GetMyAnalyticsQuery(Guid UserId)
     : IRequest<Result<UsherAnalyticsSummary>>;
@@ -17,9 +18,6 @@ public sealed class GetMyAnalyticsQueryHandler(
     ICacheService cache
 ) : IRequestHandler<GetMyAnalyticsQuery, Result<UsherAnalyticsSummary>>
 {
-    private static string CacheKey(Guid usherId) => $"usher:analytics:{usherId}";
-    private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(15);
-
     public async Task<Result<UsherAnalyticsSummary>> Handle(
         GetMyAnalyticsQuery query, CancellationToken cancellationToken)
     {
@@ -30,8 +28,8 @@ public sealed class GetMyAnalyticsQueryHandler(
             return Result<UsherAnalyticsSummary>.Failure(
                 new Error("USHER_004", "Usher not found."));
 
-        var cacheKey = CacheKey(usher.Id);
-
+        var cacheKey = CacheKeys.UsherAnalytics(usher.Id); 
+        
         var cached = await cache.GetAsync<UsherAnalyticsSummary>(
             cacheKey, cancellationToken);
 
@@ -41,7 +39,7 @@ public sealed class GetMyAnalyticsQueryHandler(
         var data = await analyticsRepository
             .GetUsherAnalyticsAsync(usher.Id, cancellationToken);
 
-        await cache.SetAsync(cacheKey, data, CacheDuration, cancellationToken);
+        await cache.SetAsync(cacheKey, data, CacheKeys.TTL.UsherAnalytics, cancellationToken); 
 
         return Result<UsherAnalyticsSummary>.Success(data);
     }

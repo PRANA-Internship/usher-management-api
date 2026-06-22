@@ -7,7 +7,7 @@ using MediatR;
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Admin.Dashboard;
 using UMS.Domain.Common;
-using UMS.Infrastructure.Cache;
+using UMS.Application.Common;
 
 namespace UMS.Application.Features.Admin.Queries.Dashboard
 {
@@ -19,7 +19,7 @@ namespace UMS.Application.Features.Admin.Queries.Dashboard
         ICacheService cache
     ) : IRequestHandler<AttendanceTrendQuery, Result<AttendanceTrendResponse>>
     {
-        private const int Months = 11; //11 months in the ui
+        private const int Months = 11;
 
         public async Task<Result<AttendanceTrendResponse>> Handle(
             AttendanceTrendQuery query,

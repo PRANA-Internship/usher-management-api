@@ -11,6 +11,7 @@ using UMS.Infrastructure.Hubs;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence.Seeder;
+using UMS.Infrastructure.BackgroundServices;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -47,6 +48,8 @@ builder.Services.AddApplication();
 builder.Services.AddControllers();
 
 builder.Services.AddSignalR();
+
+builder.Services.AddHostedService<ReportCacheRefreshWorker>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

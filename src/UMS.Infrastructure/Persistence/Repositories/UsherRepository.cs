@@ -77,6 +77,12 @@ namespace UMS.Infrastructure.Persistence.Repositories
 
         public Task<int> CountPendingAsync(CancellationToken ct = default) =>
               db.Ushers.CountAsync(u => u.ApprovalStatus == ApprovalStatus.PENDING, ct);
+        public Task<IReadOnlyList<Guid>> GetAllApprovedIdsAsync(CancellationToken ct = default) =>
+         db.Ushers
+        .Where(u => u.ApprovalStatus == ApprovalStatus.APPROVED)
+        .Select(u => u.Id)
+        .ToListAsync(ct)
+        .ContinueWith(t => (IReadOnlyList<Guid>)t.Result, ct);      
     }
 
 }

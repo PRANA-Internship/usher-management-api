@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
-using UMS.Infrastructure.Cache;
+using UMS.Application.Common;
 
 namespace UMS.Infrastructure.ExternalApi
 {
