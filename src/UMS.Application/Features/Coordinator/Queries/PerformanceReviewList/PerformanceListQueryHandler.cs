@@ -93,26 +93,26 @@ namespace UMS.Application.Features.Coordinator.Queries.PerformanceReviewList
         }
 
         private static PerformanceReviewItem BuildItem(
-    Guid usherId,
-    string fullName,
-    string phone,
-    string city,
-    UsherPerformanceReview? review) =>
-    new(
-        UsherId: usherId,
-        FullName: fullName,
-        Phone: phone,
-        City: city,
-        IsReviewed: review is not null,
-        ReviewId: review?.Id,
-        Grooming: review?.Grooming,
-        Professionalism: review?.Professionalism,
-        Communication: review?.Communication,
-        Teamwork: review?.Teamwork,
-        OverallScore: review?.OverallScore,
-        AverageRating: review?.AverageRating,
-        Remarks: review?.Remarks,
-        SubmittedAt: review?.SubmittedAt
-    );
+            Guid usherId,
+            string fullName,
+            string phone,
+            string city,
+            UsherPerformanceReview? review) =>
+            new(
+                UsherId: usherId,
+                FullName: fullName,
+                Phone: phone,
+                City: city,
+                IsReviewed: review is not null,
+                ReviewId: review?.Id,
+                Grooming: review?.Grooming,
+                Professionalism: review?.Professionalism,
+                Communication: review?.Communication,
+                Teamwork: review?.Teamwork,
+                OverallScore: review?.OverallScore,
+                AverageRating: review?.AverageRating,
+                Remarks: review?.Remarks,
+                SubmittedAt: review?.SubmittedAt
+            );
     }
 }
