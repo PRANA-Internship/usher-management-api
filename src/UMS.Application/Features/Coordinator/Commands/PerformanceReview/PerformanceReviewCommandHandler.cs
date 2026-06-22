@@ -60,7 +60,7 @@ namespace UMS.Application.Features.Coordinator.Commands.PerformanceReview
                 return PerformanceReviewErrors.ScheduleNotEnded;
 
             var usher = await usherRepository
-                .GetByUserIdAsync(command.UsherId, cancellationToken);
+                .GetByIdAsync(command.UsherId, cancellationToken);
 
             if (usher is null)
                 return PerformanceReviewErrors.UsherNotConfirmed;

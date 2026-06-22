@@ -53,7 +53,7 @@ namespace UMS.Application.Features.Coordinator.Queries.PerformanceReviewList
                 reviewMap.TryGetValue(app.UsherId, out var review);
 
                 usherItems.Add(BuildItem(
-                    app.Usher.UserId,
+                    app.Usher.Id,
                     app.Usher.User!.FullName,
                     app.Usher.User.Phone,
                     app.Usher.City,
@@ -67,7 +67,7 @@ namespace UMS.Application.Features.Coordinator.Queries.PerformanceReviewList
                 reviewMap.TryGetValue(invite.UsherId, out var review);
 
                 usherItems.Add(BuildItem(
-                    invite.Usher.UserId,
+                    invite.Usher.Id,
                     invite.Usher.User!.FullName,
                     invite.Usher.User.Phone,
                     invite.Usher.City,
@@ -93,13 +93,13 @@ namespace UMS.Application.Features.Coordinator.Queries.PerformanceReviewList
         }
 
         private static PerformanceReviewItem BuildItem(
-            Guid userId,
+            Guid usherId,
             string fullName,
             string phone,
             string city,
             UsherPerformanceReview? review) =>
             new(
-                UsherId: userId,
+                UsherId: usherId,
                 FullName: fullName,
                 Phone: phone,
                 City: city,

@@ -66,7 +66,7 @@ namespace UMS.Application.Features.Coordinator.Commands.MarkAttendance
                 return AttendanceErrors.FutureDateNotAllowed;
 
             var usher = await usherRepository
-                .GetByUserIdAsync(command.UsherId, cancellationToken);
+                .GetByIdAsync(command.UsherId, cancellationToken);
 
             if (usher is null)
                 return AttendanceErrors.UsherNotConfirmed;
