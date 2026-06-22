@@ -82,7 +82,7 @@ namespace UMS.Infrastructure.Persistence.Repositories
         .Where(u => u.ApprovalStatus == ApprovalStatus.APPROVED)
         .Select(u => u.Id)
         .ToListAsync(ct)
-        .ContinueWith(t => (IReadOnlyList<Guid>)t.Result, ct);      
+        .ContinueWith(t => (IReadOnlyList<Guid>)t.Result, ct);
     }
 
 }

@@ -4,10 +4,10 @@ using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Usher;
 using UMS.Domain.Common;
-using UMS.Application.Common;
 
 public sealed record GetMyAnalyticsQuery(Guid UserId)
     : IRequest<Result<UsherAnalyticsSummary>>;
@@ -28,8 +28,8 @@ public sealed class GetMyAnalyticsQueryHandler(
             return Result<UsherAnalyticsSummary>.Failure(
                 new Error("USHER_004", "Usher not found."));
 
-        var cacheKey = CacheKeys.UsherAnalytics(usher.Id); 
-        
+        var cacheKey = CacheKeys.UsherAnalytics(usher.Id);
+
         var cached = await cache.GetAsync<UsherAnalyticsSummary>(
             cacheKey, cancellationToken);
 
@@ -39,7 +39,7 @@ public sealed class GetMyAnalyticsQueryHandler(
         var data = await analyticsRepository
             .GetUsherAnalyticsAsync(usher.Id, cancellationToken);
 
-        await cache.SetAsync(cacheKey, data, CacheKeys.TTL.UsherAnalytics, cancellationToken); 
+        await cache.SetAsync(cacheKey, data, CacheKeys.TTL.UsherAnalytics, cancellationToken);
 
         return Result<UsherAnalyticsSummary>.Success(data);
     }

@@ -4,10 +4,10 @@ using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Admin.Dashboard;
 using UMS.Domain.Common;
-using UMS.Application.Common;
 
 namespace UMS.Application.Features.Admin.Queries.Dashboard
 {

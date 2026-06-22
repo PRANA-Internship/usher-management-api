@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 using UMS.Application;
+using UMS.Infrastructure.BackgroundServices;
 using UMS.Infrastructure.Hubs;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence.Seeder;
-using UMS.Infrastructure.BackgroundServices;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApiDocument(config =>
 {

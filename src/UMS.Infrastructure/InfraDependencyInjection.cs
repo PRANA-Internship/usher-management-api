@@ -12,10 +12,11 @@ using Minio;
 
 using StackExchange.Redis;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Services;
 using UMS.Infrastructure.Auth;
-using UMS.Application.Common;
+using UMS.Infrastructure.Cache;
 using UMS.Infrastructure.Email;
 using UMS.Infrastructure.ExternalApi;
 using UMS.Infrastructure.Notifications;
@@ -24,7 +25,6 @@ using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
 using UMS.Infrastructure.Settings;
 using UMS.Infrastructure.Storage;
-using UMS.Infrastructure.Cache;
 namespace UMS.Infrastructure.Persistance
 {
     public static class InfraDependencyInjection

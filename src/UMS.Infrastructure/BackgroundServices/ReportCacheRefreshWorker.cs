@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 
@@ -13,7 +14,7 @@ namespace UMS.Infrastructure.BackgroundServices
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            
+
             await RefreshAsync(stoppingToken);
 
             while (!stoppingToken.IsCancellationRequested)
@@ -37,7 +38,7 @@ namespace UMS.Infrastructure.BackgroundServices
                 var cache = scope.ServiceProvider
                     .GetRequiredService<ICacheService>();
 
-               
+
                 var usherIds = await usherRepository.GetAllApprovedIdsAsync(ct);
 
                 foreach (var usherId in usherIds)

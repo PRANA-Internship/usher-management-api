@@ -10,9 +10,9 @@ namespace UMS.Application.Common
         public static string AdminDashboard => "admin:dashboard";
         public static string AdminAttendanceTrend => "admin:attendance:trend";
         public static string EventById(string id) => $"prana:events:{id}";
-        public static string PaginatedEvents(int pageNumber, int pageSize) => 
+        public static string PaginatedEvents(int pageNumber, int pageSize) =>
             $"prana:events:page:{pageNumber}:size:{pageSize}";
-        public static string UsherAnalytics(Guid usherId) => 
+        public static string UsherAnalytics(Guid usherId) =>
             $"usher:analytics:{usherId}";
 
         public static class TTL
