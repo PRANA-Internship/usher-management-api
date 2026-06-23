@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using UMS.Application.Features.Coordinator.Commands.MarkAttendance;
 using UMS.Application.Features.Coordinator.Commands.PerformanceReview;
 using UMS.Application.Features.Coordinator.Commands.ReviewApplication;
+using UMS.Application.Features.Coordinator.Commands.UpdateProfile;
 using UMS.Application.Features.Coordinator.Queries.AttendanceSheet;
 using UMS.Application.Features.Coordinator.Queries.DashboardAnalytics;
 using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
@@ -67,6 +68,31 @@ namespace UMS.api.Controllers
             return result.IsSuccess
                 ? Ok(result.Value)
                 : NotFound(result.Error);
+        }
+
+        [HttpPatch("me/update-profile")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateProfile(
+          [FromBody] UpdateCoordinatorProfileRequest request,
+           CancellationToken ct)
+        {
+            var result = await sender.Send(new UpdateCoordinatorProfileCommand(
+                UserId: CoordinatorId,
+                FullName: request.FullName,
+                Phone: request.Phone,
+                CurrentPassword: request.CurrentPassword,
+                NewPassword: request.NewPassword), ct);
+
+            return result.IsSuccess
+                ? Ok(new { message = "Profile updated successfully." })
+                : result.Error.Code switch
+                {
+                    "USER_NOT_FOUND" => NotFound(result.Error),
+                    "AUTH_010" => BadRequest(result.Error),
+                    _ => BadRequest(result.Error)
+                };
         }
 
         [HttpPost("schedules/invite")]
