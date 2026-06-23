@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
 using Microsoft.Extensions.Caching.Memory;
@@ -15,9 +17,11 @@ namespace UMS.Infrastructure.ExternalApi
     public sealed class PranaEventsClient(
         HttpClient httpClient,
         ICacheService cache,
-        ILogger<PranaEventsClient> logger
+        ILogger<PranaEventsClient> logger,
+        IHttpContextAccessor httpContextAccessor
     ) : IEventsApiClient
     {
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true
@@ -34,8 +38,18 @@ namespace UMS.Infrastructure.ExternalApi
 
             try
             {
-                var response = await httpClient.GetAsync("events/public", ct);
-                response.EnsureSuccessStatusCode();
+                var request = new HttpRequestMessage(HttpMethod.Get, "events/public");
+                var authHeader = _httpContextAccessor.HttpContext?.Request?.Headers["Authorization"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authHeader.Substring("Bearer ".Length));
+                }
+                var response = await httpClient.SendAsync(request, ct);
+                if (!response.IsSuccessStatusCode)
+                {
+                    logger.LogWarning("Failed to fetch events: {StatusCode}", response.StatusCode);
+                    return new List<ExternalEventDto>();
+                }
 
                 var json = await response.Content.ReadAsStringAsync(ct);
                 var result = JsonSerializer.Deserialize<List<ExternalEventDto>>(
@@ -62,8 +76,18 @@ namespace UMS.Infrastructure.ExternalApi
 
             try
             {
-                var response = await httpClient.GetAsync($"events/public?pageNumber={pageNumber}&pageSize={pageSize}", ct);
-                response.EnsureSuccessStatusCode();
+                var request = new HttpRequestMessage(HttpMethod.Get, $"events/public?pageNumber={pageNumber}&pageSize={pageSize}");
+                var authHeader = _httpContextAccessor.HttpContext?.Request?.Headers["Authorization"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authHeader.Substring("Bearer ".Length));
+                }
+                var response = await httpClient.SendAsync(request, ct);
+                if (!response.IsSuccessStatusCode)
+                {
+                    logger.LogWarning("Failed to fetch paginated events: {StatusCode}", response.StatusCode);
+                    return new ExternalPaginatedEventsDto(new List<ExternalEventDto>(), pageNumber, pageSize, false, false);
+                }
 
                 var json = await response.Content.ReadAsStringAsync(ct);
                 var events = JsonSerializer.Deserialize<List<ExternalEventDto>>(json, JsonOptions) ?? [];
@@ -91,7 +115,13 @@ namespace UMS.Infrastructure.ExternalApi
 
             try
             {
-                var response = await httpClient.GetAsync($"events/public/{eventId}", ct);
+                var request = new HttpRequestMessage(HttpMethod.Get, $"events/public/{eventId}");
+                var authHeader = _httpContextAccessor.HttpContext?.Request?.Headers["Authorization"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authHeader.Substring("Bearer ".Length));
+                }
+                var response = await httpClient.SendAsync(request, ct);
                 if (!response.IsSuccessStatusCode) return null;
 
                 var json = await response.Content.ReadAsStringAsync(ct);

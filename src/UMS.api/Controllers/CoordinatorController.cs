@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security.Claims;
 
 using MediatR;
@@ -18,9 +18,11 @@ using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
 using UMS.Application.Features.Coordinator.Queries.UsherDetail;
 using UMS.Application.Features.Coordinator.Queries.UsherEventHistory;
 using UMS.Application.Features.Events.Commands.InviteUsher;
-using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
+using UMS.Application.Features.Coordinator.Queries.DashboardAnalytics;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
+using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Contracts.Coordinator;
+using UMS.Contracts.Coordinator.Dashboard;
 using UMS.Contracts.Coordinator.Attendance;
 using UMS.Contracts.Coordinator.Performance;
 using UMS.Contracts.Coordinator.Usher;
@@ -271,6 +273,14 @@ namespace UMS.api.Controllers
                     "SCHEDULE_002" => NotFound(result.Error),
                     _ => BadRequest(result.Error)
                 };
+        }
+
+        [HttpGet("dashboard/analytics")]
+        [ProducesResponseType(typeof(CoordinatorDashboardResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDashboardAnalytics(CancellationToken ct)
+        {
+            var result = await sender.Send(new GetCoordinatorDashboardAnalyticsQuery(), ct);
+            return result.IsSuccess ? Ok(result.Value) : StatusCode(StatusCodes.Status502BadGateway, result.Error);
         }
 
         [HttpGet("schedules/{eventId}/{scheduleId}/reviews")]

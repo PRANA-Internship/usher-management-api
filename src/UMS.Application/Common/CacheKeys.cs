@@ -9,6 +9,7 @@ namespace UMS.Infrastructure.Cache
     {
         public static string AllEvents => "prana:events:all";
         public static string AdminDashboard => "admin:dashboard";
+        public static string CoordinatorDashboardAnalytics => "coordinator:dashboard:analytics";
         public static string AdminAttendanceTrend => "admin:attendance:trend";
 
         public static string EventById(string id) => $"prana:events:{id}";
@@ -19,6 +20,7 @@ namespace UMS.Infrastructure.Cache
             public static readonly TimeSpan Events = TimeSpan.FromHours(12);
 
             public static readonly TimeSpan AdminDashboardDuration = TimeSpan.FromHours(1);
+            public static readonly TimeSpan CoordinatorDashboardAnalytics = TimeSpan.FromMinutes(5);
 
             private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
         }

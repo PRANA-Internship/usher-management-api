@@ -23,6 +23,7 @@ using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
 using UMS.Infrastructure.Settings;
+using UMS.Infrastructure.Workers;
 using UMS.Infrastructure.Storage;
 namespace UMS.Infrastructure.Persistance
 {
@@ -53,6 +54,7 @@ namespace UMS.Infrastructure.Persistance
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IAttendanceAnalyticsRepository, AttendanceAnalyticsRepository>();
 
+            services.AddHttpContextAccessor();
             services.Configure<PranaApiSettings>(
                 configuration.GetSection(PranaApiSettings.SectionName));
 
@@ -148,6 +150,7 @@ namespace UMS.Infrastructure.Persistance
                     };
                 });
             services.AddDatabase(configuration);
+            services.AddHostedService<CoordinatorDashboardRefreshWorker>();
             return services;
         }
 
