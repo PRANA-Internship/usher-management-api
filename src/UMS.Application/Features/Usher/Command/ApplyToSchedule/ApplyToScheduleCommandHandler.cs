@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -30,7 +30,7 @@ namespace UMS.Application.Features.Ushers.Command.ApplyToSchedule
             ApplyToScheduleCommand command,
             CancellationToken cancellationToken)
         {
-            var usher = await usherRepository.GetByUserIdAsync(command.UsherId, cancellationToken);
+            var usher = await usherRepository.GetByIdAsync(command.UsherId, cancellationToken);
 
             if (usher is null)
                 return UsherScheduleErrors.UsherNotApproved;

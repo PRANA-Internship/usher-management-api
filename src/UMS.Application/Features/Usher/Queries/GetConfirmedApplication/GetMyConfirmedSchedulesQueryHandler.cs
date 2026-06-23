@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -28,7 +28,7 @@ namespace UMS.Application.Features.Ushers.Queries.GetConfirmedApplication
             CancellationToken cancellationToken)
         {
             var usher = await usherRepository
-                .GetByUserIdAsync(query.UsherId, cancellationToken);
+                .GetByIdAsync(query.UsherId, cancellationToken);
 
             if (usher is null || usher.ApprovalStatus != ApprovalStatus.APPROVED)
                 return UsherScheduleErrors.UsherNotApproved;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -32,7 +32,7 @@ namespace UMS.Application.Features.Ushers.Command.RespondToInvitaion
             if (invitation is null)
                 return UsherScheduleErrors.InvitationNotFound;
 
-            var usher = await usherRepository.GetByUserIdAsync(
+            var usher = await usherRepository.GetByIdAsync(
                 command.UsherId, cancellationToken);
 
             if (usher is null || invitation.UsherId != usher.Id)

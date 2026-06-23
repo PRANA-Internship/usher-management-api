@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
 using MediatR;
 
@@ -25,9 +25,9 @@ namespace UMS.api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
-    public sealed class UshersController(ISender sender, IUsherRepository usherRepository) : ControllerBase
+    public sealed class UshersController(ISender sender) : ControllerBase
     {
-        private readonly IUsherRepository _usherRepository = usherRepository;
+
         [HttpPost("apply")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(SubmitUsherApplicationResponse), StatusCodes.Status201Created)]
@@ -152,14 +152,10 @@ namespace UMS.api.Controllers
                 [FromBody] ApplyToScheduleRequest request,
                 CancellationToken ct)
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-            var usher = await _usherRepository.GetByUserIdAsync(userId, ct);
-            if (usher is null) return NotFound();
             var result = await sender.Send(new ApplyToScheduleCommand(
-            UsherId: usher.Id,
-            ExternalEventId: request.ExternalEventId,
-            ExternalScheduleId: request.ExternalScheduleId), ct);
+                UsherId: request.UsherId,
+                ExternalEventId: request.ExternalEventId,
+                ExternalScheduleId: request.ExternalScheduleId), ct);
             if (result.IsSuccess)
             {
                 return StatusCode(StatusCodes.Status201Created, result.Value);
@@ -176,6 +172,7 @@ namespace UMS.api.Controllers
                 _ => BadRequest(result.Error)
             };
         }
+
         [HttpPost("invitations/respond")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -186,14 +183,10 @@ namespace UMS.api.Controllers
                [FromBody] RespondToInvitationRequest request,
                CancellationToken ct)
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-            var usher = await _usherRepository.GetByUserIdAsync(userId, ct);
-            if (usher is null) return NotFound();
             var result = await sender.Send(new RespondToInvitationCommand(
-            UsherId: usher.Id,
-            InvitationId: request.invitationId,
-            Accept: request.Accept), ct);
+                UsherId: request.UsherId,
+                InvitationId: request.invitationId,
+                Accept: request.Accept), ct);
 
             return result.IsSuccess
                 ? Ok(new { message = request.Accept ? "Invitation accepted." : "Invitation declined." })
@@ -226,14 +219,13 @@ namespace UMS.api.Controllers
         [Authorize]
         [ProducesResponseType(typeof(PagedConfirmedScheduleResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMyConfirmedSchedules(
+            [FromQuery] Guid usherId,
             [FromQuery] int page = 1,
             [FromQuery] int size = 10,
             CancellationToken ct = default)
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
             var result = await sender.Send(
-                new GetMyConfirmedSchedulesQuery(userId, page, size), ct);
+                new GetMyConfirmedSchedulesQuery(usherId, page, size), ct);
 
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
