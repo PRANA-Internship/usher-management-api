@@ -12,6 +12,7 @@ using Minio;
 
 using StackExchange.Redis;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Services;
 using UMS.Infrastructure.Auth;
@@ -103,6 +104,7 @@ namespace UMS.Infrastructure.Persistance
             services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUsherAnalyticsRepository, UsherAnalyticsRepository>();
 
             var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
 
