@@ -6,9 +6,12 @@ using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
-using UMS.Infrastructure.Cache;
+
+
+
 
 namespace UMS.Infrastructure.ExternalApi
 {

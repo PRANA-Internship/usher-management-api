@@ -6,12 +6,12 @@ using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Contracts.Auth;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
-using UMS.Infrastructure.Cache;
 
 using static UMS.Domain.Common.Error;
 
@@ -45,7 +45,7 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
             if (user is null)
                 return UsherErrors.NotFound;
 
-            // Generate password setup token
+
             var verificationToken = EmailVerificationToken.Create(
                 userId: user.Id,
                 tokenType: TokenType.EmailVerification,
@@ -101,7 +101,7 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
 
 
             await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
-            // Send password setup email outside transaction
+
             try
             {
                 await emailService.SendPasswordSetupAsync(
