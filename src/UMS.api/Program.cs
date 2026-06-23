@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 using UMS.Application;
+using UMS.Infrastructure.BackgroundServices;
 using UMS.Infrastructure.Hubs;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
@@ -47,6 +48,8 @@ builder.Services.AddApplication();
 builder.Services.AddControllers();
 
 builder.Services.AddSignalR();
+
+builder.Services.AddHostedService<ReportCacheRefreshWorker>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

@@ -4,12 +4,12 @@ using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Coordinator.Performance;
 using UMS.Domain.Common;
 using UMS.Domain.Entities;
-using UMS.Infrastructure.Cache;
 
 using static UMS.Domain.Common.Error;
 
@@ -98,6 +98,7 @@ namespace UMS.Application.Features.Coordinator.Commands.PerformanceReview
             }, cancellationToken);
 
             await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
+            await cache.RemoveAsync(CacheKeys.UsherAnalytics(command.UsherId), cancellationToken);
             return Result<PerformanceReviewResponse>.Success(
                 new PerformanceReviewResponse(
                     ReviewId: review.Id,

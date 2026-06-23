@@ -238,6 +238,18 @@ namespace UMS.api.Controllers
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
 
+        [HttpGet("me/analytics")]
+        [Authorize]
+        [ProducesResponseType(typeof(UsherAnalyticsSummary), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetMyAnalytics(CancellationToken ct)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var result = await sender.Send(new GetMyAnalyticsQuery(userId), ct);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
 
     }
 }
