@@ -100,8 +100,8 @@ namespace UMS.Application.Features.Auth.Commands.ApproveApplication
   }, cancellationToken);
 
 
+            await cache.RemoveAsync(CacheKeys.AdminDashboard, cancellationToken);
             await cache.RemoveAsync(CacheKeys.AdminAttendanceTrend, cancellationToken);
-
             try
             {
                 await emailService.SendPasswordSetupAsync(
