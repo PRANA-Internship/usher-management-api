@@ -23,8 +23,8 @@ using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
 using UMS.Infrastructure.Settings;
-using UMS.Infrastructure.Workers;
 using UMS.Infrastructure.Storage;
+using UMS.Infrastructure.Workers;
 namespace UMS.Infrastructure.Persistance
 {
     public static class InfraDependencyInjection

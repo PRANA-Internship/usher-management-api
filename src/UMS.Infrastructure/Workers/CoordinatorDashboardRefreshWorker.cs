@@ -1,11 +1,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using UMS.Application.Features.Coordinator.Queries.DashboardAnalytics;
+
 using UMS.Application.Common.Interfaces;
+using UMS.Application.Features.Coordinator.Queries.DashboardAnalytics;
 
 namespace UMS.Infrastructure.Workers;
 
