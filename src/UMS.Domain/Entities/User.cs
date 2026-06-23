@@ -135,6 +135,19 @@ namespace UMS.Domain.Entities
             Phone = phone.Trim();
             UpdatedAt = DateTimeOffset.UtcNow;
         }
+        public void UpdateFullName(string fullName)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
+            FullName = fullName.Trim();
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void UpdatePassword(string passwordHash)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
+            PasswordHash = passwordHash;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
         public bool HasPassword() => !string.IsNullOrWhiteSpace(PasswordHash);
 
         public static User CreateStaff(
