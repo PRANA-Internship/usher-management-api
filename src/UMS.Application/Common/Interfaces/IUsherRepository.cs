@@ -28,6 +28,7 @@ namespace UMS.Application.Common.Interfaces
     ISet<Guid> excludedUsherIds, int page, int size, CancellationToken ct = default);
         Task<int> CountApprovedAsync(CancellationToken ct = default);
         Task<int> CountPendingAsync(CancellationToken ct = default);
+        Task<IReadOnlyList<Guid>> GetAllApprovedIdsAsync(CancellationToken ct = default);
 
     }
 }
