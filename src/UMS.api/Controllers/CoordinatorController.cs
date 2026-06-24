@@ -305,7 +305,7 @@ namespace UMS.api.Controllers
         [ProducesResponseType(typeof(CoordinatorDashboardResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDashboardAnalytics(CancellationToken ct)
         {
-            var result = await sender.Send(new GetCoordinatorDashboardAnalyticsQuery(), ct);
+            var result = await sender.Send(new GetCoordinatorDashboardAnalyticsQuery(CoordinatorId), ct);
             return result.IsSuccess ? Ok(result.Value) : StatusCode(StatusCodes.Status502BadGateway, result.Error);
         }
 

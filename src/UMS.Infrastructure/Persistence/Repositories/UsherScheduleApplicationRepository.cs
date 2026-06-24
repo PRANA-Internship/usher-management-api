@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -116,6 +116,14 @@ namespace UMS.Infrastructure.Persistence.Repositories
             await db.UsherScheduleApplications
                 .Where(a => a.ExternalScheduleId == scheduleId
                          && a.Status != InvitationStatus.DECLINED)
+                .Select(a => a.UsherId)
+                .ToListAsync(ct);
+
+        public async Task<IReadOnlyList<Guid>> GetAcceptedUsherIdsByScheduleAsync(
+            string scheduleId, CancellationToken ct = default) =>
+            await db.UsherScheduleApplications
+                .Where(a => a.ExternalScheduleId == scheduleId
+                         && a.Status == InvitationStatus.ACCEPTED)
                 .Select(a => a.UsherId)
                 .ToListAsync(ct);
 

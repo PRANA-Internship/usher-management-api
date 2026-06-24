@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -44,6 +44,9 @@ namespace UMS.Application.Common.Interfaces
         Task<IReadOnlyList<Guid>> GetUsherIdsByScheduleAsync(
             string scheduleId, CancellationToken ct = default);
 
+        Task<IReadOnlyList<Guid>> GetAcceptedUsherIdsByScheduleAsync(
+            string scheduleId, CancellationToken ct = default);
+
         Task<int> CountApprovedByScheduleAsync(
             string scheduleId, CancellationToken ct = default);
 
@@ -52,13 +55,6 @@ namespace UMS.Application.Common.Interfaces
 
         Task<IReadOnlyList<UsherScheduleApplication>> GetConfirmedByUsherAsync(
             Guid usherId, CancellationToken ct = default);
-
-
-
-
-
-
-
 
     }
 }

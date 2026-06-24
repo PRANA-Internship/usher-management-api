@@ -1,12 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Domain.Common;
 using UMS.Domain.Enums;
+
+using UMS.Infrastructure.Cache;
 
 using static UMS.Domain.Common.Error;
 
@@ -19,7 +22,8 @@ namespace UMS.Application.Features.Ushers.Command.RespondToInvitaion
         IUsherAvailablityService availabilityService,
         IUnitOfWork unitOfWork,
         IScheduleAssignmentRepository assignmentRepository,
-        INotificationService notificationService
+        INotificationService notificationService,
+        ICacheService cacheService
     ) : IRequestHandler<RespondToInvitationCommand, Result<bool>>
     {
         public async Task<Result<bool>> Handle(
@@ -64,23 +68,28 @@ namespace UMS.Application.Features.Ushers.Command.RespondToInvitaion
 
                 await invitationRepository.UpdateAsync(invitation, cancellationToken);
             }, cancellationToken);
-            try
+
+            if (command.Accept)
             {
-                if (command.Accept)
+                var assignment = await assignmentRepository
+                    .GetByScheduleIdAsync(invitation.ExternalScheduleId, cancellationToken);
+
+                if (assignment is not null)
                 {
-                    var assignment = await assignmentRepository
-                        .GetByScheduleIdAsync(invitation.ExternalScheduleId, cancellationToken);
+                    await cacheService.RemoveAsync(CacheKeys.CoordinatorDashboardAnalytics(assignment.CoordinatorId), cancellationToken);
 
-                    await notificationService
-                        .NotifyCoordinatorUsherAcceptedAsync(
-                            assignment!.CoordinatorId,
-                            usherFullName: usher.User!.FullName,
-                            cancellationToken);
+                    try
+                    {
+                        await notificationService
+                            .NotifyCoordinatorUsherAcceptedAsync(
+                                assignment.CoordinatorId,
+                                usherFullName: usher.User!.FullName,
+                                cancellationToken);
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
-            }
-            catch (Exception)
-            {
-
             }
 
             return Result<bool>.Success(true);

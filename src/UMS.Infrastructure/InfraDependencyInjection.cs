@@ -15,6 +15,7 @@ using StackExchange.Redis;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Services;
 using UMS.Infrastructure.Auth;
+using UMS.Infrastructure.BackgroundServices;
 using UMS.Infrastructure.Cache;
 using UMS.Infrastructure.Email;
 using UMS.Infrastructure.ExternalApi;
@@ -24,7 +25,6 @@ using UMS.Infrastructure.Persistence;
 using UMS.Infrastructure.Persistence.Repositories;
 using UMS.Infrastructure.Settings;
 using UMS.Infrastructure.Storage;
-using UMS.Infrastructure.Workers;
 namespace UMS.Infrastructure.Persistance
 {
     public static class InfraDependencyInjection
@@ -105,6 +105,7 @@ namespace UMS.Infrastructure.Persistance
             services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICoordinatorAnalyticsRepository, CoordinatorAnalyticsRepository>();
 
             var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
 
@@ -151,6 +152,7 @@ namespace UMS.Infrastructure.Persistance
                 });
             services.AddDatabase(configuration);
             services.AddHostedService<CoordinatorDashboardRefreshWorker>();
+
             return services;
         }
 
