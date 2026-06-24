@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
+using UMS.Domain.Enums;
 
 namespace UMS.Infrastructure.BackgroundServices
 {
@@ -38,7 +39,6 @@ namespace UMS.Infrastructure.BackgroundServices
                 var cache = scope.ServiceProvider
                     .GetRequiredService<ICacheService>();
 
-
                 var usherIds = await usherRepository.GetAllApprovedIdsAsync(ct);
 
                 foreach (var usherId in usherIds)
@@ -54,6 +54,29 @@ namespace UMS.Infrastructure.BackgroundServices
 
                     logger.LogInformation(
                         "Refreshed analytics cache for usher {UsherId}", usherId);
+                }
+
+                var userRepository = scope.ServiceProvider
+                    .GetRequiredService<IUserRepository>();
+                var coordinatorAnalyticsRepository = scope.ServiceProvider
+                    .GetRequiredService<ICoordinatorAnalyticsRepository>();
+
+                var coordinatorIds = await userRepository.GetUserIdsByRoleAsync(
+                    UserRole.EVENT_COORDINATOR, ct);
+
+                foreach (var coordinatorId in coordinatorIds)
+                {
+                    var data = await coordinatorAnalyticsRepository
+                        .GetCoordinatorAnalyticsAsync(coordinatorId, ct);
+
+                    await cache.SetAsync(
+                        CacheKeys.CoordinatorAnalytics(coordinatorId),
+                        data,
+                        CacheKeys.TTL.CoordinatorAnalytics,
+                        ct);
+
+                    logger.LogInformation(
+                        "Refreshed analytics cache for coordinator {CoordinatorId}", coordinatorId);
                 }
             }
             catch (Exception ex)

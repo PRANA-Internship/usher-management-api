@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Domain.Common;
 
@@ -15,7 +16,8 @@ namespace UMS.Application.Features.Coordinator.Commands.ReviewApplication
       IUsherScheduleApplicationRepository applicationRepository,
       IScheduleAssignmentRepository assignmentRepository,
       IUnitOfWork unitOfWork,
-      INotificationService notificationService
+      INotificationService notificationService,
+      ICacheService cache
   ) : IRequestHandler<ReviewApplicationCommand, Result<bool>>
     {
         public async Task<Result<bool>> Handle(
@@ -50,6 +52,8 @@ namespace UMS.Application.Features.Coordinator.Commands.ReviewApplication
             {
                 if (command.Approve)
                 {
+                    await cache.RemoveAsync(CacheKeys.CoordinatorAnalytics(command.CoordinatorId), cancellationToken);
+
                     await notificationService
                         .NotifyUsherApplicationApprovedAsync(
                             userId: application.Usher.User!.Id,

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Events;
@@ -45,6 +46,7 @@ namespace UMS.Application.Features.Events.Commands.RemoveCoordinator
             }, cancellationToken);
 
             await _cache.RemoveAsync(command.ExternalEventId, cancellationToken);
+            await _cache.RemoveAsync(CacheKeys.CoordinatorAnalytics(assignment.CoordinatorId), cancellationToken);
 
             var response = new RemoveCoordinatorResponse(
                 AssignmentId: assignment.Id,

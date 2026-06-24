@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Domain.Common;
 using UMS.Domain.Enums;
@@ -19,7 +20,8 @@ namespace UMS.Application.Features.Ushers.Command.RespondToInvitaion
         IUsherAvailablityService availabilityService,
         IUnitOfWork unitOfWork,
         IScheduleAssignmentRepository assignmentRepository,
-        INotificationService notificationService
+        INotificationService notificationService,
+        ICacheService cache
     ) : IRequestHandler<RespondToInvitationCommand, Result<bool>>
     {
         public async Task<Result<bool>> Handle(
@@ -71,11 +73,18 @@ namespace UMS.Application.Features.Ushers.Command.RespondToInvitaion
                     var assignment = await assignmentRepository
                         .GetByScheduleIdAsync(invitation.ExternalScheduleId, cancellationToken);
 
-                    await notificationService
-                        .NotifyCoordinatorUsherAcceptedAsync(
-                            assignment!.CoordinatorId,
-                            usherFullName: usher.User!.FullName,
+                    if (assignment is not null)
+                    {
+                        await cache.RemoveAsync(
+                            CacheKeys.CoordinatorAnalytics(assignment.CoordinatorId),
                             cancellationToken);
+
+                        await notificationService
+                            .NotifyCoordinatorUsherAcceptedAsync(
+                                assignment.CoordinatorId,
+                                usherFullName: usher.User!.FullName,
+                                cancellationToken);
+                    }
                 }
             }
             catch (Exception)

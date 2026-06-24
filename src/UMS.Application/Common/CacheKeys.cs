@@ -14,12 +14,15 @@ namespace UMS.Application.Common
             $"prana:events:page:{pageNumber}:size:{pageSize}";
         public static string UsherAnalytics(Guid usherId) =>
             $"usher:analytics:{usherId}";
+        public static string CoordinatorAnalytics(Guid coordinatorId) =>
+            $"coordinator:analytics:{coordinatorId}";
 
         public static class TTL
         {
             public static readonly TimeSpan Events = TimeSpan.FromHours(12);
             public static readonly TimeSpan AdminDashboardDuration = TimeSpan.FromHours(1);
             public static readonly TimeSpan UsherAnalytics = TimeSpan.FromMinutes(15);
+            public static readonly TimeSpan CoordinatorAnalytics = TimeSpan.FromMinutes(15);
         }
     }
 }

@@ -105,6 +105,7 @@ namespace UMS.Infrastructure.Persistance
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUsherAnalyticsRepository, UsherAnalyticsRepository>();
+            services.AddScoped<ICoordinatorAnalyticsRepository, CoordinatorAnalyticsRepository>();
 
             var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
 
