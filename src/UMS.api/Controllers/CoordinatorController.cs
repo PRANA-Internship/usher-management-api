@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security.Claims;
 
 using MediatR;
@@ -13,6 +13,7 @@ using UMS.Application.Features.Coordinator.Commands.UpdateProfile;
 using UMS.Application.Features.Coordinator.Queries.AttendanceSheet;
 using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
 using UMS.Application.Features.Coordinator.Queries.GetConfirmed;
+using UMS.Application.Features.Coordinator.Queries.GetCoordinatorDashboardAnalytics;
 using UMS.Application.Features.Coordinator.Queries.GetMyProfile;
 using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
 using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
@@ -389,6 +390,18 @@ namespace UMS.api.Controllers
                 };
         }
 
+        [HttpGet("dashboard/analytics")]
+        [ProducesResponseType(typeof(CoordinatorDashboardAnalyticsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetDashboardAnalytics(CancellationToken ct)
+        {
+            var result = await sender.Send(
+                new GetCoordinatorDashboardAnalyticsQuery(CoordinatorId), ct);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : NotFound(result.Error);
+        }
 
 
     }

@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using MediatR;
 
+using UMS.Application.Common;
 using UMS.Application.Common.Interfaces;
 using UMS.Application.Common.Models;
 using UMS.Contracts.Events;
@@ -59,6 +60,8 @@ namespace UMS.Application.Features.Events.Commands.AssignCoordinator
             var existing = await assignmentRepository.GetByScheduleIdAsync(
                 command.ExternalScheduleId, cancellationToken);
 
+            Guid? oldCoordinatorId = existing?.CoordinatorId;
+
             await unitOfWork.ExecuteInTransactionAsync(async () =>
             {
                 if (existing is not null)
@@ -79,6 +82,11 @@ namespace UMS.Application.Features.Events.Commands.AssignCoordinator
             }, cancellationToken);
 
             await cache.RemoveAsync(command.ExternalEventId, cancellationToken);
+            await cache.RemoveAsync(CacheKeys.CoordinatorAnalytics(command.CoordinatorId), cancellationToken);
+            if (oldCoordinatorId.HasValue && oldCoordinatorId.Value != command.CoordinatorId)
+            {
+                await cache.RemoveAsync(CacheKeys.CoordinatorAnalytics(oldCoordinatorId.Value), cancellationToken);
+            }
 
             var saved = await assignmentRepository.GetByScheduleIdAsync(
                 command.ExternalScheduleId, cancellationToken);
