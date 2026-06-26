@@ -27,6 +27,12 @@ namespace UMS.Application.Features.Ushers.Command
         public List<Language>? Languages { get; init; }
         public List<Sector>? Sector { get; init; }
         public IFormFile? ProfilePhoto { get; init; }
+        public string? FullName { get; init; }
+        public string? CurrentPassword { get; init; }
+        public string? NewPassword { get; init; }
+        public Gender? Gender { get; init; }
+        public DateOnly? DateOfBirth { get; init; }
+        public IFormFile? IdDocument { get; init; }
     }
     public sealed class UpdateUsherProfileValidator
     : AbstractValidator<UpdateUsherProfileCommand>
@@ -87,6 +93,22 @@ namespace UMS.Application.Features.Ushers.Command
                         .WithMessage("Profile photo must be JPEG, PNG, or WebP.");
             });
 
+            When(x => x.FullName is not null, () =>
+    RuleFor(x => x.FullName).NotEmpty().MaximumLength(100));
+
+            When(x => x.NewPassword is not null, () =>
+            {
+                RuleFor(x => x.CurrentPassword).NotEmpty()
+                    .WithMessage("Current password is required to set a new password.");
+                RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(8)
+                    .WithMessage("New password must be at least 8 characters.");
+            });
+
+            When(x => x.DateOfBirth.HasValue, () =>
+                RuleFor(x => x.DateOfBirth)
+                    .Must(d => d < DateOnly.FromDateTime(DateTime.UtcNow))
+                    .WithMessage("Date of birth must be in the past."));
+
             RuleFor(x => x).Must(cmd =>
                 cmd.Phone is not null ||
                 cmd.Address is not null ||
@@ -97,7 +119,12 @@ namespace UMS.Application.Features.Ushers.Command
                 cmd.ExperienceSummary is not null ||
                 cmd.Languages is not null ||
                 cmd.Sector is not null ||
-                cmd.ProfilePhoto is not null)
+                cmd.ProfilePhoto is not null ||
+                cmd.FullName is not null ||
+                cmd.NewPassword is not null ||
+                cmd.Gender is not null ||
+                cmd.DateOfBirth is not null ||
+                cmd.IdDocument is not null)
             .WithMessage("At least one field must be provided.");
         }
     }

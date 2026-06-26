@@ -15,12 +15,13 @@ namespace UMS.Application.Features.Ushers.Command
         IUsherRepository usherRepository,
         IUserRepository userRepository,
         IFileStorageService fileStorage,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IPasswordHasher passwordHasher
     ) : IRequestHandler<UpdateUsherProfileCommand, Result<bool>>
     {
         public async Task<Result<bool>> Handle(
-            UpdateUsherProfileCommand command,
-            CancellationToken cancellationToken)
+       UpdateUsherProfileCommand command,
+       CancellationToken cancellationToken)
         {
             var usher = await usherRepository.GetByUserIdAsync(command.UserId, cancellationToken);
             if (usher is null)
@@ -29,6 +30,15 @@ namespace UMS.Application.Features.Ushers.Command
             var user = await userRepository.GetByIdAsync(command.UserId, cancellationToken);
             if (user is null)
                 return UsherErrors.NotFound;
+            if (command.NewPassword is not null)
+            {
+                if (!user.HasPassword())
+                    return new Error("USER_001", "User has no password set.");
+
+                if (!passwordHasher.Verify(command.CurrentPassword!, user.PasswordHash!))
+                    return new Error("AUTH_010", "Current password is incorrect.");
+            }
+
 
             string? newPhotoUrl = null;
             if (command.ProfilePhoto is not null)
@@ -48,17 +58,42 @@ namespace UMS.Application.Features.Ushers.Command
                 }
             }
 
+
+            string? newDocumentUrl = null;
+            if (command.IdDocument is not null)
+            {
+                try
+                {
+                    newDocumentUrl = await fileStorage.UploadFileAsync(
+                        fileStream: command.IdDocument.OpenReadStream(),
+                        fileName: command.IdDocument.FileName,
+                        contentType: command.IdDocument.ContentType,
+                        folder: "id-documents",
+                        ct: cancellationToken);
+                }
+                catch
+                {
+                    return UsherErrors.FileUploadFailed;
+                }
+            }
+
             var oldPhotoUrl = newPhotoUrl is not null ? usher.ProfilePhotoUrl : null;
+            var oldDocumentUrl = newDocumentUrl is not null ? usher.IdDocumentUrl : null;
 
             try
             {
                 await unitOfWork.ExecuteInTransactionAsync(async () =>
                 {
-                    if (command.Phone is not null)
+
+                    if (command.FullName is not null) user.UpdateFullName(command.FullName);
+                    if (command.NewPassword is not null)
                     {
-                        user.UpdatePhone(command.Phone);
-                        await userRepository.UpdateAsync(user, cancellationToken);
+                        user.UpdatePassword(passwordHasher.Hash(command.NewPassword!));
                     }
+
+                    if (command.Phone is not null) user.UpdatePhone(command.Phone);
+
+                    await userRepository.UpdateAsync(user, cancellationToken);
 
                     usher.UpdateProfile(
                         address: command.Address,
@@ -71,8 +106,12 @@ namespace UMS.Application.Features.Ushers.Command
                         sector: command.Sector);
 
 
-                    if (newPhotoUrl is not null)
-                        usher.UpdateProfilePhoto(newPhotoUrl);
+                    usher.UpdatePersonalInfo(command.Gender, command.DateOfBirth);
+
+                    if (newPhotoUrl is not null) usher.UpdateProfilePhoto(newPhotoUrl);
+
+
+                    if (newDocumentUrl is not null) usher.CreateDocument(newDocumentUrl);
 
                     await usherRepository.UpdateAsync(usher, cancellationToken);
 
@@ -82,24 +121,19 @@ namespace UMS.Application.Features.Ushers.Command
             {
                 if (newPhotoUrl is not null)
                     try { await fileStorage.DeleteAsync(newPhotoUrl, cancellationToken); } catch { }
-
+                if (newDocumentUrl is not null)
+                    try { await fileStorage.DeleteAsync(newDocumentUrl, cancellationToken); } catch { }
                 return UsherErrors.ApplicationSaveFailed;
             }
 
             if (oldPhotoUrl is not null)
                 try { await fileStorage.DeleteAsync(oldPhotoUrl, cancellationToken); } catch { }
+            if (oldDocumentUrl is not null)
+                try { await fileStorage.DeleteAsync(oldDocumentUrl, cancellationToken); } catch { }
 
             return Result<bool>.Success(true);
         }
     }
-
-
-
-
-
-
-
-
 
 
 

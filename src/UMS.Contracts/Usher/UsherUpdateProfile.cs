@@ -20,5 +20,11 @@ namespace UMS.Contracts.Usher
         public List<Language> Languages { get; set; } = [];
         public List<Sector>? Sector { get; set; }
         public IFormFile? ProfilePhoto { get; set; }
+        public string? FullName { get; set; }
+        public string? CurrentPassword { get; set; }
+        public string? NewPassword { get; set; }
+        public Gender? Gender { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
+        public IFormFile? IdDocument { get; set; }
     }
 }

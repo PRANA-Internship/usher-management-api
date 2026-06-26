@@ -128,7 +128,13 @@ namespace UMS.api.Controllers
                 ExperienceSummary = request.ExperienceSummary,
                 Languages = request.Languages,
                 Sector = request.Sector,
-                ProfilePhoto = request.ProfilePhoto
+                ProfilePhoto = request.ProfilePhoto,
+                FullName = request.FullName,
+                CurrentPassword = request.CurrentPassword,
+                NewPassword = request.NewPassword,
+                Gender = request.Gender,
+                DateOfBirth = request.DateOfBirth,
+                IdDocument = request.IdDocument
             };
 
             var result = await sender.Send(command, ct);
