@@ -6,10 +6,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using UMS.Application.Features.Account.Commands.UpdateProfile;
 using UMS.Application.Features.Coordinator.Commands.MarkAttendance;
 using UMS.Application.Features.Coordinator.Commands.PerformanceReview;
 using UMS.Application.Features.Coordinator.Commands.ReviewApplication;
-using UMS.Application.Features.Coordinator.Commands.UpdateProfile;
 using UMS.Application.Features.Coordinator.Queries.AttendanceSheet;
 using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
 using UMS.Application.Features.Coordinator.Queries.GetConfirmed;
@@ -27,6 +27,7 @@ using UMS.Contracts.Coordinator.Attendance;
 using UMS.Contracts.Coordinator.Performance;
 using UMS.Contracts.Coordinator.Usher;
 using UMS.Contracts.Events;
+using UMS.Contracts.User;
 using UMS.Contracts.Usher;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
@@ -77,12 +78,10 @@ namespace UMS.api.Controllers
           [FromBody] UpdateCoordinatorProfileRequest request,
            CancellationToken ct)
         {
-            var result = await sender.Send(new UpdateCoordinatorProfileCommand(
+            var result = await sender.Send(new UpdateUserProfileCommand(
                 UserId: CoordinatorId,
                 FullName: request.FullName,
-                Phone: request.Phone,
-                CurrentPassword: request.CurrentPassword,
-                NewPassword: request.NewPassword), ct);
+                Phone: request.Phone), ct);
 
             return result.IsSuccess
                 ? Ok(new { message = "Profile updated successfully." })
