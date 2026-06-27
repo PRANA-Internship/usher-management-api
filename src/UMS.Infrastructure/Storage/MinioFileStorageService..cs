@@ -13,9 +13,9 @@ using UMS.Infrastructure.Settings;
 namespace UMS.Infrastructure.Storage
 {
     public sealed class MinioFileStorageService(
-     IMinioClient minioClient,
-     IOptions<MinioSettings> options
- ) : IFileStorageService
+        IMinioClient minioClient,
+        IOptions<MinioSettings> options
+    ) : IFileStorageService
     {
         private readonly MinioSettings _settings = options.Value;
 
@@ -39,7 +39,6 @@ namespace UMS.Infrastructure.Storage
                 .WithContentType(contentType);
 
             await minioClient.PutObjectAsync(putArgs, ct);
-
             return objectName;
         }
 
@@ -52,6 +51,60 @@ namespace UMS.Infrastructure.Storage
             await minioClient.RemoveObjectAsync(removeArgs, ct);
         }
 
+        public async Task<Stream> DownloadFileAsync(string objectPath, CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(objectPath))
+                return Stream.Null;
+
+            var memoryStream = new MemoryStream();
+
+            var args = new GetObjectArgs()
+                .WithBucket(_settings.BucketName)
+                .WithObject(objectPath)
+                .WithCallbackStream(stream => stream.CopyTo(memoryStream));
+
+            await minioClient.GetObjectAsync(args, ct);
+            memoryStream.Position = 0;
+            return memoryStream;
+        }
+
+        public async Task<bool> FileExistsAsync(string objectPath, CancellationToken ct = default)
+        {
+            try
+            {
+                var args = new StatObjectArgs()
+                    .WithBucket(_settings.BucketName)
+                    .WithObject(objectPath);
+
+                await minioClient.StatObjectAsync(args, ct);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<string> MoveFileAsync(
+            string sourcePath,
+            string destinationFolder,
+            CancellationToken ct = default)
+        {
+            var extension = Path.GetExtension(sourcePath).ToLowerInvariant();
+            var destinationPath = $"{destinationFolder}/{Guid.NewGuid()}{extension}";
+
+            var copyArgs = new CopyObjectArgs()
+                .WithBucket(_settings.BucketName)
+                .WithObject(destinationPath)
+                .WithCopyObjectSource(new CopySourceObjectArgs()
+                    .WithBucket(_settings.BucketName)
+                    .WithObject(sourcePath));
+
+            await minioClient.CopyObjectAsync(copyArgs, ct);
+            await DeleteAsync(sourcePath, ct);
+            return destinationPath;
+        }
+
         private async Task EnsureBucketExistsAsync(CancellationToken ct)
         {
             var existsArgs = new BucketExistsArgs().WithBucket(_settings.BucketName);
@@ -62,18 +115,6 @@ namespace UMS.Infrastructure.Storage
                 var makeArgs = new MakeBucketArgs().WithBucket(_settings.BucketName);
                 await minioClient.MakeBucketAsync(makeArgs, ct);
             }
-        }
-        public async Task<string> GetPresignedUrlAsync(
-            string objectPath,
-            int expirySeconds = 3600,
-            CancellationToken ct = default)
-        {
-            var args = new PresignedGetObjectArgs()
-                .WithBucket(_settings.BucketName)
-                .WithObject(objectPath)
-                .WithExpiry(expirySeconds);
-
-            return await minioClient.PresignedGetObjectAsync(args);
         }
     }
 }
