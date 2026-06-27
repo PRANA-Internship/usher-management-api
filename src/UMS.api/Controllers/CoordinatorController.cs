@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using UMS.Application.Features.Coordinator.Commands.MarkAttendance;
 using UMS.Application.Features.Coordinator.Commands.PerformanceReview;
 using UMS.Application.Features.Coordinator.Commands.ReviewApplication;
-using UMS.Application.Features.Coordinator.Commands.UpdateProfile;
 using UMS.Application.Features.Coordinator.Queries.AttendanceSheet;
 using UMS.Application.Features.Coordinator.Queries.GetAvailableUshersQuery;
 using UMS.Application.Features.Coordinator.Queries.GetConfirmed;
@@ -19,6 +18,7 @@ using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
 using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
 using UMS.Application.Features.Coordinator.Queries.UsherDetail;
 using UMS.Application.Features.Coordinator.Queries.UsherEventHistory;
+using UMS.Application.Features.Account.Commands.UpdateProfile;
 using UMS.Application.Features.Events.Commands.InviteUsher;
 using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
@@ -30,6 +30,7 @@ using UMS.Contracts.Events;
 using UMS.Contracts.Usher;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
+using UMS.Contracts.User;
 
 namespace UMS.api.Controllers
 {
@@ -77,12 +78,10 @@ namespace UMS.api.Controllers
           [FromBody] UpdateCoordinatorProfileRequest request,
            CancellationToken ct)
         {
-            var result = await sender.Send(new UpdateCoordinatorProfileCommand(
+            var result = await sender.Send(new UpdateUserProfileCommand(
                 UserId: CoordinatorId,
                 FullName: request.FullName,
-                Phone: request.Phone,
-                CurrentPassword: request.CurrentPassword,
-                NewPassword: request.NewPassword), ct);
+                Phone: request.Phone), ct);
 
             return result.IsSuccess
                 ? Ok(new { message = "Profile updated successfully." })

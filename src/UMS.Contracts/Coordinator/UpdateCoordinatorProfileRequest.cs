@@ -4,7 +4,5 @@ using System.Text;
 
 public sealed record UpdateCoordinatorProfileRequest(
     string FullName = "",
-    string Phone = "",
-    string CurrentPassword = "",
-    string NewPassword = ""
+    string Phone = ""
 );

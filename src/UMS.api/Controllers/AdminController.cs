@@ -8,14 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 using UMS.Application.Features.Admin.Queries;
 using UMS.Application.Features.Auth.Commands.ApproveApplication;
 using UMS.Application.Features.Auth.Commands.RejectApplication;
-using UMS.Application.Features.Coordinator.Commands.UpdateProfile;
 using UMS.Application.Features.Coordinator.Queries.GetMyProfile;
 using UMS.Application.Features.Ushers.Queries.GetApplications;
 using UMS.Application.Features.Ushers.Queries.GetApplicationsDetail;
+using UMS.Application.Features.Account.Commands.UpdateProfile;
 using UMS.Contracts.Admin;
-using UMS.Contracts.Coordinator;
 using UMS.Contracts.Usher;
 using UMS.Domain.Enums;
+using UMS.Contracts.User;
+using UMS.Contracts.Coordinator;
 namespace UMS.api.Controllers
 {
     [ApiController]
@@ -63,13 +64,10 @@ namespace UMS.api.Controllers
           CancellationToken ct)
         {
             var adminId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var result = await sender.Send(new UpdateCoordinatorProfileCommand(
+            var result = await sender.Send(new UpdateUserProfileCommand(
                 UserId: adminId,
                 FullName: request.FullName,
-                Phone: request.Phone,
-                CurrentPassword: request.CurrentPassword,
-                NewPassword: request.NewPassword), ct);
-
+                Phone: request.Phone), ct);
             return result.IsSuccess
                 ? Ok(new { message = "Profile updated successfully." })
                 : result.Error.Code switch

@@ -1,10 +1,9 @@
 using MediatR;
-
 using UMS.Domain.Common;
 
-namespace UMS.Application.Features.Coordinator.Commands.UpdateProfile;
+namespace UMS.Application.Features.Account.Commands.UpdateProfile;
 
-public sealed record UpdateCoordinatorProfileCommand(
+public sealed record UpdateUserProfileCommand(
     Guid UserId,
     string? Phone,
     string? FullName
