@@ -15,8 +15,7 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyProfile
     public sealed record GetMyProfileQuery(Guid UserId)
      : IRequest<Result<GetMyProfileUsher>>;
     public sealed class GetMyProfileQueryHandler(
-    IUsherRepository usherRepository,
-    IFileStorageService fileStorage
+    IUsherRepository usherRepository
 ) : IRequestHandler<GetMyProfileQuery, Result<GetMyProfileUsher>>
     {
         public async Task<Result<GetMyProfileUsher>> Handle(
@@ -28,11 +27,10 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyProfile
             if (usher is null)
                 return UsherErrors.NotFound;
 
-            var profilePhotoUrl = await fileStorage.GetPresignedUrlAsync(
-                usher.ProfilePhotoUrl, expirySeconds: 3600, ct: cancellationToken);
+            var profilePhotoPath = usher.ProfilePhotoUrl;
 
-            var idDocumentUrl = await fileStorage.GetPresignedUrlAsync(
-                usher.IdDocumentUrl, expirySeconds: 3600, ct: cancellationToken);
+            var idDocumentPath = usher.IdDocumentUrl;
+
 
             return Result<GetMyProfileUsher>.Success(new GetMyProfileUsher(
                     UserId: usher.UserId,
@@ -49,8 +47,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetMyProfile
                     ExperienceSummary: usher.ExperienceSummary,
                     Languages: usher.Languages.ToList(),
                     Sector: usher.Sector.ToList(),
-                    ProfilePhotoPath: profilePhotoUrl,
-                    IdDocumentPath: idDocumentUrl,
+                    ProfilePhotoPath: profilePhotoPath,
+                    IdDocumentPath: idDocumentPath,
                     ApplicationStatus: usher.ApprovalStatus
 
                 ));
