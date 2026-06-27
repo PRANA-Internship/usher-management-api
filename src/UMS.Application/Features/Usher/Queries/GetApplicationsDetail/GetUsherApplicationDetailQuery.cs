@@ -16,8 +16,7 @@ namespace UMS.Application.Features.Ushers.Queries.GetApplicationsDetail
         : IRequest<Result<GetUsherApplicationDetailResponse>>;
 
     public sealed class GetUsherApplicationDetailQueryHandler(
-        IUsherRepository usherRepository,
-           IFileStorageService fileStorage
+        IUsherRepository usherRepository
     ) : IRequestHandler<GetUsherApplicationDetailQuery, Result<GetUsherApplicationDetailResponse>>
     {
         public async Task<Result<GetUsherApplicationDetailResponse>> Handle(
@@ -28,12 +27,8 @@ namespace UMS.Application.Features.Ushers.Queries.GetApplicationsDetail
 
             if (usher is null)
                 return UsherErrors.NotFound;
-            var profilePhotoUrl = await fileStorage.GetPresignedUrlAsync(
-            usher.ProfilePhotoUrl, expirySeconds: 3600, ct: cancellationToken);
-
-            var idDocumentUrl = await fileStorage.GetPresignedUrlAsync(
-                usher.IdDocumentUrl, expirySeconds: 3600, ct: cancellationToken);
-
+            var profilePhotoUrl = usher.ProfilePhotoUrl;
+            var idDocumentUrl = usher.IdDocumentUrl;
 
             return Result<GetUsherApplicationDetailResponse>.Success(
                 new GetUsherApplicationDetailResponse(
