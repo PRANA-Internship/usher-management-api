@@ -1,4 +1,5 @@
 using MediatR;
+
 using UMS.Domain.Common;
 
 namespace UMS.Application.Features.Account.Commands.UpdateProfile;

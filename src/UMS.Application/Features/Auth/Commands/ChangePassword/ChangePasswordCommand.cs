@@ -1,4 +1,5 @@
 using MediatR;
+
 using UMS.Domain.Common;
 
 public sealed record ChangePasswordCommand(

@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using UMS.Application.Features.Account.Commands.UpdateProfile;
 using UMS.Application.Features.Coordinator.Commands.MarkAttendance;
 using UMS.Application.Features.Coordinator.Commands.PerformanceReview;
 using UMS.Application.Features.Coordinator.Commands.ReviewApplication;
@@ -18,7 +19,6 @@ using UMS.Application.Features.Coordinator.Queries.GetScheduleRoster;
 using UMS.Application.Features.Coordinator.Queries.PerformanceReviewList;
 using UMS.Application.Features.Coordinator.Queries.UsherDetail;
 using UMS.Application.Features.Coordinator.Queries.UsherEventHistory;
-using UMS.Application.Features.Account.Commands.UpdateProfile;
 using UMS.Application.Features.Events.Commands.InviteUsher;
 using UMS.Application.Features.Events.Queries.GetCoordinatorSchedules;
 using UMS.Application.Features.Events.Queries.GetScheduleInvitations;
@@ -27,10 +27,10 @@ using UMS.Contracts.Coordinator.Attendance;
 using UMS.Contracts.Coordinator.Performance;
 using UMS.Contracts.Coordinator.Usher;
 using UMS.Contracts.Events;
+using UMS.Contracts.User;
 using UMS.Contracts.Usher;
 using UMS.Domain.Entities;
 using UMS.Domain.Enums;
-using UMS.Contracts.User;
 
 namespace UMS.api.Controllers
 {
