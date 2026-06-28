@@ -129,10 +129,10 @@ namespace UMS.api.Controllers
                 Languages = request.Languages,
                 Sector = request.Sector,
                 ProfilePhoto = request.ProfilePhoto,
-                FullName = request.FullName,      
-                Gender = request.Gender,          
+                FullName = request.FullName,
+                Gender = request.Gender,
                 DateOfBirth = request.DateOfBirth,
-                IdDocument = request.IdDocument,  
+                IdDocument = request.IdDocument,
             };
 
             var result = await sender.Send(command, ct);
