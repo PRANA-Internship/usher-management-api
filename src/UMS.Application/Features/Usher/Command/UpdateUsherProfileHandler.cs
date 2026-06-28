@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
 using MediatR;
-
 using UMS.Application.Common.Interfaces;
 using UMS.Domain.Common;
-
 using static UMS.Domain.Common.Error;
 
 namespace UMS.Application.Features.Ushers.Command
@@ -30,6 +27,7 @@ namespace UMS.Application.Features.Ushers.Command
             if (user is null)
                 return UsherErrors.NotFound;
 
+
             string? newPhotoUrl = null;
             if (command.ProfilePhoto is not null)
             {
@@ -48,17 +46,36 @@ namespace UMS.Application.Features.Ushers.Command
                 }
             }
 
+            string? newDocumentUrl = null;
+            if (command.IdDocument is not null)
+            {
+                try
+                {
+                    newDocumentUrl = await fileStorage.UploadFileAsync(
+                        fileStream: command.IdDocument.OpenReadStream(),
+                        fileName: command.IdDocument.FileName,
+                        contentType: command.IdDocument.ContentType,
+                        folder: "id-documents",
+                        ct: cancellationToken);
+                }
+                catch
+                {
+                    return UsherErrors.FileUploadFailed;
+                }
+            }
+
             var oldPhotoUrl = newPhotoUrl is not null ? usher.ProfilePhotoUrl : null;
+            var oldDocumentUrl = newDocumentUrl is not null ? usher.IdDocumentUrl : null;
 
             try
             {
                 await unitOfWork.ExecuteInTransactionAsync(async () =>
                 {
-                    if (command.Phone is not null)
-                    {
-                        user.UpdatePhone(command.Phone);
-                        await userRepository.UpdateAsync(user, cancellationToken);
-                    }
+
+                    if (command.FullName is not null) user.UpdateFullName(command.FullName);
+                    if (command.Phone is not null) user.UpdatePhone(command.Phone);
+                    await userRepository.UpdateAsync(user, cancellationToken);
+
 
                     usher.UpdateProfile(
                         address: command.Address,
@@ -71,8 +88,10 @@ namespace UMS.Application.Features.Ushers.Command
                         sector: command.Sector);
 
 
-                    if (newPhotoUrl is not null)
-                        usher.UpdateProfilePhoto(newPhotoUrl);
+                    usher.UpdatePersonalInfo(command.Gender, command.DateOfBirth);
+
+                    if (newPhotoUrl is not null) usher.UpdateProfilePhoto(newPhotoUrl);
+                    if (newDocumentUrl is not null) usher.CreateDocument(newDocumentUrl);
 
                     await usherRepository.UpdateAsync(usher, cancellationToken);
 
@@ -82,25 +101,18 @@ namespace UMS.Application.Features.Ushers.Command
             {
                 if (newPhotoUrl is not null)
                     try { await fileStorage.DeleteAsync(newPhotoUrl, cancellationToken); } catch { }
+                if (newDocumentUrl is not null)
+                    try { await fileStorage.DeleteAsync(newDocumentUrl, cancellationToken); } catch { }
 
                 return UsherErrors.ApplicationSaveFailed;
             }
 
             if (oldPhotoUrl is not null)
                 try { await fileStorage.DeleteAsync(oldPhotoUrl, cancellationToken); } catch { }
+            if (oldDocumentUrl is not null)
+                try { await fileStorage.DeleteAsync(oldDocumentUrl, cancellationToken); } catch { }
 
             return Result<bool>.Success(true);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }
