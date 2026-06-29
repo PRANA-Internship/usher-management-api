@@ -170,6 +170,17 @@ namespace UMS.Domain.Entities
             UpdatedAt = DateTimeOffset.UtcNow;
         }
 
+        public void UpdatePersonalInfo(Gender? gender = null, DateOnly? dateOfBirth = null)
+        {
+            if (dateOfBirth.HasValue && dateOfBirth.Value >= DateOnly.FromDateTime(DateTime.UtcNow))
+                throw new ArgumentException("Date of birth must be in the past.");
+
+            if (gender.HasValue) Gender = gender.Value;
+            if (dateOfBirth.HasValue) DateOfBirth = dateOfBirth.Value;
+
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
     }
 }
 
