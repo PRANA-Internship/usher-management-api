@@ -12,6 +12,7 @@ using UMS.Infrastructure.Hubs;
 using UMS.Infrastructure.Persistance;
 using UMS.Infrastructure.Persistance.Context;
 using UMS.Infrastructure.Persistence.Seeder;
+using UMS.Infrastructure.Settings;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -32,15 +33,20 @@ builder.Services.AddControllers()
             .Add(new JsonStringEnumConverter());
     });
 
+var rateLimiterSettings = builder.Configuration
+    .GetSection(RateLimiterSettings.SectionName)
+    .Get<RateLimiterSettings>()
+    ?? throw new InvalidOperationException("RateLimiter configuration is missing.");
+
 builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter(
-        "fixed",
+        rateLimiterSettings.PolicyName,
         opt =>
         {
-            opt.PermitLimit = 5;
-            opt.Window = TimeSpan.FromMinutes(10);
-            opt.QueueLimit = 0;
+            opt.PermitLimit = rateLimiterSettings.PermitLimit;
+            opt.Window = TimeSpan.FromMinutes(rateLimiterSettings.WindowMinutes);
+            opt.QueueLimit = rateLimiterSettings.QueueLimit;
         }
     );
 });
